@@ -1,26 +1,27 @@
-# Lippu-projekti API:n Java-implementaatio
+# Java implementation for Lippu-project API
 
 
-## Miten käynnistyy?
+## Howto run
+Project uses gradle-build tool to build software
+artifacts. It can be used to build standalone
+runnable jar-file. You also need Java 8 SDK to
+build and run the 
 
-Projekti käyttää gradle build-työkalua, jolla voi luoda
-ajettavan jar-tiedoston. Tämän lisäksi tarvitaan Java 8 SDK.
-
-Aja komento:
+Run command:
 
 ```
 gradlew clean build
 ```
-joka luo lippu-api-service-0.1.0-SNAPSHOT.jar tiedoston build/libs/
-hakemistoon.
+which creates lippu-api-service-0.1.0-SNAPSHOT.jar file
+to the build/libs/ directory.
 
-Tämän jälkeen rajapinnan voi käynnistää komennolla:
+You can start the service by running:
 
 ```
 java -jar build/libs/lippu-api-service-0.1.0-SNAPSHOT.jar
 ```
 
-Rajapinta löytyy osoitteesta http://localhost:8080/ , tällä
-hetkellä löytyy vain placeholder osoitteesta:
+Standalone service is listening on port 8080, currently
+only placehoder implementation is available:
 
 * http://localhost:8080/products
