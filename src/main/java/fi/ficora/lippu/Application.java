@@ -5,11 +5,17 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
+import org.springframework.data.map.repository.config.EnableMapRepositories;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+/**
+ * Spring boot Application settings.
+ * @author markkuko
+ */
 @SpringBootApplication
 @EnableSwagger2
-@ComponentScan(basePackages = { "fi.ficora.lippu", "fi.ficora.lippu.server" })
+@ComponentScan(basePackages = { "fi.ficora.lippu", "fi.ficora.lippu.controller" })
+@EnableMapRepositories
 public class Application implements CommandLineRunner {
 
 

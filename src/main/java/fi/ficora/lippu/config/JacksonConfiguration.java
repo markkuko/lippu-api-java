@@ -1,23 +1,26 @@
 package fi.ficora.lippu.config;
 
-import com.fasterxml.jackson.datatype.threetenbp.ThreeTenModule;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.threeten.bp.Instant;
-import org.threeten.bp.OffsetDateTime;
-import org.threeten.bp.ZonedDateTime;
 
+/**
+ * Jackson serialization configurations.
+ * @author markkuko
+ */
 @Configuration
 public class JacksonConfiguration {
 
-  @Bean
-  @ConditionalOnMissingBean(ThreeTenModule.class)
-  ThreeTenModule threeTenModule() {
-    ThreeTenModule module = new ThreeTenModule();
-    module.addDeserializer(Instant.class, CustomInstantDeserializer.INSTANT);
-    module.addDeserializer(OffsetDateTime.class, CustomInstantDeserializer.OFFSET_DATE_TIME);
-    module.addDeserializer(ZonedDateTime.class, CustomInstantDeserializer.ZONED_DATE_TIME);
-    return module;
-  }
+    @Bean
+    public ObjectMapper objectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        mapper.registerModule(new JavaTimeModule());
+        return mapper;
+
+    }
 }
+
+

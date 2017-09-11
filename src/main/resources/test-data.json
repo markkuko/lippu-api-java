@@ -1,0 +1,28 @@
+[ {
+    "_class" : "fi.ficora.lippu.domain.Client",
+    "account" : "2967a6e3-fe24-4bec-84d1-1ba34c5f620e",
+    "name" : "Matthews",
+    "secret" : "Matthews",
+    "pubKeyId": "d52c0c74-6cd5-443b-ac5e-ee49b2b3c6ad",
+    "keyfile": "keys/client/client1.pub",
+    "contract" : "CONTRACT 35235-1"
+   },
+  {
+    "_class" : "fi.ficora.lippu.domain.Client",
+    "account" : "fb46604a-eceb-4248-8f8e-31ecd92aa18f",
+    "name" : "Second MaaS Operator",
+    "secret" : "fb46604a-eceb-4248-8f8e-31ecd92aa18f",
+    "pubKeyId": "empty",
+    "keyfile": "empty",
+    "contract" : "CONTRACT 28764-4"
+  },
+  {
+    "_class" : "fi.ficora.lippu.domain.Product",
+    "name" : "Single ticket",
+    "productType": "PRODUCT-SINGLE-TICKET",
+    "contract": "CONTRACT-AB123CD",
+    "description": "The validity of a single ticket starts at the time of purchase. The validity period will be printed to the ticket.",
+    "suitablePassengerCategories": ["Adult", "Child","Youth", "Senior"]
+  }
+]
+

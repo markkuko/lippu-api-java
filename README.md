@@ -2,26 +2,26 @@
 
 
 ## Howto run
-Project uses gradle-build tool to build software
-artifacts. It can be used to build standalone
-runnable jar-file. You also need Java 8 SDK to
-build and run the 
+Project uses gradle-build tool to build software artifacts. It can also be
+used to build standalone runnable jar-file. You also need Java 8 SDK
+and openssl to create encpyption keys.
 
-Run command:
-
+Start the service by running, which will create server keys
+to the directory `keys`. Edit the `src/main/resources/test-data.json`
+to populate the database with your own test data.
 ```
-gradlew clean build
-```
-which creates lippu-api-service-0.1.0-SNAPSHOT.jar file
-to the build/libs/ directory.
-
-You can start the service by running:
-
-```
-java -jar build/libs/lippu-api-service-0.1.0-SNAPSHOT.jar
+sh run.sh
 ```
 
-Standalone service is listening on port 8080, currently
-only placehoder implementation is available:
+To run the server without generating keys, use command:
+```
+./gradlew clean bootRun
+```
 
-* http://localhost:8080/products
+Standalone service is listening on port 8080:
+
+* http://localhost:8080/stubs/
+
+## License
+This work is licended under EUPL (European Union Public Licence) version 1.2. See [LICENSE.txt](LICENSE.txt)
+for more information.
