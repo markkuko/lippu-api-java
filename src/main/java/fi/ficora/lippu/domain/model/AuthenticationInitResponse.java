@@ -2,10 +2,12 @@ package fi.ficora.lippu.domain.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.time.OffsetDateTime;
 import org.springframework.validation.annotation.Validated;
-
+import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
@@ -13,11 +15,17 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Response for authentication initialization.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-11T13:35:10.864+03:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-30T10:16:24.190+03:00")
 
 public class AuthenticationInitResponse   {
   @JsonProperty("nonce")
   private String nonce = null;
+
+  @JsonProperty("user")
+  private String user = null;
+
+  @JsonProperty("expires")
+  private OffsetDateTime expires = null;
 
   public AuthenticationInitResponse nonce(String nonce) {
     this.nonce = nonce;
@@ -40,6 +48,48 @@ public class AuthenticationInitResponse   {
     this.nonce = nonce;
   }
 
+  public AuthenticationInitResponse user(String user) {
+    this.user = user;
+    return this;
+  }
+
+   /**
+   * Account name for the client company.
+   * @return user
+  **/
+  @ApiModelProperty(value = "Account name for the client company.")
+
+
+  public String getUser() {
+    return user;
+  }
+
+  public void setUser(String user) {
+    this.user = user;
+  }
+
+  public AuthenticationInitResponse expires(OffsetDateTime expires) {
+    this.expires = expires;
+    return this;
+  }
+
+   /**
+   * Nonce expiration time.
+   * @return expires
+  **/
+  @ApiModelProperty(required = true, value = "Nonce expiration time.")
+  @NotNull
+
+  @Valid
+
+  public OffsetDateTime getExpires() {
+    return expires;
+  }
+
+  public void setExpires(OffsetDateTime expires) {
+    this.expires = expires;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -50,12 +100,14 @@ public class AuthenticationInitResponse   {
       return false;
     }
     AuthenticationInitResponse authenticationInitResponse = (AuthenticationInitResponse) o;
-    return Objects.equals(this.nonce, authenticationInitResponse.nonce);
+    return Objects.equals(this.nonce, authenticationInitResponse.nonce) &&
+        Objects.equals(this.user, authenticationInitResponse.user) &&
+        Objects.equals(this.expires, authenticationInitResponse.expires);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(nonce);
+    return Objects.hash(nonce, user, expires);
   }
 
   @Override
@@ -64,6 +116,8 @@ public class AuthenticationInitResponse   {
     sb.append("class AuthenticationInitResponse {\n");
     
     sb.append("    nonce: ").append(toIndentedString(nonce)).append("\n");
+    sb.append("    user: ").append(toIndentedString(user)).append("\n");
+    sb.append("    expires: ").append(toIndentedString(expires)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -3,7 +3,8 @@ package fi.ficora.lippu.domain.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import fi.ficora.lippu.domain.model.Location;
+import fi.ficora.lippu.domain.model.CoordinateLocation;
+import fi.ficora.lippu.domain.model.StopLocation;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
@@ -11,13 +12,19 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * Location description for the point of desparture or point of destination. Can be stop a location with using stopId and stopPlatform (for example a bus stop) or a coordinate locate using lat and lon numbers.
+ * Location description for the point of departure or point of destination. Can be stop a location with using stopId and stopPlatform (for example a bus stop) or a coordinate locate using lat and lon numbers.
  */
-@ApiModel(description = "Location description for the point of desparture or point of destination. Can be stop a location with using stopId and stopPlatform (for example a bus stop) or a coordinate locate using lat and lon numbers.")
+@ApiModel(description = "Location description for the point of departure or point of destination. Can be stop a location with using stopId and stopPlatform (for example a bus stop) or a coordinate locate using lat and lon numbers.")
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-30T10:16:24.190+03:00")
 
-public class CoordinateLocation   {
+public class CombinedLocation   {
+  @JsonProperty("id")
+  private String id = null;
+
+  @JsonProperty("platform")
+  private String platform = null;
+
   @JsonProperty("description")
   private String description = null;
 
@@ -27,7 +34,47 @@ public class CoordinateLocation   {
   @JsonProperty("lon")
   private Double lon = null;
 
-  public CoordinateLocation description(String description) {
+  public CombinedLocation id(String id) {
+    this.id = id;
+    return this;
+  }
+
+   /**
+   * Stop location identifier from stop registry both participants are using. Eg. Digiroad2
+   * @return id
+  **/
+  @ApiModelProperty(value = "Stop location identifier from stop registry both participants are using. Eg. Digiroad2")
+
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public CombinedLocation platform(String platform) {
+    this.platform = platform;
+    return this;
+  }
+
+   /**
+   * Platform information from where service will depart. Meaningfull information in large station areas where transport service can depart from multiple different platforms.
+   * @return platform
+  **/
+  @ApiModelProperty(value = "Platform information from where service will depart. Meaningfull information in large station areas where transport service can depart from multiple different platforms.")
+
+
+  public String getPlatform() {
+    return platform;
+  }
+
+  public void setPlatform(String platform) {
+    this.platform = platform;
+  }
+
+  public CombinedLocation description(String description) {
     this.description = description;
     return this;
   }
@@ -47,7 +94,7 @@ public class CoordinateLocation   {
     this.description = description;
   }
 
-  public CoordinateLocation lat(Double lat) {
+  public CombinedLocation lat(Double lat) {
     this.lat = lat;
     return this;
   }
@@ -67,7 +114,7 @@ public class CoordinateLocation   {
     this.lat = lat;
   }
 
-  public CoordinateLocation lon(Double lon) {
+  public CombinedLocation lon(Double lon) {
     this.lon = lon;
     return this;
   }
@@ -96,22 +143,26 @@ public class CoordinateLocation   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    CoordinateLocation coordinateLocation = (CoordinateLocation) o;
-    return Objects.equals(this.description, coordinateLocation.description) &&
-        Objects.equals(this.lat, coordinateLocation.lat) &&
-        Objects.equals(this.lon, coordinateLocation.lon);
+    CombinedLocation combinedLocation = (CombinedLocation) o;
+    return Objects.equals(this.id, combinedLocation.id) &&
+        Objects.equals(this.platform, combinedLocation.platform) &&
+        Objects.equals(this.description, combinedLocation.description) &&
+        Objects.equals(this.lat, combinedLocation.lat) &&
+        Objects.equals(this.lon, combinedLocation.lon);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(description, lat, lon);
+    return Objects.hash(id, platform, description, lat, lon);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class CoordinateLocation {\n");
+    sb.append("class CombinedLocation {\n");
     
+    sb.append("    id: ").append(toIndentedString(id)).append("\n");
+    sb.append("    platform: ").append(toIndentedString(platform)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    lat: ").append(toIndentedString(lat)).append("\n");
     sb.append("    lon: ").append(toIndentedString(lon)).append("\n");

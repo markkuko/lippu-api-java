@@ -2,6 +2,9 @@ package fi.ficora.lippu.domain.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import fi.ficora.lippu.domain.model.CombinedLocation;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.OffsetDateTime;
 import org.springframework.validation.annotation.Validated;
@@ -12,7 +15,7 @@ import javax.validation.constraints.*;
  * Travel
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-11T13:35:10.864+03:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-30T10:16:24.190+03:00")
 
 public class Travel   {
   @JsonProperty("productType")
@@ -24,16 +27,22 @@ public class Travel   {
   @JsonProperty("serviceId")
   private String serviceId = null;
 
+  @JsonProperty("from")
+  private CombinedLocation from = null;
+
+  @JsonProperty("to")
+  private CombinedLocation to = null;
+
   public Travel productType(String productType) {
     this.productType = productType;
     return this;
   }
 
    /**
-   * Availability/Product kyselyn vastauksena tulleen tuotteen tunnus.
+   * Availability/Product identifier from the products query response.
    * @return productType
   **/
-  @ApiModelProperty(required = true, value = "Availability/Product kyselyn vastauksena tulleen tuotteen tunnus.")
+  @ApiModelProperty(required = true, value = "Availability/Product identifier from the products query response.")
   @NotNull
 
 
@@ -87,6 +96,48 @@ public class Travel   {
     this.serviceId = serviceId;
   }
 
+  public Travel from(CombinedLocation from) {
+    this.from = from;
+    return this;
+  }
+
+   /**
+   * Get from
+   * @return from
+  **/
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+  public CombinedLocation getFrom() {
+    return from;
+  }
+
+  public void setFrom(CombinedLocation from) {
+    this.from = from;
+  }
+
+  public Travel to(CombinedLocation to) {
+    this.to = to;
+    return this;
+  }
+
+   /**
+   * Get to
+   * @return to
+  **/
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+  public CombinedLocation getTo() {
+    return to;
+  }
+
+  public void setTo(CombinedLocation to) {
+    this.to = to;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -99,12 +150,14 @@ public class Travel   {
     Travel travel = (Travel) o;
     return Objects.equals(this.productType, travel.productType) &&
         Objects.equals(this.dateTime, travel.dateTime) &&
-        Objects.equals(this.serviceId, travel.serviceId);
+        Objects.equals(this.serviceId, travel.serviceId) &&
+        Objects.equals(this.from, travel.from) &&
+        Objects.equals(this.to, travel.to);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(productType, dateTime, serviceId);
+    return Objects.hash(productType, dateTime, serviceId, from, to);
   }
 
   @Override
@@ -115,6 +168,8 @@ public class Travel   {
     sb.append("    productType: ").append(toIndentedString(productType)).append("\n");
     sb.append("    dateTime: ").append(toIndentedString(dateTime)).append("\n");
     sb.append("    serviceId: ").append(toIndentedString(serviceId)).append("\n");
+    sb.append("    from: ").append(toIndentedString(from)).append("\n");
+    sb.append("    to: ").append(toIndentedString(to)).append("\n");
     sb.append("}");
     return sb.toString();
   }

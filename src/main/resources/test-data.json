@@ -3,8 +3,11 @@
     "account" : "2967a6e3-fe24-4bec-84d1-1ba34c5f620e",
     "name" : "Matthews",
     "secret" : "Matthews",
-    "pubKeyId": "d52c0c74-6cd5-443b-ac5e-ee49b2b3c6ad",
-    "keyfile": "keys/client/client1.pub",
+    "keys": [
+     {
+      "pubKeyId": "d52c0c74-6cd5-443b-ac5e-ee49b2b3c6ad",
+      "keyfile": "keys/client/client1.pub"
+     }],
     "contract" : "CONTRACT 35235-1"
    },
   {
@@ -12,8 +15,12 @@
     "account" : "fb46604a-eceb-4248-8f8e-31ecd92aa18f",
     "name" : "Second MaaS Operator",
     "secret" : "fb46604a-eceb-4248-8f8e-31ecd92aa18f",
-    "pubKeyId": "empty",
-    "keyfile": "empty",
+    "keys": [
+      {
+        "pubKeyId": "empty",
+        "keyfile": "empty"
+      }
+    ],
     "contract" : "CONTRACT 28764-4"
   },
   {

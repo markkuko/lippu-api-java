@@ -10,34 +10,33 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * AccountId
+ * ReservationDeleteResponse
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-30T10:16:24.190+03:00")
 
-public class AccountId   {
-  @JsonProperty("account")
-  private String account = null;
+public class ReservationDeleteResponse   {
+  @JsonProperty("cancellation")
+  private Boolean cancellation = null;
 
-  public AccountId account(String account) {
-    this.account = account;
+  public ReservationDeleteResponse cancellation(Boolean cancellation) {
+    this.cancellation = cancellation;
     return this;
   }
 
    /**
-   * Get account
-   * @return account
+   * Result of the cancellation operation
+   * @return cancellation
   **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+  @ApiModelProperty(value = "Result of the cancellation operation")
 
 
-  public String getAccount() {
-    return account;
+  public Boolean isCancellation() {
+    return cancellation;
   }
 
-  public void setAccount(String account) {
-    this.account = account;
+  public void setCancellation(Boolean cancellation) {
+    this.cancellation = cancellation;
   }
 
 
@@ -49,21 +48,21 @@ public class AccountId   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    AccountId accountId = (AccountId) o;
-    return Objects.equals(this.account, accountId.account);
+    ReservationDeleteResponse reservationDeleteResponse = (ReservationDeleteResponse) o;
+    return Objects.equals(this.cancellation, reservationDeleteResponse.cancellation);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(account);
+    return Objects.hash(cancellation);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class AccountId {\n");
+    sb.append("class ReservationDeleteResponse {\n");
     
-    sb.append("    account: ").append(toIndentedString(account)).append("\n");
+    sb.append("    cancellation: ").append(toIndentedString(cancellation)).append("\n");
     sb.append("}");
     return sb.toString();
   }

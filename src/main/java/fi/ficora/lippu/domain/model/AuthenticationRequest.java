@@ -4,16 +4,17 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
-
+import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
  * AuthenticationRequest
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-11T13:35:10.864+03:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-30T10:16:24.190+03:00")
 
 public class AuthenticationRequest   {
   @JsonProperty("data")
@@ -21,6 +22,9 @@ public class AuthenticationRequest   {
 
   @JsonProperty("pubKeyId")
   private String pubKeyId = null;
+
+  @JsonProperty("snonce")
+  private String snonce = null;
 
   @JsonProperty("cnonce")
   private String cnonce = null;
@@ -65,10 +69,10 @@ public class AuthenticationRequest   {
   }
 
    /**
-   * A cryptographically signed message. Compiled by merging the nonce + client nonce controller into a single long string. The controller has base64 encoded its own value. The client end can do the encoding they want as it is used as part of the verification process.
+   * A cryptographically signed message. Compiled by merging the nonce + client nonce server into a single long string. The server has base64 encoded its own value. The client end can do the encoding they want as it is used as part of the verification process.
    * @return data
   **/
-  @ApiModelProperty(required = true, value = "A cryptographically signed message. Compiled by merging the nonce + client nonce controller into a single long string. The controller has base64 encoded its own value. The client end can do the encoding they want as it is used as part of the verification process.")
+  @ApiModelProperty(required = true, value = "A cryptographically signed message. Compiled by merging the nonce + client nonce server into a single long string. The server has base64 encoded its own value. The client end can do the encoding they want as it is used as part of the verification process.")
   @NotNull
 
 
@@ -86,10 +90,10 @@ public class AuthenticationRequest   {
   }
 
    /**
-   * The controller identifier for the Public Key
+   * The server identifier for the Public Key
    * @return pubKeyId
   **/
-  @ApiModelProperty(required = true, value = "The controller identifier for the Public Key")
+  @ApiModelProperty(required = true, value = "The server identifier for the Public Key")
   @NotNull
 
 
@@ -99,6 +103,27 @@ public class AuthenticationRequest   {
 
   public void setPubKeyId(String pubKeyId) {
     this.pubKeyId = pubKeyId;
+  }
+
+  public AuthenticationRequest snonce(String snonce) {
+    this.snonce = snonce;
+    return this;
+  }
+
+   /**
+   * The cryptographic nonce value created by server
+   * @return snonce
+  **/
+  @ApiModelProperty(required = true, value = "The cryptographic nonce value created by server")
+  @NotNull
+
+
+  public String getSnonce() {
+    return snonce;
+  }
+
+  public void setSnonce(String snonce) {
+    this.snonce = snonce;
   }
 
   public AuthenticationRequest cnonce(String cnonce) {
@@ -155,13 +180,14 @@ public class AuthenticationRequest   {
     AuthenticationRequest authenticationRequest = (AuthenticationRequest) o;
     return Objects.equals(this.data, authenticationRequest.data) &&
         Objects.equals(this.pubKeyId, authenticationRequest.pubKeyId) &&
+        Objects.equals(this.snonce, authenticationRequest.snonce) &&
         Objects.equals(this.cnonce, authenticationRequest.cnonce) &&
         Objects.equals(this.alg, authenticationRequest.alg);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(data, pubKeyId, cnonce, alg);
+    return Objects.hash(data, pubKeyId, snonce, cnonce, alg);
   }
 
   @Override
@@ -171,6 +197,7 @@ public class AuthenticationRequest   {
     
     sb.append("    data: ").append(toIndentedString(data)).append("\n");
     sb.append("    pubKeyId: ").append(toIndentedString(pubKeyId)).append("\n");
+    sb.append("    snonce: ").append(toIndentedString(snonce)).append("\n");
     sb.append("    cnonce: ").append(toIndentedString(cnonce)).append("\n");
     sb.append("    alg: ").append(toIndentedString(alg)).append("\n");
     sb.append("}");

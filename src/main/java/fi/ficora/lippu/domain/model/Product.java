@@ -2,8 +2,15 @@ package fi.ficora.lippu.domain.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import fi.ficora.lippu.domain.model.Accessibility;
+import fi.ficora.lippu.domain.model.CoordinateLocation;
+import fi.ficora.lippu.domain.model.ExtraService;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
@@ -12,7 +19,7 @@ import javax.validation.constraints.*;
  * Product
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-11T13:35:10.864+03:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-30T10:16:24.190+03:00")
 
 public class Product   {
   @JsonProperty("productType")
@@ -32,6 +39,20 @@ public class Product   {
 
   @JsonProperty("validTo")
   private OffsetDateTime validTo = null;
+
+  @JsonProperty("extraServices")
+  @Valid
+  private List<ExtraService> extraServices = null;
+
+  @JsonProperty("accessibility")
+  @Valid
+  private List<Accessibility> accessibility = null;
+
+  @JsonProperty("from")
+  private CoordinateLocation from = null;
+
+  @JsonProperty("to")
+  private CoordinateLocation to = null;
 
   public Product productType(String productType) {
     this.productType = productType;
@@ -158,6 +179,106 @@ public class Product   {
     this.validTo = validTo;
   }
 
+  public Product extraServices(List<ExtraService> extraServices) {
+    this.extraServices = extraServices;
+    return this;
+  }
+
+  public Product addExtraServicesItem(ExtraService extraServicesItem) {
+    if (this.extraServices == null) {
+      this.extraServices = new ArrayList<ExtraService>();
+    }
+    this.extraServices.add(extraServicesItem);
+    return this;
+  }
+
+   /**
+   * Get extraServices
+   * @return extraServices
+  **/
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+  public List<ExtraService> getExtraServices() {
+    return extraServices;
+  }
+
+  public void setExtraServices(List<ExtraService> extraServices) {
+    this.extraServices = extraServices;
+  }
+
+  public Product accessibility(List<Accessibility> accessibility) {
+    this.accessibility = accessibility;
+    return this;
+  }
+
+  public Product addAccessibilityItem(Accessibility accessibilityItem) {
+    if (this.accessibility == null) {
+      this.accessibility = new ArrayList<Accessibility>();
+    }
+    this.accessibility.add(accessibilityItem);
+    return this;
+  }
+
+   /**
+   * Get accessibility
+   * @return accessibility
+  **/
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+  public List<Accessibility> getAccessibility() {
+    return accessibility;
+  }
+
+  public void setAccessibility(List<Accessibility> accessibility) {
+    this.accessibility = accessibility;
+  }
+
+  public Product from(CoordinateLocation from) {
+    this.from = from;
+    return this;
+  }
+
+   /**
+   * Get from
+   * @return from
+  **/
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+  public CoordinateLocation getFrom() {
+    return from;
+  }
+
+  public void setFrom(CoordinateLocation from) {
+    this.from = from;
+  }
+
+  public Product to(CoordinateLocation to) {
+    this.to = to;
+    return this;
+  }
+
+   /**
+   * Get to
+   * @return to
+  **/
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+  public CoordinateLocation getTo() {
+    return to;
+  }
+
+  public void setTo(CoordinateLocation to) {
+    this.to = to;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -173,12 +294,16 @@ public class Product   {
         Objects.equals(this.name, product.name) &&
         Objects.equals(this.description, product.description) &&
         Objects.equals(this.validFrom, product.validFrom) &&
-        Objects.equals(this.validTo, product.validTo);
+        Objects.equals(this.validTo, product.validTo) &&
+        Objects.equals(this.extraServices, product.extraServices) &&
+        Objects.equals(this.accessibility, product.accessibility) &&
+        Objects.equals(this.from, product.from) &&
+        Objects.equals(this.to, product.to);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(productType, contract, name, description, validFrom, validTo);
+    return Objects.hash(productType, contract, name, description, validFrom, validTo, extraServices, accessibility, from, to);
   }
 
   @Override
@@ -192,6 +317,10 @@ public class Product   {
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    validFrom: ").append(toIndentedString(validFrom)).append("\n");
     sb.append("    validTo: ").append(toIndentedString(validTo)).append("\n");
+    sb.append("    extraServices: ").append(toIndentedString(extraServices)).append("\n");
+    sb.append("    accessibility: ").append(toIndentedString(accessibility)).append("\n");
+    sb.append("    from: ").append(toIndentedString(from)).append("\n");
+    sb.append("    to: ").append(toIndentedString(to)).append("\n");
     sb.append("}");
     return sb.toString();
   }

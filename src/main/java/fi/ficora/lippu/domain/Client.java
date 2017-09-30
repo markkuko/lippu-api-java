@@ -2,27 +2,20 @@ package fi.ficora.lippu.domain;
 
 import org.springframework.data.annotation.Id;
 
+import java.util.List;
+
 public class Client {
 
 
 
     @Id
     private String account;
-    private String keyfile;
+
     private String name;
     private String contract;
-    private String pubKeyId;
+
     private String secret;
-
-    public String getKeyfile() {
-        return keyfile;
-    }
-
-    public Client setKeyfile(String keyfile) {
-
-        this.keyfile = keyfile;
-        return this;
-    }
+    private List<ClientKey> keys;
 
 
 
@@ -45,14 +38,7 @@ public class Client {
         return this;
     }
 
-    public String getPubKeyId() {
-        return pubKeyId;
-    }
 
-    public Client setPubKeyId(String pubKeyId) {
-        this.pubKeyId = pubKeyId;
-        return this;
-    }
 
     public String getSecret() {
         return secret;
@@ -70,6 +56,13 @@ public class Client {
         this.account = account;
     }
 
+    public List<ClientKey> getKeys() {
+        return keys;
+    }
+
+    public void setKeys(List<ClientKey> keys) {
+        this.keys = keys;
+    }
 }
 
 

@@ -2,16 +2,18 @@ package fi.ficora.lippu.domain.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
-
+import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
  * StopLocation
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-11T13:35:10.864+03:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-30T10:16:24.190+03:00")
 
 public class StopLocation   {
   @JsonProperty("id")
@@ -19,9 +21,6 @@ public class StopLocation   {
 
   @JsonProperty("platform")
   private String platform = null;
-
-  @JsonProperty("description")
-  private String description = null;
 
   public StopLocation id(String id) {
     this.id = id;
@@ -32,8 +31,7 @@ public class StopLocation   {
    * Stop location identifier from stop registry both participants are using. Eg. Digiroad2
    * @return id
   **/
-  @ApiModelProperty(required = true, value = "Stop location identifier from stop registry both participants are using. Eg. Digiroad2")
-  @NotNull
+  @ApiModelProperty(value = "Stop location identifier from stop registry both participants are using. Eg. Digiroad2")
 
 
   public String getId() {
@@ -64,26 +62,6 @@ public class StopLocation   {
     this.platform = platform;
   }
 
-  public StopLocation description(String description) {
-    this.description = description;
-    return this;
-  }
-
-   /**
-   * Stop location description text.
-   * @return description
-  **/
-  @ApiModelProperty(value = "Stop location description text.")
-
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -95,13 +73,12 @@ public class StopLocation   {
     }
     StopLocation stopLocation = (StopLocation) o;
     return Objects.equals(this.id, stopLocation.id) &&
-        Objects.equals(this.platform, stopLocation.platform) &&
-        Objects.equals(this.description, stopLocation.description);
+        Objects.equals(this.platform, stopLocation.platform);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, platform, description);
+    return Objects.hash(id, platform);
   }
 
   @Override
@@ -111,7 +88,6 @@ public class StopLocation   {
     
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    platform: ").append(toIndentedString(platform)).append("\n");
-    sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("}");
     return sb.toString();
   }

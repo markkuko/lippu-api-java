@@ -1,7 +1,7 @@
 package fi.ficora.lippu.config;
 
 public class Constants {
-    public static final String AUTHORIZATION_HEADER = "Authorization";
+    public static final String AUTHORIZATION_HEADER = "X-Authorization";
 
     public static final int RESULTCODE_SUCCESS = 0;
     public static final int RESULTCODE_NOT_FOUND = 10;

@@ -1,5 +1,6 @@
 package fi.ficora.lippu.controller;
 
+import fi.ficora.lippu.domain.model.ApiError;
 import fi.ficora.lippu.domain.model.ProductList;
 import fi.ficora.lippu.domain.model.ProductQueryResponse;
 import fi.ficora.lippu.service.ProductService;
@@ -13,11 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -35,7 +34,8 @@ public class ProductsApiController implements ProductsApi {
 
     @ApiOperation(value = "Product portfolio for given datetime.", notes = "Returns product portfolio of transport operator that is valid on given datetime.As product offerings can change over time, and some products may be seasonal, the date is always part of the search process. If the search parameter {date} is left unchecked, then the time of the query is assumed as a time.", response = ProductQueryResponse.class, tags = {"availability",})
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Returns product portfolio and supported passenger types for provided products.", response = ProductQueryResponse.class)})
+            @ApiResponse(code = 200, message = "Returns product portfolio and supported passenger types for provided products.", response = ProductQueryResponse.class),
+            @ApiResponse(code = 403, message = "Invalid authentication token", response = ApiError.class) })
     @RequestMapping(value = "/products/{date}",
             produces = {"application/json", "application/xml"},
             method = RequestMethod.GET)
@@ -47,10 +47,18 @@ public class ProductsApiController implements ProductsApi {
             @ApiParam(value = "Text indentification of original requestor. Value is use for error situations.", required = true)
             @RequestHeader(value = "X-Initiator", required = true) String xInitiator,
             @ApiParam(value = "JWT authentication token for authorization requests.", required = true)
-            @RequestHeader(value = "Authorization", required = true) String authorization,
+            @RequestHeader(value = "X-Authorization", required = true) String authorization,
             @ApiParam(value = "Datetime value when returned product portfolio is valid. If date is not given, current datetime is used.", required = false)
             @PathVariable("date")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) String date,
+            @ApiParam(value = "Longitude part of a coordinate to narrow products query from a certain location.") @Valid
+            @RequestParam(value = "fromLat", required = false) Double fromLat,
+            @ApiParam(value = "Longitude part of a coordinate to narrow products query from a certain location.") @Valid
+            @RequestParam(value = "fromLon", required = false) Double fromLon,
+            @ApiParam(value = "Latitude part of a coordinate to narrow products query to a certain location.") @Valid
+            @RequestParam(value = "toLat", required = false) Double toLat,
+            @ApiParam(value = "Longitude part of a coordinate to narrow products query to a certain location.") @Valid
+            @RequestParam(value = "toLon", required = false) Double toLon,
             @RequestHeader(value = "Accept", required = false) String accept) throws Exception {
 
 

@@ -2,27 +2,30 @@ package fi.ficora.lippu.domain.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import fi.ficora.lippu.domain.model.ProductFare;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * ExtraService
+ * Extra services for passenger, like transporting animal.
  */
+@ApiModel(description = "Extra services for passenger, like transporting animal.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-11T13:35:10.864+03:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-30T10:16:24.190+03:00")
 
 public class ExtraService   {
   @JsonProperty("title")
   private String title = null;
 
-  @JsonProperty("description")
-  private String description = null;
-
   @JsonProperty("extraServiceReservationData")
   private String extraServiceReservationData = null;
+
+  @JsonProperty("description")
+  private String description = null;
 
   @JsonProperty("fare")
   private ProductFare fare = null;
@@ -48,6 +51,27 @@ public class ExtraService   {
     this.title = title;
   }
 
+  public ExtraService extraServiceReservationData(String extraServiceReservationData) {
+    this.extraServiceReservationData = extraServiceReservationData;
+    return this;
+  }
+
+   /**
+   * Get extraServiceReservationData
+   * @return extraServiceReservationData
+  **/
+  @ApiModelProperty(required = true, value = "")
+  @NotNull
+
+
+  public String getExtraServiceReservationData() {
+    return extraServiceReservationData;
+  }
+
+  public void setExtraServiceReservationData(String extraServiceReservationData) {
+    this.extraServiceReservationData = extraServiceReservationData;
+  }
+
   public ExtraService description(String description) {
     this.description = description;
     return this;
@@ -66,27 +90,6 @@ public class ExtraService   {
 
   public void setDescription(String description) {
     this.description = description;
-  }
-
-  public ExtraService extraServiceReservationData(String extraServiceReservationData) {
-    this.extraServiceReservationData = extraServiceReservationData;
-    return this;
-  }
-
-   /**
-   * Kuljetuspalvelun tuottama varaustieto, sisältö sellainen jonka perusteella kuljetuspalvelu pystyy yksilöllisesti muodostamaan halutun lisäpalvelun tiedot siten, että se voidaan tarvittaessa sitoa juuri tiettyyn tarjottuun matkustusoikeuteen mukaan. Kaikkien erikoispalveluiden kohdalla tämän tasoinen sitominen ei ole tarpeen (esim. lastenistuin taksiin), mutta osaan kylläkin (esim. ateria lennolla). Se, että onko tämä tieto kuinka spesifisti sidottu jätetään kuljetuspalvelun toteutuksen vastuulle, kutsuvan osapuolen ei tule joutua välittämään siitä vaan heidän tehtäväkseen jää vain toimittaa tämän kentän arvo sellaisenaan tilauksen yhteydessä jos lisäpalvelu on valittu mukaan.
-   * @return extraServiceReservationData
-  **/
-  @ApiModelProperty(required = true, value = "Kuljetuspalvelun tuottama varaustieto, sisältö sellainen jonka perusteella kuljetuspalvelu pystyy yksilöllisesti muodostamaan halutun lisäpalvelun tiedot siten, että se voidaan tarvittaessa sitoa juuri tiettyyn tarjottuun matkustusoikeuteen mukaan. Kaikkien erikoispalveluiden kohdalla tämän tasoinen sitominen ei ole tarpeen (esim. lastenistuin taksiin), mutta osaan kylläkin (esim. ateria lennolla). Se, että onko tämä tieto kuinka spesifisti sidottu jätetään kuljetuspalvelun toteutuksen vastuulle, kutsuvan osapuolen ei tule joutua välittämään siitä vaan heidän tehtäväkseen jää vain toimittaa tämän kentän arvo sellaisenaan tilauksen yhteydessä jos lisäpalvelu on valittu mukaan.")
-  @NotNull
-
-
-  public String getExtraServiceReservationData() {
-    return extraServiceReservationData;
-  }
-
-  public void setExtraServiceReservationData(String extraServiceReservationData) {
-    this.extraServiceReservationData = extraServiceReservationData;
   }
 
   public ExtraService fare(ProductFare fare) {
@@ -122,14 +125,14 @@ public class ExtraService   {
     }
     ExtraService extraService = (ExtraService) o;
     return Objects.equals(this.title, extraService.title) &&
-        Objects.equals(this.description, extraService.description) &&
         Objects.equals(this.extraServiceReservationData, extraService.extraServiceReservationData) &&
+        Objects.equals(this.description, extraService.description) &&
         Objects.equals(this.fare, extraService.fare);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(title, description, extraServiceReservationData, fare);
+    return Objects.hash(title, extraServiceReservationData, description, fare);
   }
 
   @Override
@@ -138,8 +141,8 @@ public class ExtraService   {
     sb.append("class ExtraService {\n");
     
     sb.append("    title: ").append(toIndentedString(title)).append("\n");
-    sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    extraServiceReservationData: ").append(toIndentedString(extraServiceReservationData)).append("\n");
+    sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    fare: ").append(toIndentedString(fare)).append("\n");
     sb.append("}");
     return sb.toString();

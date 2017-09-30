@@ -2,18 +2,22 @@ package fi.ficora.lippu.domain.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import fi.ficora.lippu.domain.model.Travel;
+import fi.ficora.lippu.domain.model.TravelPassenger;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * AvailabilityRequest
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-11T13:35:10.864+03:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-30T10:16:24.190+03:00")
 
 public class AvailabilityRequest   {
   @JsonProperty("contract")
@@ -24,7 +28,7 @@ public class AvailabilityRequest   {
 
   @JsonProperty("passengers")
   @Valid
-  private List<String> passengers = null;
+  private List<TravelPassenger> passengers = null;
 
   public AvailabilityRequest contract(String contract) {
     this.contract = contract;
@@ -67,14 +71,14 @@ public class AvailabilityRequest   {
     this.travel = travel;
   }
 
-  public AvailabilityRequest passengers(List<String> passengers) {
+  public AvailabilityRequest passengers(List<TravelPassenger> passengers) {
     this.passengers = passengers;
     return this;
   }
 
-  public AvailabilityRequest addPassengersItem(String passengersItem) {
+  public AvailabilityRequest addPassengersItem(TravelPassenger passengersItem) {
     if (this.passengers == null) {
-      this.passengers = new ArrayList<String>();
+      this.passengers = new ArrayList<TravelPassenger>();
     }
     this.passengers.add(passengersItem);
     return this;
@@ -86,12 +90,13 @@ public class AvailabilityRequest   {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public List<String> getPassengers() {
+  public List<TravelPassenger> getPassengers() {
     return passengers;
   }
 
-  public void setPassengers(List<String> passengers) {
+  public void setPassengers(List<TravelPassenger> passengers) {
     this.passengers = passengers;
   }
 

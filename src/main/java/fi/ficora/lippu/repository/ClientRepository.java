@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface ClientRepository extends CrudRepository<Client, String> {
-    List<Client> findDistinctClientByPubKeyId(String pubKeyId);
+
 }

@@ -2,6 +2,7 @@ package fi.ficora.lippu.service;
 
 import fi.ficora.lippu.config.Constants;
 import fi.ficora.lippu.domain.Client;
+import fi.ficora.lippu.domain.ClientKey;
 import fi.ficora.lippu.domain.Nonce;
 import fi.ficora.lippu.repository.DataRepository;
 import fi.ficora.lippu.repository.AuthRepository;
@@ -14,6 +15,7 @@ import org.jose4j.lang.JoseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -24,17 +26,19 @@ import java.util.Base64;
 import java.util.List;
 
 /**
- * Handles authentication request and produces
+ * Handles authentication and authorization services.
+ *
  * @author markkuko
  */
 
 @Service
 public class AuthService implements IAuthService{
 
+
     @Autowired
     private ClientRepository clientRepository;
     @Autowired
-    private AuthRepository authRepository;
+    private AuthRepository nonceRepository;
 
     private DataRepository operatorConfiguration;
     private static final Logger log = LoggerFactory.getLogger(ClientRepository.class);
@@ -46,42 +50,57 @@ public class AuthService implements IAuthService{
 
     }
 
-    public String verifyAuthentication(String data, String cnonce, String keyId, String alg)
+    /**
+     * Verifies message signature of using clients public key.
+     *
+     * @param data Client's signature data
+     * @param cnonce Client side nonce
+     * @param snonce Server side nonce
+     * @param keyId Client key id
+     * @param alg Algorithm client used for signature
+     * @return JWT Authentication token for client.
+     * @throws UnsupportedEncodingException
+     * @throws JoseException
+     */
+    public String verifyAuthentication(String data, String cnonce, String snonce, String keyId, String alg)
             throws UnsupportedEncodingException, JoseException {
 
-        List<Client> clients = clientRepository.findDistinctClientByPubKeyId(keyId);
-        if(clients.size() == 1) {
-
-            Client client = clients.get(0);
-            Nonce serverNonce = this.verifyNonce(client.getAccount());
-            try {
-                log.debug("Decoding base64 payload {}", data);
-                byte[] dataEncoded = Base64.getEncoder().encode((serverNonce.getNonce() + cnonce).getBytes("utf-8"));
-                boolean isValidSignature = checkSignature(new String(dataEncoded),
-                        data, client.getKeyfile(), alg);
-                log.info("Payload is {} {}  {}", isValidSignature, dataEncoded, data);
-                if (isValidSignature) {
-                    String token = generateJWT(client);
-                    authRepository.delete(serverNonce);
-                    return token;
-                } else {
-                    log.info("Payload signature was not valid");
+        Nonce serverNonce = this.verifyNonce(snonce);
+        if(serverNonce != null) {
+            Client client = clientRepository.findOne(serverNonce.getClient());
+            ClientKey key = findClientKey(client, keyId);
+            if(key != null ) {
+                try {
+                    log.debug("Decoding base64 payload {}", data);
+                    byte[] dataEncoded = Base64.getEncoder().encode((serverNonce.getNonce() + cnonce).getBytes("utf-8"));
+                    boolean isValidSignature = checkSignature(new String(dataEncoded),
+                            data, key.getKeyfile(), alg);
+                    log.debug("Payload is {} {}  {}", isValidSignature, dataEncoded, data);
+                    if (isValidSignature) {
+                        String token = generateJWT(client);
+                        nonceRepository.delete(serverNonce);
+                        return token;
+                    } else {
+                        log.info("Payload signature was not valid");
+                        return null;
+                    }
+                } catch (IllegalArgumentException e) {
+                    log.debug("Exception while prosessing authentication payload {}", e.getMessage());
+                    nonceRepository.delete(serverNonce.getNonce());
                     return null;
                 }
-            } catch (IllegalArgumentException e) {
-                log.debug("Exception while prosessing authentication payload {}", e.getMessage());
-                authRepository.delete(serverNonce.getNonce());
+            } else {
+                log.info("Did not find client's ({}) key with keyId {}", client.getAccount(), keyId);
                 return null;
             }
         } else {
-            log.info("Found {} clients with pubKeyId {}",clients.size() , keyId);
+            log.info("Did not find valid nonce", snonce);
             return null;
         }
     }
 
     /**
      * Generates JWT authentication token for specific client.
-     * @// TODO: 9/22/17 sign the token with RSA key
      * @param client Client for which token is issued for.
      * @return JWT authorization token.
      * @throws UnsupportedEncodingException
@@ -116,7 +135,7 @@ public class AuthService implements IAuthService{
     }
 
     /**
-     * Generates controller side nonce for a client and stores it.
+     * Generates serverside nonce for a client and stores it.
      * @param account Client account indicator to generate nonce for.
      * @return Nonce value
      */
@@ -128,7 +147,7 @@ public class AuthService implements IAuthService{
             Nonce nonce = new Nonce();
             nonce.setExp(exp);
             nonce.setClient(client.getAccount());
-            return authRepository.save(nonce).getNonce();
+            return nonceRepository.save(nonce).getNonce();
         } else {
             return null;
         }
@@ -136,36 +155,37 @@ public class AuthService implements IAuthService{
 
     /**
      * Verifies that nonce is exists and has not expired.
-     * @param client Find nonce by client
-     * @return Is nonce valid.
+     * @param snonce Generated nonce id
+     * @return Nonce is its valid or null
      */
 
-    private Nonce verifyNonce(String client) {
-        Nonce nonce = authRepository.findOneNonceByClient(client);
+    private Nonce verifyNonce(String snonce) {
+        Nonce nonce = nonceRepository.findOne(snonce);
         if(nonce.getExp().isAfter(LocalDateTime.now())){
             return nonce;
         } else {
-            log.debug("Did not find valid nonce {}.", client);
+            log.debug("Did not find valid nonce {}.", snonce);
             return null;
         }
     }
     /**
      * Verifies that nonce is exists and has not expired.
-     * @param nonceValue Server side nonce to validate.
-     * @return Is nonce valid.
+     * @param nonceValue Nonce id for the nonce to validate.
+     * @param client Client account id
+     * @return Nonce is its valid or null
      */
 
-    public boolean verifyNonce(String nonceValue, String client) {
-        if (authRepository.exists(nonceValue)){
-            Nonce nonce = authRepository.findOne(nonceValue);
+    public Nonce verifyNonce(String nonceValue, String client) {
+        if (nonceRepository.exists(nonceValue)){
+            Nonce nonce = nonceRepository.findOne(nonceValue);
             if(nonce.getExp().isAfter(LocalDateTime.now())
                     && nonce.getClient().equals(client))
-                return true;
+                return nonce;
             else
-                return false;
+                return null;
         } else {
             log.debug("Did not find valid nonce {}.", nonceValue);
-            return false;
+            return null;
         }
     }
 
@@ -174,7 +194,7 @@ public class AuthService implements IAuthService{
      * @param message Message for which the signature is calculated
      * @param sign Signature to verify
      * @param keyPath Public key used to verify signature
-     * @param alg Used algorithm in the
+     * @param alg Used algorithm in the. Currently RSA with SHA 256 is supported.
      * @return Boolean depending if the verification was valid or not.
      */
     public static boolean checkSignature(String message, String sign, String keyPath, String alg )
@@ -213,6 +233,14 @@ public class AuthService implements IAuthService{
             log.error("Error while validating signature: {}",  e.getMessage());
         }
         return returnValue;
+    }
+    private ClientKey findClientKey(Client client, String keyId) {
+        for(ClientKey key: client.getKeys()) {
+            if(key.getPubKeyId().equals(keyId)) {
+                return key;
+            }
+        }
+        return null;
     }
 
 }

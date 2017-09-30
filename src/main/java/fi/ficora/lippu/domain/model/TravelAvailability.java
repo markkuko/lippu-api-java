@@ -2,21 +2,24 @@ package fi.ficora.lippu.domain.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import fi.ficora.lippu.domain.model.ExtraService;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import fi.ficora.lippu.domain.model.ProductFare;
 import fi.ficora.lippu.domain.model.Transport;
+import fi.ficora.lippu.domain.model.TravelPassenger;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * TravelAvailability
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-11T13:35:10.864+03:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-30T10:16:24.190+03:00")
 
 public class TravelAvailability   {
   @JsonProperty("reservationData")
@@ -33,11 +36,7 @@ public class TravelAvailability   {
 
   @JsonProperty("applicableForPassengers")
   @Valid
-  private List<String> applicableForPassengers = null;
-
-  @JsonProperty("extraServices")
-  @Valid
-  private List<ExtraService> extraServices = null;
+  private List<TravelPassenger> applicableForPassengers = null;
 
   public TravelAvailability reservationData(String reservationData) {
     this.reservationData = reservationData;
@@ -122,14 +121,14 @@ public class TravelAvailability   {
     this.transport = transport;
   }
 
-  public TravelAvailability applicableForPassengers(List<String> applicableForPassengers) {
+  public TravelAvailability applicableForPassengers(List<TravelPassenger> applicableForPassengers) {
     this.applicableForPassengers = applicableForPassengers;
     return this;
   }
 
-  public TravelAvailability addApplicableForPassengersItem(String applicableForPassengersItem) {
+  public TravelAvailability addApplicableForPassengersItem(TravelPassenger applicableForPassengersItem) {
     if (this.applicableForPassengers == null) {
-      this.applicableForPassengers = new ArrayList<String>();
+      this.applicableForPassengers = new ArrayList<TravelPassenger>();
     }
     this.applicableForPassengers.add(applicableForPassengersItem);
     return this;
@@ -141,42 +140,14 @@ public class TravelAvailability   {
   **/
   @ApiModelProperty(value = "Reference to passenger categories given in availability request.")
 
+  @Valid
 
-  public List<String> getApplicableForPassengers() {
+  public List<TravelPassenger> getApplicableForPassengers() {
     return applicableForPassengers;
   }
 
-  public void setApplicableForPassengers(List<String> applicableForPassengers) {
+  public void setApplicableForPassengers(List<TravelPassenger> applicableForPassengers) {
     this.applicableForPassengers = applicableForPassengers;
-  }
-
-  public TravelAvailability extraServices(List<ExtraService> extraServices) {
-    this.extraServices = extraServices;
-    return this;
-  }
-
-  public TravelAvailability addExtraServicesItem(ExtraService extraServicesItem) {
-    if (this.extraServices == null) {
-      this.extraServices = new ArrayList<ExtraService>();
-    }
-    this.extraServices.add(extraServicesItem);
-    return this;
-  }
-
-   /**
-   * Get extraServices
-   * @return extraServices
-  **/
-  @ApiModelProperty(value = "")
-
-  @Valid
-
-  public List<ExtraService> getExtraServices() {
-    return extraServices;
-  }
-
-  public void setExtraServices(List<ExtraService> extraServices) {
-    this.extraServices = extraServices;
   }
 
 
@@ -193,13 +164,12 @@ public class TravelAvailability   {
         Objects.equals(this.validTo, travelAvailability.validTo) &&
         Objects.equals(this.fare, travelAvailability.fare) &&
         Objects.equals(this.transport, travelAvailability.transport) &&
-        Objects.equals(this.applicableForPassengers, travelAvailability.applicableForPassengers) &&
-        Objects.equals(this.extraServices, travelAvailability.extraServices);
+        Objects.equals(this.applicableForPassengers, travelAvailability.applicableForPassengers);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(reservationData, validTo, fare, transport, applicableForPassengers, extraServices);
+    return Objects.hash(reservationData, validTo, fare, transport, applicableForPassengers);
   }
 
   @Override
@@ -212,7 +182,6 @@ public class TravelAvailability   {
     sb.append("    fare: ").append(toIndentedString(fare)).append("\n");
     sb.append("    transport: ").append(toIndentedString(transport)).append("\n");
     sb.append("    applicableForPassengers: ").append(toIndentedString(applicableForPassengers)).append("\n");
-    sb.append("    extraServices: ").append(toIndentedString(extraServices)).append("\n");
     sb.append("}");
     return sb.toString();
   }

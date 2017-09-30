@@ -31,11 +31,11 @@ import java.util.List;
 
 
 public interface IAuthService {
-    public String verifyAuthentication(String data, String cnonce, String keyId, String alg)
+    public String verifyAuthentication(String data, String cnonce, String snonce, String keyId, String alg)
             throws UnsupportedEncodingException, JoseException;
 
 
-    public boolean verifyNonce(String nonceValue, String client);
+    public Nonce verifyNonce(String nonceValue, String client);
 
 
 }
