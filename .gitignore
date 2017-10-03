@@ -1,5 +1,7 @@
 .gradle
 .idea
 build
+*pem
 keys
 out
+__*
