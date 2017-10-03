@@ -1,7 +1,9 @@
 package fi.ficora.lippu.service;
 
 import fi.ficora.lippu.domain.Nonce;
+import fi.ficora.lippu.domain.Reservation;
 import fi.ficora.lippu.domain.ReservationItem;
+import fi.ficora.lippu.exception.NotAuthorizedException;
 import org.jose4j.lang.JoseException;
 
 import java.io.UnsupportedEncodingException;
@@ -51,4 +53,21 @@ public interface IAuthService {
      */
     public String generateNonce(String account);
 
+    /**
+     * Verifies that current user is authorized to access
+     * the resource.
+     * @param item The resource to which authorization check is made.
+     * @throws NotAuthorizedException If user is not allowed to access the resource,
+     * {@link NotAuthorizedException}is thrown.
+     */
+    public void verifyAuthorization(ReservationItem item) throws NotAuthorizedException;
+
+    /**
+     * Verifies that current user is authorized to access the resource.
+     *
+     * @param reservation The resource to which authorization check is made.
+     * @throws NotAuthorizedException If user is not allowed to access the resource,
+     * {@link NotAuthorizedException}is thrown.
+     */
+    public void verifyAuthorization(Reservation reservation) throws NotAuthorizedException;
 }

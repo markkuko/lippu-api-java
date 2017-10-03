@@ -1,10 +1,8 @@
 package fi.ficora.lippu.service;
 
 import fi.ficora.lippu.config.Constants;
-import fi.ficora.lippu.domain.Client;
-import fi.ficora.lippu.domain.ClientKey;
-import fi.ficora.lippu.domain.Nonce;
-import fi.ficora.lippu.domain.ReservationItem;
+import fi.ficora.lippu.domain.*;
+import fi.ficora.lippu.exception.NotAuthorizedException;
 import fi.ficora.lippu.repository.DataRepository;
 import fi.ficora.lippu.repository.NonceRepository;
 import fi.ficora.lippu.repository.ClientRepository;
@@ -219,4 +217,25 @@ public class AuthService implements IAuthService{
         return null;
     }
 
+    public void verifyAuthorization(ReservationItem item) throws NotAuthorizedException{
+        String clientId = getClientId();
+        if(item == null || item.getClientId() == null || clientId == null) {
+            throw new IllegalArgumentException("Nulls given as argument");
+        }
+        if (!item.getClientId().equals(clientId)) {
+            log.warn("Client is not authorized to access item. " +
+                            "Reservation item client id: {}, current client id {}"
+                    , item.getClientId(), clientId);
+            throw new NotAuthorizedException("Client not authorized to access item.");
+        }
+    }
+    public void verifyAuthorization(Reservation reservation) throws NotAuthorizedException{
+        String clientId = getClientId();
+        if (!reservation.getClientId().equals(clientId)) {
+            log.warn("Client is not authorized to access reservation. " +
+                            "Reservation client id: {}, current client id {}"
+                    , reservation.getClientId(), clientId);
+            throw new NotAuthorizedException("Client not authorized to access reservation.");
+        }
+    }
 }

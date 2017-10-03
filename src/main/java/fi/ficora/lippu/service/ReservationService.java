@@ -7,6 +7,7 @@ import fi.ficora.lippu.domain.ReservationItem;
 import fi.ficora.lippu.domain.model.ReservationRequest;
 import fi.ficora.lippu.domain.model.ReservationRequestReservations;
 import fi.ficora.lippu.domain.model.Travel;
+import fi.ficora.lippu.exception.NotAuthorizedException;
 import fi.ficora.lippu.repository.ReservationItemRepository;
 import fi.ficora.lippu.repository.ReservationRepository;
 import org.slf4j.Logger;
@@ -50,23 +51,19 @@ public class ReservationService implements IReservationService {
     }
 
 
-    public int delete(String caseId) {
+    public int delete(String caseId) throws NotAuthorizedException {
         Reservation reservation = repository.findOne(caseId);
         if(reservation == null) {
             return Constants.RESULTCODE_NOT_FOUND;
         }
-        // @todo Move authorization check to separate service.
-        if (reservation.getClientId().equals(
-                authService.getClientId())) {
-            List<ReservationItem> items = reservationItemRepository.findAllByCaseId(caseId);
-            for(ReservationItem item: items){
-                reservationItemRepository.delete(item);
-            }
-            repository.delete(caseId);
-            return Constants.RESULTCODE_SUCCESS;
-        } else {
-            return Constants.RESULTCODE_FORBIDDEN;
+        authService.verifyAuthorization(reservation);
+
+        List<ReservationItem> items = reservationItemRepository.findAllByCaseId(caseId);
+        for(ReservationItem item: items){
+            reservationItemRepository.delete(item);
         }
+        repository.delete(caseId);
+        return Constants.RESULTCODE_SUCCESS;
     }
 
 
@@ -82,17 +79,23 @@ public class ReservationService implements IReservationService {
     public List<ReservationItem> confirmReservation(List<ReservationRequestReservations>
                                                     reservations) {
         List<ReservationItem> items = new ArrayList<ReservationItem>();
-        // @todo move authorization check to separate service
         String clientId = authService.getClientId();
         for(ReservationRequestReservations reservation: reservations) {
             ReservationItem item = reservationItemRepository.
                     findOneByReservationData(reservation.getReservationData());
-            if(isValidReservation(item, reservation, clientId)) {
-                item.setConfirmed(true);
-                item.setTicketPayload(ticketService.generateTicket(item));
+            try {
 
-                items.add(reservationItemRepository.save(item));
+                if (isValidReservation(item, reservation)) {
+                    authService.verifyAuthorization(item);
+                    item.setConfirmed(true);
+                    item.setTicketPayload(ticketService.generateTicket(item));
 
+                    items.add(reservationItemRepository.save(item));
+
+                }
+            } catch (NotAuthorizedException e) {
+                log.info("Client {} tried to confirm item {}, message: {}", clientId,
+                        item.getReservationData(), e.getMessage());
             }
         }
         return items;
@@ -113,19 +116,13 @@ public class ReservationService implements IReservationService {
     }
 
     private boolean isValidReservation(ReservationItem item,
-                                       ReservationRequestReservations reservation,
-                                       String clientId) {
-        if(item == null) {
+                                       ReservationRequestReservations reservation) {
+        if(item == null || item.getReservationValidTo() == null) {
             log.info("Did not find reservation with reservation data {}",
                     reservation.getReservationData());
             return false;
         }
-        if (!item.getClientId().equals(clientId)) {
-            log.info("Cannot confirm reservation {}, client ids did no match." +
-                            "Reservation client id: {}, current client id {}",
-                    reservation.getReservationData(), item.getClientId(), clientId);
-            return false;
-        }
+
         if (!item.getReservationValidTo().isAfter(OffsetDateTime.now())) {
             log.info("Reservation {} has expired",
                     reservation.getReservationData() );

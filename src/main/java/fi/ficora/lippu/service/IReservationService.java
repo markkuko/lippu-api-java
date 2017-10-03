@@ -7,6 +7,7 @@ import fi.ficora.lippu.domain.ReservationItem;
 import fi.ficora.lippu.domain.model.ReservationRequest;
 import fi.ficora.lippu.domain.model.ReservationRequestReservations;
 import fi.ficora.lippu.domain.model.Travel;
+import fi.ficora.lippu.exception.NotAuthorizedException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -23,7 +24,7 @@ public interface IReservationService {
      * @return Operation result code
      * @see @{@link Constants}.
      */
-    public int delete(String caseId);
+    public int delete(String caseId) throws NotAuthorizedException;
 
     /**
      * Confirms previous reservation made with availability
