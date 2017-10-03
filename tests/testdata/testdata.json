@@ -1,0 +1,45 @@
+{
+  "valid_client1" : "2967a6e3-fe24-4bec-84d1-1ba34c5f620e",
+  "key_id_client1" : "d52c0c74-6cd5-443b-ac5e-ee49b2b3c6ad",
+  "non_valid_client1" : "c94ec332-0d66-42a7-8f69-7f189bf09b51",
+  "non_valid_caseid": "a05c1b48-3bc9-4d58-8be5-af9adaa8b4d5",
+  "key_path_client1": "client.pem",
+  "non_valid_reservation_data" : {
+    "reservations": [
+      {
+        "reservationData": "InRyYXZlbCI6IFsNCiAgICB7DQogICAgICAidHJhdmVsVHlwZSI6ICJDb29yZGluYXRlQmFzZWRUcmF2ZWwiLA0KICAgICAgImZyb20iOiB7DQogICAgICAgICJsYXQiOiA2MC4yLA0KICAgICAgICAibG9uIjogMjQuOCwNCiAgICAgICAgIm",
+        "customerInfo": [
+          {
+            "name": "Matti Matkustaja",
+            "phone": "+3584444444",
+            "email": "matti.matkustaja@sahkoposti.fi"
+          }
+        ]
+      },
+      {
+        "reservationData": "XXXXXXXXXXXXXXXXXdHJhdmVsVHlwZSI6ICJDb29yZGluYXRlQmFzZWRUcmF2ZWwiLA0KICAgICAgImZyb20iOiB7DQogICAgICAgICJsYXQiOiA2MC4yLA0KICAgICAgICAibG9uIjogMjQuOCwNCiAgICAgICAgIm"
+      },
+      {
+        "reservationData": "YYYYYYYYYYYYYYYYYYB7DQogICAgICAidHJhdmVsVHlwZSI6ICJDb29yZGluYXRlQmFzZWRUcmF2ZWwiLA0KICAgICAgImZyb20iOiB7DQogICAgICAgICJsYXQiOiA2MC4yLA0KICAgICAgICAibG9uIjogMjQuOCwNCiAgICAgICAgIm"
+      }
+    ]
+  },
+  "travel_data" : {
+    "contract": "CONTRACT-AB123CD",
+    "travel": {
+      "productType": "PRODUCT-SINGLE-TICKET",
+      "dateTime": "2017-10-23T07:20:04.474Z",
+      "from": {"lat":  60.2,
+               "lon": 24.8},
+      "to": {
+        "lat": 61.0,
+        "lon": 25.7
+      }
+    },
+    "passengers": [
+      {"category":"Adult"},
+      {"category":"Adult"},
+      {"category":"Child"}
+    ]
+  }
+}
