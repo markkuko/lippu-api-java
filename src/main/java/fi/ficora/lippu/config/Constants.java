@@ -10,4 +10,11 @@ public class Constants {
     public static final long JWT_EXPIRATION_TIME_MINUTES = 100;
 
     public static final String AUTH_SIGNATURE_RSA_SHA256 = "RSA+SHA256";
+
+    public static final String COORDINATE_PRECISION = "#,##0.0";
+
+    public static final int RESERVATION_AVAILABILITY_MINUTES = 15;
+
+    public static final int TICKET_VALID_PERIOD_IN_MINUTES = 45;
+
 }

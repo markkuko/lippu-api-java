@@ -1,17 +1,30 @@
 package fi.ficora.lippu.domain;
 
 import fi.ficora.lippu.domain.model.CustomerInfo;
+import org.springframework.data.annotation.Id;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 
 public class ReservationItem {
+
+    @Id
+    private String id;
     private String reservationData;
     private String ticketPayload;
     private OffsetDateTime validFrom;
     private OffsetDateTime validTo;
     private List<CustomerInfo> customerInfo;
     private List<String> chosenExtraReservationDatas;
+    private boolean confirmed;
+    private String productId;
+    private String caseId;
+    private String clientId;
+    private LocalDateTime travelDate;
+    private String passengerCategory;
+    private OffsetDateTime reservationValidTo;
 
     public String getReservationData() {
         return reservationData;
@@ -66,4 +79,69 @@ public class ReservationItem {
         this.chosenExtraReservationDatas = chosenExtraReservationDatas;
         return this;
     }
+
+    public boolean isConfirmed() {
+        return confirmed;
+    }
+
+    public void setConfirmed(boolean confirmed) {
+        this.confirmed = confirmed;
+    }
+
+    public String getProductId() {
+        return productId;
+    }
+
+    public void setProductId(String productId) {
+        this.productId = productId;
+    }
+
+    public String getCaseId() {
+        return caseId;
+    }
+
+    public void setCaseId(String caseId) {
+        this.caseId = caseId;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public LocalDateTime getTravelDate() {
+        return travelDate;
+    }
+
+    public void setTravelDate(LocalDateTime travelDate) {
+        this.travelDate = travelDate;
+    }
+
+    public String getPassengerCategory() {
+        return passengerCategory;
+    }
+
+    public void setPassengerCategory(String passengerCategory) {
+        this.passengerCategory = passengerCategory;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public OffsetDateTime getReservationValidTo() {
+        return reservationValidTo;
+    }
+
+    public void setReservationValidTo(OffsetDateTime reservationValidTo) {
+        this.reservationValidTo = reservationValidTo;
+    }
+
 }

@@ -37,6 +37,11 @@ data:
   secret: a661abab-0101-47f4-9345-114b0d906ce7-360a6a11-f8a9-4ea6-b36f-76f9d10465ec
   privatekey: keys/operator.key
   publickey: keys/operator.pub
+  passengerCategories:
+    - Adult
+    - Child
+    - Senior
+    - Youth
 project:
   name: lippu
   version: 0.1

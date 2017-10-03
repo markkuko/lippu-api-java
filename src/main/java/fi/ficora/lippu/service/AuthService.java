@@ -4,8 +4,9 @@ import fi.ficora.lippu.config.Constants;
 import fi.ficora.lippu.domain.Client;
 import fi.ficora.lippu.domain.ClientKey;
 import fi.ficora.lippu.domain.Nonce;
+import fi.ficora.lippu.domain.ReservationItem;
 import fi.ficora.lippu.repository.DataRepository;
-import fi.ficora.lippu.repository.AuthRepository;
+import fi.ficora.lippu.repository.NonceRepository;
 import fi.ficora.lippu.repository.ClientRepository;
 import fi.ficora.lippu.util.KeyUtil;
 import org.jose4j.jws.AlgorithmIdentifiers;
@@ -15,7 +16,7 @@ import org.jose4j.lang.JoseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -23,7 +24,6 @@ import java.security.*;
 import java.security.spec.*;
 import java.time.LocalDateTime;
 import java.util.Base64;
-import java.util.List;
 
 /**
  * Handles authentication and authorization services.
@@ -38,7 +38,7 @@ public class AuthService implements IAuthService{
     @Autowired
     private ClientRepository clientRepository;
     @Autowired
-    private AuthRepository nonceRepository;
+    private NonceRepository nonceRepository;
 
     private DataRepository operatorConfiguration;
     private static final Logger log = LoggerFactory.getLogger(ClientRepository.class);
@@ -50,18 +50,9 @@ public class AuthService implements IAuthService{
 
     }
 
-    /**
-     * Verifies message signature of using clients public key.
-     *
-     * @param data Client's signature data
-     * @param cnonce Client side nonce
-     * @param snonce Server side nonce
-     * @param keyId Client key id
-     * @param alg Algorithm client used for signature
-     * @return JWT Authentication token for client.
-     * @throws UnsupportedEncodingException
-     * @throws JoseException
-     */
+    public String getClientId() {
+        return (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
     public String verifyAuthentication(String data, String cnonce, String snonce, String keyId, String alg)
             throws UnsupportedEncodingException, JoseException {
 
@@ -134,11 +125,7 @@ public class AuthService implements IAuthService{
 
     }
 
-    /**
-     * Generates serverside nonce for a client and stores it.
-     * @param account Client account indicator to generate nonce for.
-     * @return Nonce value
-     */
+
     public String generateNonce(String account) {
         if(clientRepository.exists(account)) {
             Client client = clientRepository.findOne(account);
@@ -153,11 +140,6 @@ public class AuthService implements IAuthService{
         }
     }
 
-    /**
-     * Verifies that nonce is exists and has not expired.
-     * @param snonce Generated nonce id
-     * @return Nonce is its valid or null
-     */
 
     private Nonce verifyNonce(String snonce) {
         Nonce nonce = nonceRepository.findOne(snonce);
@@ -168,12 +150,6 @@ public class AuthService implements IAuthService{
             return null;
         }
     }
-    /**
-     * Verifies that nonce is exists and has not expired.
-     * @param nonceValue Nonce id for the nonce to validate.
-     * @param client Client account id
-     * @return Nonce is its valid or null
-     */
 
     public Nonce verifyNonce(String nonceValue, String client) {
         if (nonceRepository.exists(nonceValue)){

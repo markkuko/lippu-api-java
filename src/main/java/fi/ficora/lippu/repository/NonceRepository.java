@@ -5,7 +5,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface AuthRepository extends CrudRepository<Nonce, String> {
+public interface NonceRepository extends CrudRepository<Nonce, String> {
     Nonce findOneNonceByClient(String client);
 
 }

@@ -1,8 +1,8 @@
 [ {
     "_class" : "fi.ficora.lippu.domain.Client",
     "account" : "2967a6e3-fe24-4bec-84d1-1ba34c5f620e",
-    "name" : "Matthews",
-    "secret" : "Matthews",
+    "name" : "Maas Operator 1",
+    "secret" : "Maas Operator 1",
     "keys": [
      {
       "pubKeyId": "d52c0c74-6cd5-443b-ac5e-ee49b2b3c6ad",
@@ -25,11 +25,43 @@
   },
   {
     "_class" : "fi.ficora.lippu.domain.Product",
+    "id" : "be0f6694-6ca1-4175-a25f-28a709380ad4",
     "name" : "Single ticket",
     "productType": "PRODUCT-SINGLE-TICKET",
     "contract": "CONTRACT-AB123CD",
     "description": "The validity of a single ticket starts at the time of purchase. The validity period will be printed to the ticket.",
-    "suitablePassengerCategories": ["Adult", "Child","Youth", "Senior"]
+    "fromLat": 60.2,
+    "fromLon": 24.8,
+    "toLat": 61.0,
+    "toLon": 25.7,
+    "accessibilities": [
+      {"title": "UNKNOWN"}
+    ],
+    "extraServices": [
+    ],
+    "suitablePassengerCategories": ["Adult", "Child","Senior"]
+  },
+  {
+    "_class" : "fi.ficora.lippu.domain.Capasity",
+    "productId" : "be0f6694-6ca1-4175-a25f-28a709380ad4",
+    "maxCapasity": 60
+  },
+  {
+    "_class" : "fi.ficora.lippu.domain.Timetable",
+    "id" : "d11cc238-6148-4c11-a86a-b66220beadb0",
+    "productId" : "be0f6694-6ca1-4175-a25f-28a709380ad4",
+    "operatedOn": [
+      "MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY", "SUNDAY"
+    ],
+    "hour" : 20,
+    "minutes": 0
+
+  },
+  {
+    "_class" : "fi.ficora.lippu.domain.Transport",
+    "productId" : "be0f6694-6ca1-4175-a25f-28a709380ad4",
+    "operator": "Liikennöitsijä OY AB (Y-1234567)",
+    "vehicleInfo": "Linja-auto Mikkeli-Lahti"
   }
 ]
 

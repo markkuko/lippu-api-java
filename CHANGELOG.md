@@ -6,11 +6,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
+- Initial implementation for availability services.
+- Initial implementation for reservation service.
+- Functionality handle product with one operation per day.
+- Product searches by to / from coordinates.
+- Entities and repositories for Transport, Timetable, Fare, Capasity
+- Ticket service to generate STUB ticket payloads.
 - Changelog.
 - License (EUPL v1.2) and LICENSE.txt
 - AuthenticationAPI implementation using Spring security.
-- Stub implementation for AvailabilityAPI.
-- Stub implementation for ReservationAPI.
 - Data storage using KeyValue maps.
 - Test data loading using Jackson2RepositoryPopulatorFactoryBean.
 - Logback configuration.

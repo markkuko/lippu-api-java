@@ -1,5 +1,6 @@
 package fi.ficora.lippu.repository;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -14,7 +15,7 @@ public class DataRepository {
     private String secret;
     private String privatekey;
     private String publickey;
-
+    private List<String> passengerCategories;
 
     public String getOperator() {
         return operator;
@@ -46,5 +47,13 @@ public class DataRepository {
 
     public void setPublickey(String publickey) {
         this.publickey = publickey;
+    }
+
+    public List<String> getPassengerCategories() {
+        return passengerCategories;
+    }
+
+    public void setPassengerCategories(List<String> passengerCategories) {
+        this.passengerCategories = passengerCategories;
     }
 }

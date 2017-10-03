@@ -1,15 +1,13 @@
 package fi.ficora.lippu.controller;
 
 import fi.ficora.lippu.domain.model.*;
-import fi.ficora.lippu.repository.AuthRepository;
-import fi.ficora.lippu.repository.ClientRepository;
-import fi.ficora.lippu.service.AuthService;
+import fi.ficora.lippu.service.IAuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.data.annotation.Id;
 import org.springframework.stereotype.Controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import fi.ficora.lippu.domain.Client;
 import javax.validation.Valid;
 
 import io.swagger.annotations.*;
@@ -36,14 +34,10 @@ public class AuthApiController implements AuthApi {
     @Autowired
     private MessageSource messageSource;
 
-    @Autowired
-    private ClientRepository clientRepository;
 
     @Autowired
-    private AuthService authService;
+    private IAuthService authService;
 
-    @Autowired
-    private AuthRepository authRepository;
 
     public AuthApiController(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;

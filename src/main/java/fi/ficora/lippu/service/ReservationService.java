@@ -1,15 +1,22 @@
 package fi.ficora.lippu.service;
 
 import fi.ficora.lippu.config.Constants;
+import fi.ficora.lippu.domain.Product;
 import fi.ficora.lippu.domain.Reservation;
 import fi.ficora.lippu.domain.ReservationItem;
 import fi.ficora.lippu.domain.model.ReservationRequest;
 import fi.ficora.lippu.domain.model.ReservationRequestReservations;
+import fi.ficora.lippu.domain.model.Travel;
+import fi.ficora.lippu.repository.ReservationItemRepository;
 import fi.ficora.lippu.repository.ReservationRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,16 +32,24 @@ public class ReservationService implements IReservationService {
     @Autowired
     private ReservationRepository repository;
 
+    @Autowired
+    private ReservationItemRepository reservationItemRepository;
+
+    @Autowired
+    private IAuthService authService;
+
+    @Autowired
+    private ITicketService ticketService;
+
+    @Autowired
+    private ITimetableService timetableService;
+    private static final Logger log = LoggerFactory.getLogger(ReservationService.class);
+
     public ReservationService() {
 
     }
 
-    /**
-     * Removes reservation from repository.
-     * @param caseId Reservation caseId
-     * @return Operation result code
-     * @see @{@link Constants}.
-     */
+
     public int delete(String caseId) {
         Reservation reservation = repository.findOne(caseId);
         if(reservation == null) {
@@ -42,7 +57,11 @@ public class ReservationService implements IReservationService {
         }
         // @todo Move authorization check to separate service.
         if (reservation.getClientId().equals(
-                (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal())) {
+                authService.getClientId())) {
+            List<ReservationItem> items = reservationItemRepository.findAllByCaseId(caseId);
+            for(ReservationItem item: items){
+                reservationItemRepository.delete(item);
+            }
             repository.delete(caseId);
             return Constants.RESULTCODE_SUCCESS;
         } else {
@@ -50,29 +69,87 @@ public class ReservationService implements IReservationService {
         }
     }
 
-    /**
-     * Creates reservation for availability search.
-     * @param request
-     * @return
-     */
-    public Reservation add(ReservationRequest request) {
-        Reservation reservation = new Reservation();
-        List<ReservationItem> reservationItems = new ArrayList<ReservationItem>();
-        for (ReservationRequestReservations requestReservation:request.getReservations()) {
-            ReservationItem item = new ReservationItem();
-            // @todo Validate reservation data
-            item.setReservationData(requestReservation.getReservationData());
-            item.setCustomerInfo(requestReservation.getCustomerInfo());
-            item.setChosenExtraReservationDatas(requestReservation.getChosenExtraReservationDatas());
-            item.setTicketPayload(UUID.randomUUID().toString());
-            item.setValidFrom(OffsetDateTime.now());
-            item.setValidTo(OffsetDateTime.now());
-            reservationItems.add(item);
-        }
-        reservation.setClientId((String)SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        reservation.setReservationItems(reservationItems);
-        return repository.save(reservation);
 
+
+    public Reservation create() {
+        Reservation reservation = new Reservation();
+        reservation.setClientId(authService.getClientId());
+        reservation = repository.save(reservation);
+        return reservation;
     }
 
+
+    public List<ReservationItem> confirmReservation(List<ReservationRequestReservations>
+                                                    reservations) {
+        List<ReservationItem> items = new ArrayList<ReservationItem>();
+        // @todo move authorization check to separate service
+        String clientId = authService.getClientId();
+        for(ReservationRequestReservations reservation: reservations) {
+            ReservationItem item = reservationItemRepository.
+                    findOneByReservationData(reservation.getReservationData());
+            if(isValidReservation(item, reservation, clientId)) {
+                item.setConfirmed(true);
+                item.setTicketPayload(ticketService.generateTicket(item));
+
+                items.add(reservationItemRepository.save(item));
+
+            }
+        }
+        return items;
+    }
+    public ReservationItem addResevationItem(ReservationItem item) {
+        return reservationItemRepository.save(item);
+    }
+    public String createReservationData() {
+        return UUID.randomUUID().toString();
+    }
+
+    public long getReservationCount(Product product, LocalDate travelDate) {
+        LocalDateTime from = travelDate.atTime(0,0,0);
+        LocalDateTime to = travelDate.atTime(23,59,59);
+        long result = reservationItemRepository.findByProductIdAndTravelDateBetween(product.getId(), from, to).size();
+        log.debug("Reservations for product {} betweeb date {} - {} is {}", product, from, to, result);
+        return result;
+    }
+
+    private boolean isValidReservation(ReservationItem item,
+                                       ReservationRequestReservations reservation,
+                                       String clientId) {
+        if(item == null) {
+            log.info("Did not find reservation with reservation data {}",
+                    reservation.getReservationData());
+            return false;
+        }
+        if (!item.getClientId().equals(clientId)) {
+            log.info("Cannot confirm reservation {}, client ids did no match." +
+                            "Reservation client id: {}, current client id {}",
+                    reservation.getReservationData(), item.getClientId(), clientId);
+            return false;
+        }
+        if (!item.getReservationValidTo().isAfter(OffsetDateTime.now())) {
+            log.info("Reservation {} has expired",
+                    reservation.getReservationData() );
+            return false;
+        }
+        return true;
+    }
+
+
+    public ReservationItem createResevartionItem(Product product,
+                                          Reservation reservation, Travel travel) {
+        ReservationItem item = new ReservationItem();
+        item.setConfirmed(false);
+        item.setReservationData(createReservationData());
+        item.setProductId(product.getId());
+        item.setTravelDate(travel.getDateTime().toLocalDate().atTime(12,00));
+        item.setReservationValidTo(OffsetDateTime.now().plusMinutes(
+                Constants.RESERVATION_AVAILABILITY_MINUTES));
+        item.setCaseId(reservation.getCaseId());
+        item.setClientId(reservation.getClientId());
+        //item.setPassengerCategory(category);
+        item.setValidFrom(timetableService.getProductDeparture(
+                travel.getDateTime().toLocalDate(), product));
+        item.setValidTo(item.getValidFrom());
+        return item;
+    }
 }

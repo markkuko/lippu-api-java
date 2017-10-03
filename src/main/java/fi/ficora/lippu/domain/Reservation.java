@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Id;
 import java.util.List;
 
 public class Reservation {
+
     @Id
     private String caseId;
     private List<ReservationItem> reservationItems;
