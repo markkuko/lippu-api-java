@@ -41,5 +41,22 @@
       {"category":"Adult"},
       {"category":"Child"}
     ]
+  },
+  "test_products_current_date_response" : {
+    "products": {
+      "contract": "CONTRACT-AB123CD",
+      "productType": "PRODUCT-SINGLE-TICKET",
+      "accessibility": [{
+        "title": "UNKNOWN",
+        "additionalInformation" : null,
+        "fare" : null,
+        "description" : null
+        }
+
+      ],
+      "suitablePassengerCategories":["Adult", "Child", "Senior"]
+
+  },
+    "passengerCategories": ["Adult", "Child", "Senior", "Youth"]
   }
 }

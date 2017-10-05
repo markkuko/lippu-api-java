@@ -7,7 +7,7 @@ from __future__ import print_function
 import unittest
 import logging
 import argparse
-from tests import test_login_api, test_availability_api, test_reservation_api, test_wholechain
+from tests import test_login_api, test_availability_api, test_reservation_api, test_wholechain, test_products_api
 #, test_availability_api, kk
 
 
@@ -24,12 +24,13 @@ if __name__ == '__main__':
     if not isinstance(numeric_level, int):
         raise ValueError('Invalid log level: %s' % args.log)
     logging.basicConfig(level=numeric_level)
-    logging.info("Starting LIPPU-project tests")
+    logging.info("Starting LIPPU-project integration tests")
     # Define test classes to run
     test_classes_to_run = [
                            test_reservation_api.TestReservationApi,
                            test_login_api.TestLoginApi,
                            test_availability_api.TestAvailabilityApi,
+                           test_products_api.TesProductsApi,
                            test_wholechain.TestWholeChain
                            ]
 
@@ -44,4 +45,4 @@ if __name__ == '__main__':
 
     runner = unittest.TextTestRunner()
     results = runner.run(big_suite)
-    logging.info("LIPPU-project tests finished")
+    logging.info("LIPPU-project integration tests finished")

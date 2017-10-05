@@ -21,7 +21,7 @@ import logging
 import tests.lippuclient
 
 
-class TestAvailabilityApi(unittest.TestCase):
+class TesProductsApi(unittest.TestCase):
     """ AvailabilityApi unit test stubs """
 
     def setUp(self):
@@ -38,12 +38,55 @@ class TestAvailabilityApi(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_availability(self):
-        """
-        Test case for availability
 
-        Trip availaibility inquiry
-        """
+    def test_products_current_date(self):
+        token = tests.lippuclient.get_authentication_token(self.envdata['auth_url'],
+                                                           str(uuid.uuid4()),
+                                                           self.testdata['valid_client1'],
+                                                           self.testdata['key_id_client1'],
+                                                           self.testdata['key_path_client1'])
+        headers = tests.lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
+                                                     token=token,
+                                                     language="fi")
+        valid_response = self.testdata['test_products_current_date_response']
+        t = datetime.datetime.now()
+        response = requests.get(self.envdata['products_url'] + '/' + t.strftime('%Y-%m-%d'),
+                                  headers=headers)
+        logging.info("test_products_current_date, response: %s ", response.json())
+        self.assertEqual(response.status_code, 200)
+        self.assertGreater(len(response.json()["products"]), 0)
+        self.assertEqual(response.json()["products"][0]["contract"], valid_response["products"]["contract"])
+        self.assertEqual(response.json()["passengerCategories"],
+                         valid_response["passengerCategories"])
+        self.assertEqual(response.json()["products"][0]["productType"], valid_response["products"]["productType"])
+        self.assertEqual(response.json()["products"][0]["accessibility"],
+                         valid_response["products"]["accessibility"])
+        self.assertEqual(response.json()["products"][0]["suitablePassengerCategories"],
+                         valid_response["products"]["suitablePassengerCategories"])
+
+    def test_products_from_coordinates(self):
+        token = tests.lippuclient.get_authentication_token(self.envdata['auth_url'],
+                                                           str(uuid.uuid4()),
+                                                           self.testdata['valid_client1'],
+                                                           self.testdata['key_id_client1'],
+                                                           self.testdata['key_path_client1'])
+        headers = tests.lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
+                                                     token=token,
+                                                     language="fi")
+
+        t = datetime.datetime.now()
+        query = {"fromLat": "60.2","fromLon":"24.8"}
+        response = requests.get(self.envdata['products_url'] + '/'
+                                + t.strftime('%Y-%m-%d'),
+                                    params=query,
+                                    headers=headers)
+        logging.info("test_products_coordinates, response:" + response.text)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertGreater(len(response.json()), 0)
+
+    def test_products_coordinates(self):
+
         token = tests.lippuclient.get_authentication_token(self.envdata['auth_url'],
                                                            str(uuid.uuid4()),
                                                            self.testdata['valid_client1'],
@@ -55,126 +98,73 @@ class TestAvailabilityApi(unittest.TestCase):
 
         t = datetime.datetime.now()
 
-        # Trip availaibility inquiry
-        travel = self.testdata['travel_data']
-        r = requests.post(self.envdata['availability_url'],
-                                       headers=headers, json=travel)
-        logging.info("test_availability, availability response: %s"
-                     % r.json())
-        self.assertEqual(r.status_code, 200)
+        query = {"fromLat": "60.2","fromLon":"24.8",
+                  "toLat": "61.0", "toLon":"25.7"}
+        response = requests.get(self.envdata['products_url'] + '/' + t.strftime('%Y-%m-%d'),
+                                    params=query,
+                                    headers=headers)
+        logging.info("test_products_coordinates, response: %s" % response.text)
 
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()["products"]), 1)
 
-    def test_availability_non_valid_token(self):
+    def test_products_date_in_the_past(self):
         """
-        Test case for using non valid authentication token for availability query
+        Test case for products
+
+        Product portfolio for given datetime, date in the past (non-valid)
+        """
+
+        token = tests.lippuclient.get_authentication_token(self.envdata['auth_url'],
+                                                           str(uuid.uuid4()),
+                                                           self.testdata['valid_client1'],
+                                                           self.testdata['key_id_client1'],
+                                                           self.testdata['key_path_client1'])
+        headers = tests.lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
+                                                     token=token,
+                                                     language="fi")
+        t = datetime.datetime.now() - datetime.timedelta(days=1)
+        response = requests.get(self.envdata['products_url'] + '/' + t.strftime('%Y-%m-%d'),
+                                headers=headers)
+        logging.info("test_products_date_in_the_past, response: %s ", response.text)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()['statusCode'], 400)
+
+    def test_products_from_coordinates_not_found(self):
+
+        token = tests.lippuclient.get_authentication_token(self.envdata['auth_url'],
+                                                           str(uuid.uuid4()),
+                                                           self.testdata['valid_client1'],
+                                                           self.testdata['key_id_client1'],
+                                                           self.testdata['key_path_client1'])
+        headers = tests.lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
+                                                     token=token,
+                                                     language="fi")
+
+        t = datetime.datetime.now()
+        query = {"fromLat": "63.2","fromLon":"26.2"}
+        response = requests.get(self.envdata['products_url'] + '/' + t.strftime('%Y-%m-%d'),
+                                params=query,
+                                headers=headers)
+        logging.info("test_products_coordinates_not_found, response:"  + response.text)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()["products"]), 0)
+
+
+    def test_products_non_valid_token(self):
+        """
+        Test case for using non valid authentication token for products query
 
         """
-        travel = self.testdata['travel_data']
+        t = datetime.datetime.now()
         headers = tests.lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
                                                      token=str(uuid.uuid4()),
                                                      language="fi")
-        r = requests.post(self.envdata['availability_url'],
-                          headers=headers, json=travel)
-        logging.info("test_availability_non_valid_token, response: %s"
-                     %(r.json() ))
+        r = requests.get(self.envdata['products_url'] + '/' + t.strftime('%Y-%m-%d'),
+                                  headers=headers)
+        logging.info("test_products_non_valid_token %s" % r.text)
         self.assertEqual(r.status_code, 403)
-
-    def test_availability_null_from_lat_coordinate(self):
-        token = tests.lippuclient.get_authentication_token(self.envdata['auth_url'],
-                                                           str(uuid.uuid4()),
-                                                           self.testdata['valid_client1'],
-                                                           self.testdata['key_id_client1'],
-                                                           self.testdata['key_path_client1'])
-        headers = tests.lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                                     token=token,
-                                                     language="fi")
-
-        travel = self.testdata['travel_data']
-        travel["travel"]["from"]["lat"] = None
-        r = requests.post(self.envdata['availability_url'],
-                                       headers=headers, json=travel)
-        logging.info("test_availability_null_from_lat_coordinate, availability response: %s"
-                     % r.json())
-        self.assertEqual(r.status_code, 400)
-        self.assertEqual(r.json()["statusCode"], 400)
-
-    def test_availability_null_from_lon_coordinate(self):
-        token = tests.lippuclient.get_authentication_token(self.envdata['auth_url'],
-                                                           str(uuid.uuid4()),
-                                                           self.testdata['valid_client1'],
-                                                           self.testdata['key_id_client1'],
-                                                           self.testdata['key_path_client1'])
-        headers = tests.lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                                     token=token,
-                                                     language="fi")
-
-        travel = self.testdata['travel_data']
-        travel["travel"]["from"]["lon"] = None
-        r = requests.post(self.envdata['availability_url'],
-                          headers=headers, json=travel)
-        logging.info("test_availability_null_from_lon_coordinate, availability response: %s"
-                     % r.json())
-        self.assertEqual(r.status_code, 400)
-        self.assertEqual(r.json()["statusCode"], 400)
-
-
-    def test_availability_null_to_lat_coordinate(self):
-        token = tests.lippuclient.get_authentication_token(self.envdata['auth_url'],
-                                                           str(uuid.uuid4()),
-                                                           self.testdata['valid_client1'],
-                                                           self.testdata['key_id_client1'],
-                                                           self.testdata['key_path_client1'])
-        headers = tests.lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                                     token=token,
-                                                     language="fi")
-
-        travel = self.testdata['travel_data']
-        travel["travel"]["to"]["lat"] = None
-        r = requests.post(self.envdata['availability_url'],
-                          headers=headers, json=travel)
-        logging.info("test_availability_null_to_lat_coordinate, availability response: %s"
-                     % r.json())
-        self.assertEqual(r.status_code, 400)
-        self.assertEqual(r.json()["statusCode"], 400)
-
-    def test_availability_null_to_lon_coordinate(self):
-        token = tests.lippuclient.get_authentication_token(self.envdata['auth_url'],
-                                                           str(uuid.uuid4()),
-                                                           self.testdata['valid_client1'],
-                                                           self.testdata['key_id_client1'],
-                                                           self.testdata['key_path_client1'])
-        headers = tests.lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                                     token=token,
-                                                     language="fi")
-
-        travel = self.testdata['travel_data']
-        travel["travel"]["to"]["lon"] = None
-        r = requests.post(self.envdata['availability_url'],
-                          headers=headers, json=travel)
-        logging.info("test_availability_null_to_lon_coordinate, availability response: %s"
-                     % r.json())
-        self.assertEqual(r.status_code, 400)
-        self.assertEqual(r.json()["statusCode"], 400)
-
-    def test_availability_null_date(self):
-        token = tests.lippuclient.get_authentication_token(self.envdata['auth_url'],
-                                                           str(uuid.uuid4()),
-                                                           self.testdata['valid_client1'],
-                                                           self.testdata['key_id_client1'],
-                                                           self.testdata['key_path_client1'])
-        headers = tests.lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                                     token=token,
-                                                     language="fi")
-
-        travel = self.testdata['travel_data']
-        travel["travel"]["datetime"] = None
-        r = requests.post(self.envdata['availability_url'],
-                          headers=headers, json=travel)
-        logging.info("test_availability_null_date, availability response: %s"
-                     % r.json())
-        self.assertEqual(r.status_code, 400)
-        self.assertEqual(r.json()["statusCode"], 400)
-
 
 if __name__ == '__main__':
     unittest.main()

@@ -19,6 +19,7 @@ public class ConversionUtil {
         ProductDescription productDescription = new ProductDescription()
                 .description(product.getDescription())
                 .contract(product.getContract())
+                .productType(product.getProductType())
                 .name(product.getName())
                 .validFrom(validFrom)
                 .validTo(validFrom.plusMinutes(Constants.TICKET_VALID_PERIOD_IN_MINUTES))
