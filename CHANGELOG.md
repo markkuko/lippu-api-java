@@ -6,8 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
-- Initial implementation for availability services.
-- Initial implementation for reservation service.
+- Integration tests.
+- Simple implementation for availability services.
+- Simple implementation for reservation service.
 - Functionality handle product with one operation per day.
 - Product searches by to / from coordinates.
 - Entities and repositories for Transport, Timetable, Fare, Capasity
