@@ -5,3 +5,5 @@ build
 keys
 out
 __*
+build_image
+artifacts

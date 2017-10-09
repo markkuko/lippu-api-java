@@ -17,8 +17,8 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'org.owasp.dependencycheck'
 
 jar {
-    baseName = 'lippu-api-service'
-    version =  '0.1.0-SNAPSHOT'
+    baseName = 'lippu-service'
+    archiveName = 'lippu-service.jar'
 }
 
 repositories {

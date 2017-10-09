@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
+- Makefile for build, run and test commands
+- Docker definitions for building in container and running service in container
 - Integration tests.
 - Simple implementation for availability services.
 - Simple implementation for reservation service.
