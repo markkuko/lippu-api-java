@@ -62,7 +62,7 @@ class TestLoginApi(unittest.TestCase):
         headers['X-Message-Id'] = str(uuid.uuid4())
         nonces = r_init.json()['nonce'] + nonce
         data = base64.b64encode(nonces.encode()).decode("utf-8")
-        commit_body = {'data':lippuclient.sign_data("client.pem", data),
+        commit_body = {'data':lippuclient.sign_data(self.testdata['key_path_client1'], data),
                        'pubKeyId':self.testdata['key_id_client1'],
                        'cnonce':nonce, 'snonce': r_init.json()['nonce'],'alg':'RSA+SHA256'}
         r_commit = requests.post(self.envdata['auth_url'] + '/commit',

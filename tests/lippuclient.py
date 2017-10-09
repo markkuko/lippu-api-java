@@ -59,7 +59,7 @@ def get_authentication_token(auth_url, transaction_id, account_id, key_id, key_p
     nonce = str(uuid.uuid4())
     nonces = r_init.json()['nonce'] + nonce
     data = base64.b64encode(nonces.encode()).decode("utf-8")
-    signed_data = sign_data("client.pem", data)
+    signed_data = sign_data(key_path, data)
     logging.debug("get_authentication_token, nonces: %s" % nonces)
     logging.debug("get_authentication_token, base64 encoded nonces: %s:" + data)
     logging.debug("get_authentication_token, signed_data: %s" % signed_data)
