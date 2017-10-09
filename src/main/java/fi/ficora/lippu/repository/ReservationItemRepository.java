@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 
@@ -18,4 +19,9 @@ public interface ReservationItemRepository extends CrudRepository<ReservationIte
     public long count();
     public ReservationItem findOneByReservationData(String reservationData);
     public List<ReservationItem> findAllByCaseId(String caseId);
+
+    public List<ReservationItem> findAllByConfirmedAndReservationValidToBetween(boolean confirmed,
+                                                                                OffsetDateTime from,
+                                                                                OffsetDateTime to);
+
 }

@@ -8,8 +8,10 @@ import org.springframework.core.io.ClassPathResource;
 
 import org.springframework.core.io.Resource;
 import org.springframework.data.repository.init.Jackson2RepositoryPopulatorFactoryBean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @Configuration
+@EnableScheduling
 class ApplicationConfig {
 
     @Bean
