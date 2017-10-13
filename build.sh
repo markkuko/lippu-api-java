@@ -5,4 +5,4 @@ git clone https://github.com/markkuko/lippu-api-java
 cd lippu-api-java
 git checkout master
 ./gradlew clean findbugsMain build
-cp build/libs/lippu-api-service-0.1.0-SNAPSHOT.jar /opt/artifacts/lippu-service.jar
+cp build/libs/lippu-service.jar /opt/artifacts/lippu-service.jar
