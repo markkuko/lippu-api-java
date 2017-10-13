@@ -25,7 +25,6 @@ artifacts/lippu-service.jar:
 
 build_image: artifacts/lippu-service.jar
 	sudo docker build -f Dockerfile --build-arg jar=lippu-service.jar -t lippu/lippu .
-	touch build_image
 
 run: build_image keys
 	sudo docker run --rm -d -v ${PWD}/keys:/opt/lippu/keys:Z -e JAR_NAME=lippu-service.jar --name lippu-service -p 8080:8080 lippu/lippu
@@ -39,5 +38,17 @@ dev:
 run_local: build
 	sh run.sh
 
+test_setup:
+	(\
+		source `which virtualenvwrapper.sh`; \
+		mkvirtualenv --python=/usr/bin/python3 lippu-test; \
+		workon lippu-test; \
+		pip install -r test-requirements.txt; \
+	)
+
 test:
-	python3 runtests.py
+	(\
+		source `which virtualenvwrapper.sh`; \
+		workon lippu-test; \
+		python3 runtests.py; \
+	)

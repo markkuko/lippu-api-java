@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.security.*;
 import java.security.spec.*;
 import java.time.LocalDateTime;
@@ -62,7 +63,7 @@ public class AuthService implements IAuthService{
                 try {
                     log.debug("Decoding base64 payload {}", data);
                     byte[] dataEncoded = Base64.getEncoder().encode((serverNonce.getNonce() + cnonce).getBytes("utf-8"));
-                    boolean isValidSignature = checkSignature(new String(dataEncoded),
+                    boolean isValidSignature = checkSignature(new String(dataEncoded, Charset.forName("UTF-8")),
                             data, key.getKeyfile(), alg);
                     log.debug("Payload is {} {}  {}", isValidSignature, dataEncoded, data);
                     if (isValidSignature) {

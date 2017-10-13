@@ -3,9 +3,8 @@ package fi.ficora.lippu.util;
 import fi.ficora.lippu.config.Constants;
 import org.bouncycastle.util.io.pem.PemReader;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.*;
@@ -31,8 +30,12 @@ public class KeyUtil {
             throws NoSuchAlgorithmException, IOException, InvalidKeySpecException
     {
         final KeyFactory keyFactory = KeyFactory.getInstance( "RSA" );
-        final PemReader reader = new PemReader( new FileReader( keyPath ) );
-        final byte[] pubKey = reader.readPemObject(  ).getContent(  );
+        final FileInputStream fileStream = new FileInputStream(keyPath);
+        final PemReader reader = new PemReader(new InputStreamReader(
+                fileStream, Charset.forName("UTF-8")) );
+        final byte[] pubKey = reader.readPemObject().getContent();
+        reader.close();
+        fileStream.close();
         final X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec( pubKey );
 
         return keyFactory.generatePublic( publicKeySpec );

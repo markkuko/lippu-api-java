@@ -141,6 +141,6 @@ public class Product {
 
     @Override
     public String toString() {
-        return new String(id +name);
+        return id + name;
     }
 }
