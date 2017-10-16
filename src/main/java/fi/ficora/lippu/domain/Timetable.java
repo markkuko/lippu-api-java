@@ -9,7 +9,7 @@ public class Timetable {
     @Id
     private String id;
     private String productId;
-    private  List<DayOfWeek> OperatedOn;
+    private  List<DayOfWeek> operatedOn;
     private int hour;
     private int minute;
 
@@ -22,11 +22,11 @@ public class Timetable {
     }
 
     public List<DayOfWeek> getOperatedOn() {
-        return OperatedOn;
+        return operatedOn;
     }
 
     public void setOperatedOn( List<DayOfWeek> operatedOn) {
-        OperatedOn = operatedOn;
+        this.operatedOn = operatedOn;
     }
 
     public String getId() {

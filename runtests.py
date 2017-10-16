@@ -19,9 +19,9 @@ if __name__ == '__main__':
                                            'and DEBUG for full debug messages',
                         default='WARNING')
     args = parser.parse_args()
-
-    numeric_level = getattr(logging, args.log.upper(), None)
-    if not isinstance(numeric_level, int):
+    log_arg = args.log.upper()
+    numeric_level = getattr(logging, log_arg, None)
+    if (log_arg != None and log_arg != "") and not isinstance(numeric_level, int):
         raise ValueError('Invalid log level: %s' % args.log)
     logging.basicConfig(level=numeric_level)
     logging.info("Starting LIPPU-project integration tests")

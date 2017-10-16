@@ -29,16 +29,28 @@ public class KeyUtil {
     public static PublicKey getPublicKey(String keyPath )
             throws NoSuchAlgorithmException, IOException, InvalidKeySpecException
     {
-        final KeyFactory keyFactory = KeyFactory.getInstance( "RSA" );
-        final FileInputStream fileStream = new FileInputStream(keyPath);
-        final PemReader reader = new PemReader(new InputStreamReader(
-                fileStream, Charset.forName("UTF-8")) );
-        final byte[] pubKey = reader.readPemObject().getContent();
-        reader.close();
-        fileStream.close();
-        final X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec( pubKey );
+        FileInputStream fileStream = null;
+        PemReader reader = null;
+        try {
+            final KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            fileStream = new FileInputStream(keyPath);
+            reader = new PemReader(new InputStreamReader(
+                    fileStream, Charset.forName("UTF-8")));
+            final byte[] pubKey = reader.readPemObject().getContent();
+            reader.close();
+            fileStream.close();
+            final X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(pubKey);
 
-        return keyFactory.generatePublic( publicKeySpec );
+            return keyFactory.generatePublic(publicKeySpec);
+        } finally {
+            if(reader != null){
+                reader.close();
+            }
+            if(fileStream != null){
+                fileStream.close();
+            }
+
+        }
     }
     /**
      * Get RSA private key from DER formatted key file using {@link PKCS8EncodedKeySpec}.

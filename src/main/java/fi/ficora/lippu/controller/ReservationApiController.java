@@ -86,13 +86,13 @@ public class ReservationApiController implements ReservationApi {
                 return new ResponseEntity<ReservationDeleteResponse>(deleteResponse, HttpStatus.OK);
             } else {
                 ApiError error = new ApiError();
-                error.setStatusCode(new BigDecimal(404));
+                error.setStatusCode(BigDecimal.valueOf(404));
                 error.setMessage("Resource not found.");
                 return new ResponseEntity<ApiError>(error, HttpStatus.NOT_FOUND);
             }
         } catch (NotAuthorizedException e) {
-            log.info("Reservation delete throw {}, ");
-            ApiError error = new ApiError().statusCode(new BigDecimal(403))
+            log.info("Reservation delete throw {} ", e);
+            ApiError error = new ApiError().statusCode(BigDecimal.valueOf(403))
                     .message(messageSource.getMessage("http.error.message.403",
                             null, Locale.ENGLISH));
             return new ResponseEntity<ApiError>(error, HttpStatus.FORBIDDEN);

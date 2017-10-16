@@ -22,24 +22,24 @@ Standalone service is listening on port 8080:
 
 
 ## Integration tests
-Install requirements for the python3, use new
-[virtualenv](http://www.pythonforbeginners.com/basics/how-to-use-python-virtualenv/)
-if you can:
+Integration tests expects [virtualenvwrapper](https://pypi.python.org/pypi/virtualenvwrapper)
+to be found in path and uses lippu-test virtualenv. Tests
+require python3. You can install the virtualenv with the command:   
 ```
-pip install -r test-requirements.txt
+make test_setup
 ```
-*PyCrypto* might need some 
-Start the server and run the integration tests:
+It will generate the lippu-test virtualenv and installs
+required python packages for it. The you can run
+the tests (start the lippu service before running tests):
 ```
-python3 runtests.py
+make test
 ```
-To get more logging you can the tests with:
+
+To get more logging you can run the tests with LOG-parameter:
 ```
-python3 runtests.py --log=INFO
-```
-or
-```
-python3 runtests.py --log=DEBUG
+make test LOG=info
+make test LOG=debug
+
 ```
 
 ## Own test data

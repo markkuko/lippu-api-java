@@ -114,8 +114,8 @@ public class ProductService implements IProductService{
     public Fare getFare(String id) {
         // @todo replace stub implementation
         Fare fare = new Fare();
-        fare.setAmount(new Double(14));
-        fare.setVat(new Double(10));
+        fare.setAmount(Double.valueOf(14));
+        fare.setVat(Double.valueOf(10));
         fare.setCurrency("EUR");
         fare.setProductId(id);
         return fare;

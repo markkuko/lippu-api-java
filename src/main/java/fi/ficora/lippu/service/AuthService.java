@@ -116,11 +116,16 @@ public class AuthService implements IAuthService{
             jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);
 
             return jws.getCompactSerialization();
-        } catch(Exception e) {
+        } catch(NoSuchAlgorithmException e) {
+            log.info("Error while generating JWT: {}", e);
+            return null;
+        } catch(IOException e) {
+            log.info("Error while generating JWT: {}", e);
+            return null;
+        } catch(InvalidKeySpecException e) {
             log.info("Error while generating JWT: {}", e);
             return null;
         }
-
 
     }
 

@@ -12,6 +12,10 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * Utility class, which has static conversions from class to another
+ * and general string methods.
+ */
 public class ConversionUtil {
 
     public static ProductDescription productToProductDescription(Product product,
@@ -60,5 +64,15 @@ public class ConversionUtil {
                 .ticketPayload(item.getTicketPayload())
                 .validFrom(item.getValidFrom())
                 .validTo(item.getValidTo().plusMinutes(Constants.TICKET_VALID_PERIOD_IN_MINUTES));
+    }
+
+    /**
+     * Sanitizes string for logs, currently mitigates CRLF_INJECTION_LOGS type vulnerabilities.
+     * @param message Message for log output.
+     * @return Sanitized string from which \r \n are replaced.
+     */
+    public static String sanitizeLog(String message) {
+        String clean = message.replaceAll("[\r\n]","_");
+        return clean;
     }
 }
