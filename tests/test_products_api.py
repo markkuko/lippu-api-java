@@ -21,8 +21,8 @@ import logging
 import tests.lippuclient
 
 
-class TesProductsApi(unittest.TestCase):
-    """ AvailabilityApi unit test stubs """
+class TestProductsApi(unittest.TestCase):
+    """ ProductsApi unit test """
 
     def setUp(self):
         testdata_file='tests/testdata/testdata.json'
@@ -40,7 +40,7 @@ class TesProductsApi(unittest.TestCase):
 
 
     def test_products_current_date(self):
-        token = tests.lippuclient.get_authentication_token(self.envdata['auth_url'],
+        token = tests.lippuclient.get_authentication_token(self.envdata['base_url'],
                                                            str(uuid.uuid4()),
                                                            self.testdata['valid_client1'],
                                                            self.testdata['key_id_client1'],
@@ -49,9 +49,8 @@ class TesProductsApi(unittest.TestCase):
                                                      token=token,
                                                      language="fi")
         valid_response = self.testdata['test_products_current_date_response']
-        t = datetime.datetime.now()
-        response = requests.get(self.envdata['products_url'] + '/' + t.strftime('%Y-%m-%d'),
-                                  headers=headers)
+        response = tests.lippuclient.product_query(self.envdata['base_url'],
+                                                   headers)
         logging.info("test_products_current_date, response: %s ", response.json())
         self.assertEqual(response.status_code, 200)
         self.assertGreater(len(response.json()["products"]), 0)
@@ -65,7 +64,7 @@ class TesProductsApi(unittest.TestCase):
                          valid_response["products"]["suitablePassengerCategories"])
 
     def test_products_from_coordinates(self):
-        token = tests.lippuclient.get_authentication_token(self.envdata['auth_url'],
+        token = tests.lippuclient.get_authentication_token(self.envdata['base_url'],
                                                            str(uuid.uuid4()),
                                                            self.testdata['valid_client1'],
                                                            self.testdata['key_id_client1'],
@@ -75,19 +74,26 @@ class TesProductsApi(unittest.TestCase):
                                                      language="fi")
 
         t = datetime.datetime.now()
+        valid_response = self.testdata['test_products_current_date_response']
         query = {"fromLat": "60.2","fromLon":"24.8"}
-        response = requests.get(self.envdata['products_url'] + '/'
-                                + t.strftime('%Y-%m-%d'),
-                                    params=query,
-                                    headers=headers)
+        response = tests.lippuclient.product_query(self.envdata['base_url'],
+                                                   headers,
+                                                   t, query)
         logging.info("test_products_coordinates, response:" + response.text)
 
         self.assertEqual(response.status_code, 200)
         self.assertGreater(len(response.json()), 0)
-
+        self.assertEqual(response.json()["products"][0]["contract"], valid_response["products"]["contract"])
+        self.assertEqual(response.json()["passengerCategories"],
+                         valid_response["passengerCategories"])
+        self.assertEqual(response.json()["products"][0]["productType"], valid_response["products"]["productType"])
+        self.assertEqual(response.json()["products"][0]["accessibility"],
+                         valid_response["products"]["accessibility"])
+        self.assertEqual(response.json()["products"][0]["suitablePassengerCategories"],
+                         valid_response["products"]["suitablePassengerCategories"])
     def test_products_coordinates(self):
 
-        token = tests.lippuclient.get_authentication_token(self.envdata['auth_url'],
+        token = tests.lippuclient.get_authentication_token(self.envdata['base_url'],
                                                            str(uuid.uuid4()),
                                                            self.testdata['valid_client1'],
                                                            self.testdata['key_id_client1'],
@@ -97,17 +103,24 @@ class TesProductsApi(unittest.TestCase):
                                                      language="fi")
 
         t = datetime.datetime.now()
-
+        valid_response = self.testdata['test_products_current_date_response']
         query = {"fromLat": "60.2","fromLon":"24.8",
                   "toLat": "61.0", "toLon":"25.7"}
-        response = requests.get(self.envdata['products_url'] + '/' + t.strftime('%Y-%m-%d'),
-                                    params=query,
-                                    headers=headers)
+        response = tests.lippuclient.product_query(self.envdata['base_url'],
+                                                   headers,
+                                                   t, query)
         logging.info("test_products_coordinates, response: %s" % response.text)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()["products"]), 1)
-
+        self.assertEqual(response.json()["products"][0]["contract"], valid_response["products"]["contract"])
+        self.assertEqual(response.json()["passengerCategories"],
+                         valid_response["passengerCategories"])
+        self.assertEqual(response.json()["products"][0]["productType"], valid_response["products"]["productType"])
+        self.assertEqual(response.json()["products"][0]["accessibility"],
+                         valid_response["products"]["accessibility"])
+        self.assertEqual(response.json()["products"][0]["suitablePassengerCategories"],
+                         valid_response["products"]["suitablePassengerCategories"])
     def test_products_date_in_the_past(self):
         """
         Test case for products
@@ -115,7 +128,7 @@ class TesProductsApi(unittest.TestCase):
         Product portfolio for given datetime, date in the past (non-valid)
         """
 
-        token = tests.lippuclient.get_authentication_token(self.envdata['auth_url'],
+        token = tests.lippuclient.get_authentication_token(self.envdata['base_url'],
                                                            str(uuid.uuid4()),
                                                            self.testdata['valid_client1'],
                                                            self.testdata['key_id_client1'],
@@ -124,15 +137,16 @@ class TesProductsApi(unittest.TestCase):
                                                      token=token,
                                                      language="fi")
         t = datetime.datetime.now() - datetime.timedelta(days=1)
-        response = requests.get(self.envdata['products_url'] + '/' + t.strftime('%Y-%m-%d'),
-                                headers=headers)
+        response = tests.lippuclient.product_query(self.envdata['base_url'],
+                                                   headers,
+                                                   t)
         logging.info("test_products_date_in_the_past, response: %s ", response.text)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json()['statusCode'], 400)
 
     def test_products_from_coordinates_not_found(self):
 
-        token = tests.lippuclient.get_authentication_token(self.envdata['auth_url'],
+        token = tests.lippuclient.get_authentication_token(self.envdata['base_url'],
                                                            str(uuid.uuid4()),
                                                            self.testdata['valid_client1'],
                                                            self.testdata['key_id_client1'],
@@ -143,9 +157,9 @@ class TesProductsApi(unittest.TestCase):
 
         t = datetime.datetime.now()
         query = {"fromLat": "63.2","fromLon":"26.2"}
-        response = requests.get(self.envdata['products_url'] + '/' + t.strftime('%Y-%m-%d'),
-                                params=query,
-                                headers=headers)
+        response = tests.lippuclient.product_query(self.envdata['base_url'],
+                                                   headers,
+                                                   t, query)
         logging.info("test_products_coordinates_not_found, response:"  + response.text)
 
         self.assertEqual(response.status_code, 200)
@@ -161,10 +175,11 @@ class TesProductsApi(unittest.TestCase):
         headers = tests.lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
                                                      token=str(uuid.uuid4()),
                                                      language="fi")
-        r = requests.get(self.envdata['products_url'] + '/' + t.strftime('%Y-%m-%d'),
-                                  headers=headers)
-        logging.info("test_products_non_valid_token %s" % r.text)
-        self.assertEqual(r.status_code, 403)
+        response = tests.lippuclient.product_query(self.envdata['base_url'],
+                                                   headers,
+                                                   t)
+        logging.info("test_products_non_valid_token %s" % response .text)
+        self.assertEqual(response.status_code, 403)
 
 if __name__ == '__main__':
     unittest.main()

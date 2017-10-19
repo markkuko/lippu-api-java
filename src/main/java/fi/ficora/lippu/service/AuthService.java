@@ -2,6 +2,7 @@ package fi.ficora.lippu.service;
 
 import fi.ficora.lippu.config.Constants;
 import fi.ficora.lippu.domain.*;
+import fi.ficora.lippu.exception.AccountNotFoundException;
 import fi.ficora.lippu.exception.NotAuthorizedException;
 import fi.ficora.lippu.repository.DataRepository;
 import fi.ficora.lippu.repository.NonceRepository;
@@ -10,10 +11,12 @@ import fi.ficora.lippu.util.KeyUtil;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwt.NumericDate;
 import org.jose4j.lang.JoseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -22,10 +25,11 @@ import java.nio.charset.Charset;
 import java.security.*;
 import java.security.spec.*;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Base64;
 
 /**
- * Handles authentication and authorization services.
+ * Implements authentication and authorization services.
  *
  * @author markkuko
  */
@@ -52,7 +56,7 @@ public class AuthService implements IAuthService{
     public String getClientId() {
         return (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
-    public String verifyAuthentication(String data, String cnonce, String snonce, String keyId, String alg)
+    public Auth verifyAuthentication(String data, String cnonce, String snonce, String keyId, String alg)
             throws UnsupportedEncodingException, JoseException {
 
         Nonce serverNonce = this.verifyNonce(snonce);
@@ -67,9 +71,9 @@ public class AuthService implements IAuthService{
                             data, key.getKeyfile(), alg);
                     log.debug("Payload is {} {}  {}", isValidSignature, dataEncoded, data);
                     if (isValidSignature) {
-                        String token = generateJWT(client);
+                        Auth auth = generateJWT(client);
                         nonceRepository.delete(serverNonce);
-                        return token;
+                        return auth;
                     } else {
                         log.info("Payload signature was not valid");
                         return null;
@@ -96,14 +100,17 @@ public class AuthService implements IAuthService{
      * @throws UnsupportedEncodingException
      * @throws JoseException
      */
-    private String generateJWT(Client client) throws UnsupportedEncodingException, JoseException {
+    private Auth generateJWT(Client client) throws UnsupportedEncodingException, JoseException {
         // Create the claims and sign the JWT with HMAC_SHA512
         try {
             PrivateKey key = KeyUtil.getPrivateKey(operatorConfiguration.getPrivatekey());
             JwtClaims claims = new JwtClaims();
             claims.setIssuer(operatorConfiguration.getOperator());
-            claims.setAudience(client.getName());
-            claims.setExpirationTimeMinutesInTheFuture(Constants.JWT_EXPIRATION_TIME_MINUTES);
+            claims.setAudience(client.getAccount());
+            OffsetDateTime exp = OffsetDateTime.now().plusMinutes(
+                    Constants.JWT_EXPIRATION_TIME_MINUTES);
+            claims.setExpirationTime(NumericDate.fromSeconds(exp.toEpochSecond()));
+
             claims.setGeneratedJwtId();
             claims.setIssuedAtToNow();
             claims.setNotBeforeMinutesInThePast(2);
@@ -114,8 +121,12 @@ public class AuthService implements IAuthService{
 
             jws.setKey(key);
             jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);
+            Auth authentication =  new Auth();
+            authentication.setToken(jws.getCompactSerialization());
+            authentication.setExpires(exp);
+            authentication.setClientId(client.getAccount());
 
-            return jws.getCompactSerialization();
+            return authentication;
         } catch(NoSuchAlgorithmException e) {
             log.info("Error while generating JWT: {}", e);
             return null;
@@ -130,7 +141,7 @@ public class AuthService implements IAuthService{
     }
 
 
-    public String generateNonce(String account) {
+    public Nonce generateNonce(String account) throws AccountNotFoundException {
         if(clientRepository.exists(account)) {
             Client client = clientRepository.findOne(account);
             log.debug("Generating nonce for client {}", client.getName());
@@ -138,9 +149,10 @@ public class AuthService implements IAuthService{
             Nonce nonce = new Nonce();
             nonce.setExp(exp);
             nonce.setClient(client.getAccount());
-            return nonceRepository.save(nonce).getNonce();
+            return nonceRepository.save(nonce);
         } else {
-            return null;
+            log.info("Did not find account for account: {}", account);
+            throw new AccountNotFoundException("Account not found");
         }
     }
 
@@ -150,7 +162,7 @@ public class AuthService implements IAuthService{
         if(nonce.getExp().isAfter(LocalDateTime.now())){
             return nonce;
         } else {
-            log.debug("Did not find valid nonce {}.", snonce);
+            log.info("Did not find valid nonce {}.", snonce);
             return null;
         }
     }
@@ -164,7 +176,7 @@ public class AuthService implements IAuthService{
             else
                 return null;
         } else {
-            log.debug("Did not find valid nonce {}.", nonceValue);
+            log.info("Did not find valid nonce {}.", nonceValue);
             return null;
         }
     }

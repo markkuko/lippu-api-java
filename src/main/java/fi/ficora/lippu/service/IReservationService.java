@@ -7,6 +7,7 @@ import fi.ficora.lippu.domain.ReservationItem;
 import fi.ficora.lippu.domain.model.ReservationRequest;
 import fi.ficora.lippu.domain.model.ReservationRequestReservations;
 import fi.ficora.lippu.domain.model.Travel;
+import fi.ficora.lippu.domain.model.TravelPassenger;
 import fi.ficora.lippu.exception.NotAuthorizedException;
 
 import java.time.LocalDate;
@@ -53,11 +54,15 @@ public interface IReservationService {
      * @param product The product which reservation item is destined to use.
      * @param reservation The reservation this reservation item is linked to.
      * @param travel The travel information for the reservation item.
+     * @param passenger The passenger category, extra services and accessibility
+     *                  services for the passenger.
      * @return Count how many confirmed
      */
 
     public ReservationItem createResevartionItem(Product product,
-                                                 Reservation reservation, Travel travel);
+                                                 Reservation reservation,
+                                                 Travel travel,
+                                                 TravelPassenger passenger);
 
     /**
      * Add the given {@link ReservationItem} to the database.

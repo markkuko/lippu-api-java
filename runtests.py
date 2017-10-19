@@ -27,10 +27,10 @@ if __name__ == '__main__':
     logging.info("Starting LIPPU-project integration tests")
     # Define test classes to run
     test_classes_to_run = [
-                           test_reservation_api.TestReservationApi,
                            test_login_api.TestLoginApi,
+                           test_products_api.TestProductsApi,
                            test_availability_api.TestAvailabilityApi,
-                           test_products_api.TesProductsApi,
+                           test_reservation_api.TestReservationApi,
                            test_wholechain.TestWholeChain
                            ]
 

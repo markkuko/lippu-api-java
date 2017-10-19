@@ -1,6 +1,7 @@
 {
   "valid_client1" : "2967a6e3-fe24-4bec-84d1-1ba34c5f620e",
   "key_id_client1" : "d52c0c74-6cd5-443b-ac5e-ee49b2b3c6ad",
+  "non_valid_key_id_client1" : "d52c0c74-6aa5-443e-dc5d-ee49b2b3c6ad",
   "non_valid_client1" : "c94ec332-0d66-42a7-8f69-7f189bf09b51",
   "non_valid_caseid": "a05c1b48-3bc9-4d58-8be5-af9adaa8b4d5",
   "key_path_client1": "keys/client/client1.pem",

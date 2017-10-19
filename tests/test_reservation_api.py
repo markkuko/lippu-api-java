@@ -47,7 +47,7 @@ class TestReservationApi(unittest.TestCase):
         Travel reservation
         """
 
-        token = tests.lippuclient.get_authentication_token(self.envdata['auth_url'],
+        token = tests.lippuclient.get_authentication_token(self.envdata['base_url'],
                                                            str(uuid.uuid4()),
                                                            self.testdata['valid_client1'],
                                                            self.testdata['key_id_client1'],
@@ -71,7 +71,7 @@ class TestReservationApi(unittest.TestCase):
 
         Cancelletion of transport reservation
         """
-        token = tests.lippuclient.get_authentication_token(self.envdata['auth_url'],
+        token = tests.lippuclient.get_authentication_token(self.envdata['base_url'],
                                                            str(uuid.uuid4()),
                                                            self.testdata['valid_client1'],
                                                            self.testdata['key_id_client1'],
@@ -94,7 +94,7 @@ class TestReservationApi(unittest.TestCase):
 
         Cancelletion of transport reservation
         """
-        token = tests.lippuclient.get_authentication_token(self.envdata['auth_url'],
+        token = tests.lippuclient.get_authentication_token(self.envdata['base_url'],
                                                            str(uuid.uuid4()),
                                                            self.testdata['valid_client1'],
                                                            self.testdata['key_id_client1'],
@@ -117,7 +117,7 @@ class TestReservationApi(unittest.TestCase):
 
         Cancelletion of transport reservation
         """
-        token = tests.lippuclient.get_authentication_token(self.envdata['auth_url'],
+        token = tests.lippuclient.get_authentication_token(self.envdata['base_url'],
                                                            str(uuid.uuid4()),
                                                            self.testdata['valid_client1'],
                                                            self.testdata['key_id_client1'],

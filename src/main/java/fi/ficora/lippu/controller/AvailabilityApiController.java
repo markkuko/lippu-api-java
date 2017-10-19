@@ -44,6 +44,9 @@ public class AvailabilityApiController implements AvailabilityApi {
     private IAvailabilityService availabilityService;
 
     @Autowired
+    private ITimetableService timetableService;
+
+    @Autowired
     private MessageSource messageSource;
     @Autowired
     private IProductService productService;
@@ -83,8 +86,11 @@ public class AvailabilityApiController implements AvailabilityApi {
                 body.getTravel().getDateTime().toLocalDate(),
                 body.getPassengers().size());
             if(reservation != null) {
+                Travel travel = body.getTravel();
+                travel.setDateTime(timetableService.getProductDeparture(travel.getDateTime().toLocalDate(),
+                        product));
                 response.setTravel(body.getTravel());
-                response.setContract(body.getContract());
+                response.setContract(product.getContract());
 
                 for (TravelPassenger passenger : body.getPassengers()) {
                     ReservationItem item = availabilityService.addAvailability(
@@ -94,7 +100,6 @@ public class AvailabilityApiController implements AvailabilityApi {
                             productService.getFare(product.getId())));
                     availability.transport(ConversionUtil.transportToModelTransport(
                             productService.getTransport(product.getId())));
-
                     response.addAvailabilityItem(availability);
                 }
                 return new ResponseEntity<AvailabilityResponse>(response, HttpStatus.OK);
@@ -106,7 +111,7 @@ public class AvailabilityApiController implements AvailabilityApi {
             }
         } else {
             ApiError error = new ApiError().
-                    statusCode(new BigDecimal(400))
+                    statusCode(BigDecimal.valueOf(400))
                     .message(messageSource.getMessage("http.error.message.400.productnotfound",
                             null, Locale.ENGLISH));
             return new ResponseEntity<ApiError>(error, HttpStatus.BAD_REQUEST);

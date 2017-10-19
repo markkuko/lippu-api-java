@@ -17,6 +17,7 @@ import datetime
 import unittest
 import uuid
 import json
+import zulu
 from pprint import pprint
 import requests
 import logging
@@ -24,7 +25,7 @@ import tests.lippuclient
 
 
 class TestWholeChain(unittest.TestCase):
-    """ AvailabilityApi unit test stubs """
+    """ Test the complete reservation request chain"""
 
     def setUp(self):
         testdata_file='tests/testdata/testdata.json'
@@ -41,8 +42,13 @@ class TestWholeChain(unittest.TestCase):
         pass
 
     def test_make_reservation_and_delete(self):
+        """
+        Tests the whole reservation flow,
+        availability query and actual reservation. Then deletes
+        the reservation.
 
-        token = tests.lippuclient.get_authentication_token(self.envdata['auth_url'],
+        """
+        token = tests.lippuclient.get_authentication_token(self.envdata['base_url'],
                                                            str(uuid.uuid4()),
                                                            self.testdata['valid_client1'],
                                                            self.testdata['key_id_client1'],
@@ -55,24 +61,28 @@ class TestWholeChain(unittest.TestCase):
 
         # Trip availaibility inquiry
         travel = self.testdata['travel_data']
+        travel["travel"]["dateTime"]  = zulu.now().shift(days=2). \
+            replace(hour=14, minute=00).isoformat()
         r_availability = requests.post(self.envdata['availability_url'],
                                   headers=headers, json=travel)
         logging.info("test_make_reservation_and_delete, availability response: %s"
                      % r_availability)
         self.assertEqual(r_availability.status_code, 200)
         self.assertGreater(len(r_availability.json()), 0)
+        self.assertGreater(len(r_availability.json()['availability']), 0)
         # Make reservation
         headers['X-Message-Id'] = str(uuid.uuid4())
-        reservation = {'reservations': [
-            {'reservationData': r_availability.json()['availability'][0]['reservationData'],
-             'customerInfo': [{'name': 'Matti','phone': 'adsf', 'email': 'asdf'}]}]}
-        logging.info("Sending reservation %s" % (reservation))
+        reservation = {'reservations': []}
+        for a in r_availability.json()['availability']:
+            reservation['reservations'].append({'reservationData': a['reservationData'],
+             'customerInfo': [{'name': 'Matti','phone': 'adsf', 'email': 'asdf'}]})
+        logging.info("Sending reservation request %s" % (reservation))
         r_reservation = requests.post(self.envdata['reservation_url'],
                                        headers=headers, json=reservation)
         logging.info("test_make_reservation_and_delete, reservation response %s"
                      % r_reservation.text)
         self.assertEqual(r_reservation.status_code, 200)
-        # Delete resevation
+        # Delete the resevation
         headers['X-Message-Id'] = str(uuid.uuid4())
         caseId = r_reservation.json()['caseId']
         r_delete = requests.delete(self.envdata['reservation_url']+ '/'

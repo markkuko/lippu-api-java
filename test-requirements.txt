@@ -10,3 +10,4 @@ py>=1.4.31
 randomize>=0.13
 requests>=2.18.4
 pycrypto>=2.6.1 
+zulu
