@@ -55,9 +55,9 @@ public class ScheduleUtil {
     }
 
     /**
-     * Removes expired and unconfirmed reservationitems and
-     * reservations (softbooked) from {@link ReservationItemRepository},
-     * so they don't end up taking capasity.
+     * Removes expired and unconfirmed reservation items and
+     * reservations (soft booked) from {@link ReservationItemRepository},
+     * so they don't end up taking capacity.
      */
     @Scheduled(cron = "10 */1 * * * *")
     public void removeExpiredReservations() {
@@ -67,7 +67,7 @@ public class ScheduleUtil {
         List<ReservationItem> items = reservationItemRepository.findAllByConfirmedAndReservationValidToBetween
                 (false, start, current);
         log.debug("Found {} expired and unconfirmed reservation items to remove", items.size());
-        Set<String> reservationCaseIds = new HashSet<String>();
+        Set<String> reservationCaseIds = new HashSet<>();
         for(ReservationItem item: items) {
             log.info("Removing expired reservation item {}, expired at: {}", item.getId(), item.getReservationValidTo());
             reservationCaseIds.add(item.getCaseId());

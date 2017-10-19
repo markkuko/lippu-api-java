@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
  * @author markkuko
  */
 @Configuration
-public class JacksonConfiguration {
+class JacksonConfiguration {
 
     @Bean
     public ObjectMapper objectMapper() {

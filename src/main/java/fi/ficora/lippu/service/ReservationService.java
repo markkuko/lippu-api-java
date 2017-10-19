@@ -4,7 +4,6 @@ import fi.ficora.lippu.config.Constants;
 import fi.ficora.lippu.domain.Product;
 import fi.ficora.lippu.domain.Reservation;
 import fi.ficora.lippu.domain.ReservationItem;
-import fi.ficora.lippu.domain.model.ReservationRequest;
 import fi.ficora.lippu.domain.model.ReservationRequestReservations;
 import fi.ficora.lippu.domain.model.Travel;
 import fi.ficora.lippu.domain.model.TravelPassenger;
@@ -14,7 +13,6 @@ import fi.ficora.lippu.repository.ReservationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -55,7 +53,7 @@ public class ReservationService implements IReservationService {
     public int delete(String caseId) throws NotAuthorizedException {
         Reservation reservation = repository.findOne(caseId);
         if(reservation == null) {
-            return Constants.RESULTCODE_NOT_FOUND;
+            return Constants.RESULT_CODE_NOT_FOUND;
         }
         authService.verifyAuthorization(reservation);
 
@@ -64,7 +62,7 @@ public class ReservationService implements IReservationService {
             reservationItemRepository.delete(item);
         }
         repository.delete(caseId);
-        return Constants.RESULTCODE_SUCCESS;
+        return Constants.RESULT_CODE_SUCCESS;
     }
 
 
@@ -79,7 +77,7 @@ public class ReservationService implements IReservationService {
 
     public List<ReservationItem> confirmReservation(List<ReservationRequestReservations>
                                                     reservations) {
-        List<ReservationItem> items = new ArrayList<ReservationItem>();
+        List<ReservationItem> items = new ArrayList<>();
         String clientId = authService.getClientId();
         for(ReservationRequestReservations reservation: reservations) {
             ReservationItem item = reservationItemRepository.
@@ -101,7 +99,7 @@ public class ReservationService implements IReservationService {
         }
         return items;
     }
-    public ReservationItem addResevationItem(ReservationItem item) {
+    public ReservationItem addReservationItem(ReservationItem item) {
         return reservationItemRepository.save(item);
     }
     public String createReservationData() {
@@ -112,7 +110,7 @@ public class ReservationService implements IReservationService {
         LocalDateTime from = travelDate.atTime(0,0,0);
         LocalDateTime to = travelDate.atTime(23,59,59);
         long result = reservationItemRepository.findByProductIdAndTravelDateBetween(product.getId(), from, to).size();
-        log.debug("Reservations for product {} betweeb date {} - {} is {}", product, from, to, result);
+        log.debug("Reservations for product {} between date {} - {} is {}", product, from, to, result);
         return result;
     }
 
@@ -131,7 +129,7 @@ public class ReservationService implements IReservationService {
         }
         return true;
     }
-    public ReservationItem createResevartionItem(Product product,
+    public ReservationItem createReservationItem(Product product,
                                                  Reservation reservation,
                                                  Travel travel,
                                                  TravelPassenger passenger) {
@@ -140,7 +138,7 @@ public class ReservationService implements IReservationService {
         item.setConfirmed(false);
         item.setReservationData(createReservationData());
         item.setProductId(product.getId());
-        item.setTravelDate(travel.getDateTime().toLocalDate().atTime(12,00));
+        item.setTravelDate(travel.getDateTime().toLocalDate().atTime(12, 0));
         item.setReservationValidTo(OffsetDateTime.now().plusMinutes(
                 Constants.RESERVATION_AVAILABILITY_MINUTES));
         item.setCaseId(reservation.getCaseId());

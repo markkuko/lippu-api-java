@@ -3,17 +3,10 @@ package fi.ficora.lippu.service;
 import fi.ficora.lippu.domain.Fare;
 import fi.ficora.lippu.domain.Product;
 import fi.ficora.lippu.domain.Transport;
-import fi.ficora.lippu.domain.model.ProductDescription;
 import fi.ficora.lippu.domain.model.ProductList;
 import fi.ficora.lippu.domain.model.Travel;
-import fi.ficora.lippu.repository.ProductRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
 import java.util.List;
 
 /**
@@ -27,7 +20,7 @@ public interface IProductService {
      * @param date  The date to search products.
      * @return List of products available.
      */
-    public ProductList getAvailableProducts(LocalDate date) ;
+    ProductList getAvailableProducts(LocalDate date) ;
 
     /**
      * Get available products for the given date and transport
@@ -39,8 +32,8 @@ public interface IProductService {
      * @return List of products available for the date and departure coordinate.
      */
 
-    public ProductList getAvailableProductsFrom(LocalDate date, Double fromLat,
-                                                Double fromLon);
+    ProductList getAvailableProductsFrom(LocalDate date, Double fromLat,
+                                         Double fromLon);
     /**
      * Get available products for the given date and transport
      * destination coordinate.
@@ -51,8 +44,8 @@ public interface IProductService {
      * @return List of products available for the date and destination coordinate.
      */
 
-    public ProductList getAvailableProductsTo(LocalDate date, Double toLat,
-                                              Double toLon);
+    ProductList getAvailableProductsTo(LocalDate date, Double toLat,
+                                       Double toLon);
     /**
      * Get available products for the given date, departure coordinates
      * and destination coordinates.
@@ -65,16 +58,16 @@ public interface IProductService {
      * @return List of products available for the date, departure and
      * destination coordinates.
      */
-    public ProductList getAvailableProducts(LocalDate date, Double fromLat,
-                                            Double fromLon, Double toLat,
-                                            Double toLon);
+    ProductList getAvailableProducts(LocalDate date, Double fromLat,
+                                     Double fromLon, Double toLat,
+                                     Double toLon);
     /**
      * Checks if there is a product with the given parameters.
      * @param productType Product type
      * @param contract Identification string for contract.
      * @return If product was found for the given parameters.
      */
-    public boolean isValidProduct(String productType, String contract) ;
+    boolean isValidProduct(String productType, String contract) ;
 
     /**
      * Get fare for a product or service.
@@ -82,19 +75,19 @@ public interface IProductService {
      * @param id Product or service id to locate fare price.
      * @return Fare information for the product.
      */
-    public Fare getFare(String id);
+    Fare getFare(String id);
     /**
      * Get transport for a product.
      * @param id Product íd to find transport
      * @return Transport for the product
      */
-    public Transport getTransport(String id);
+    Transport getTransport(String id);
 
     /**
      * Retrieves all passenger categories.
      * @return List of passenger categories.
      */
-    public List<String> getPassengerCategories();
+    List<String> getPassengerCategories();
 
     /**
      * Retrieves product for the travel departure, destination
@@ -103,5 +96,5 @@ public interface IProductService {
      * @param contract Contract for operation
      * @return Product matching the parameters or null.
      */
-    public Product getProduct(Travel travel, String contract);
+    Product getProduct(Travel travel, String contract);
 }

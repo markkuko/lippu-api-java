@@ -13,9 +13,9 @@ import springfox.documentation.spring.web.plugins.Docket;
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-11T13:35:10.864+03:00")
 
 @Configuration
-public class SwaggerDocumentationConfig {
+class SwaggerDocumentationConfig {
 
-    ApiInfo apiInfo() {
+    private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
             .title("Lippu")
             .description("Transport Code broughts together legal provisions on transport market under one act. The LIPPU-project was created to help transport operators enable Mobility as a Service (MaaS) capabilities. This is API specification of LIPPU-project. NOTE, The ticket payment capabilities are scoped out from LIPPU-project.")

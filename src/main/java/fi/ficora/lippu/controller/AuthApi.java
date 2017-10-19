@@ -3,6 +3,7 @@
  * https://github.com/swagger-api/swagger-codegen
  * Do not edit the class manually.
  */
+
 package fi.ficora.lippu.controller;
 
 import fi.ficora.lippu.domain.model.AccountId;
@@ -11,24 +12,23 @@ import fi.ficora.lippu.domain.model.AuthenticationInitResponse;
 import fi.ficora.lippu.domain.model.AuthenticationRequest;
 import fi.ficora.lippu.domain.model.AuthenticationResponse;
 
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.multipart.MultipartFile;
-import java.io.IOException;
 
-import java.util.List;
-import org.springframework.validation.annotation.Validated;
-import javax.validation.constraints.*;
 import javax.validation.Valid;
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-30T10:16:24.190+03:00")
+@javax.annotation.Generated(value =
+        "io.swagger.codegen.languages.SpringCodegen",
+        date = "2017-09-30T10:16:24.190+03:00")
 
 @Api(value = "auth", description = "the auth API")
 public interface AuthApi {

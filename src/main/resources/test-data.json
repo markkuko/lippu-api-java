@@ -42,9 +42,9 @@
     "suitablePassengerCategories": ["Adult", "Child","Senior"]
   },
   {
-    "_class" : "fi.ficora.lippu.domain.Capasity",
+    "_class" : "fi.ficora.lippu.domain.Capacity",
     "productId" : "be0f6694-6ca1-4175-a25f-28a709380ad4",
-    "maxCapasity": 60
+    "maxCapacity": 60
   },
   {
     "_class" : "fi.ficora.lippu.domain.Timetable",

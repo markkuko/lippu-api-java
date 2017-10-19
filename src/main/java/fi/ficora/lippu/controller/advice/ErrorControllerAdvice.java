@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 import java.util.Locale;
 
 /**
- * RestController to produce JSON error responses for bad requests (http statuscode 400).
+ * RestController to produce JSON error responses for bad requests (http status code 400).
  *
  * @author markkuko
  * @since 26.9.2017
@@ -35,6 +35,6 @@ public class ErrorControllerAdvice {
         ApiError error = new ApiError();
         error.setStatusCode(new BigDecimal(400));
         error.setMessage(messageSource.getMessage("http.error.message.400",null, Locale.ENGLISH));
-        return new ResponseEntity<ApiError>(error, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 }

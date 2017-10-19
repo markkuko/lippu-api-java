@@ -2,14 +2,9 @@ package fi.ficora.lippu.domain.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import fi.ficora.lippu.domain.model.CoordinateLocation;
-import fi.ficora.lippu.domain.model.StopLocation;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
 
 /**
  * Location description for the point of departure or point of destination. Can be stop a location with using stopId and stopPlatform (for example a bus stop) or a coordinate locate using lat and lon numbers.

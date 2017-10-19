@@ -1,10 +1,8 @@
 package fi.ficora.lippu.security;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -14,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 import fi.ficora.lippu.config.Constants;
 import fi.ficora.lippu.repository.DataRepository;
 import fi.ficora.lippu.util.KeyUtil;
-import org.bouncycastle.util.io.pem.PemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
@@ -25,7 +22,6 @@ import org.jose4j.jwt.MalformedClaimException;
 import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
-import org.jose4j.keys.HmacKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -77,13 +73,13 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     /**
      * Validates that the request has authorization token and validates
      * the JWT-token.
-     * @param request
+     * @param request Http request to be authorized.
      * @return Authentication token.
      */
     private UsernamePasswordAuthenticationToken authenticate(HttpServletRequest request) {
         try {
             String token = request.getHeader(Constants.AUTHORIZATION_HEADER);
-            PublicKey key = KeyUtil.getPublicKey(dataRepository.getPublickey());
+            PublicKey key = KeyUtil.getPublicKey(dataRepository.getPublicKey());
             if (token != null) {
                 log.trace("Verifying token: {}", token);
                 //Key key = new HmacKey(dataRepository.getSecret().getBytes("UTF-8"));

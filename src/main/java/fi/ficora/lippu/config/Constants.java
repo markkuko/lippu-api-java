@@ -3,9 +3,9 @@ package fi.ficora.lippu.config;
 public class Constants {
     public static final String AUTHORIZATION_HEADER = "X-Authorization";
 
-    public static final int RESULTCODE_SUCCESS = 0;
-    public static final int RESULTCODE_NOT_FOUND = 10;
-    public static final int RESULTCODE_FORBIDDEN = 11;
+    public static final int RESULT_CODE_SUCCESS = 0;
+    public static final int RESULT_CODE_NOT_FOUND = 10;
+    public static final int RESULT_CODE_FORBIDDEN = 11;
     public static final long SERVER_SIDE_NONCE_TIMEOUT_SECONDS = 60;
     public static final long JWT_EXPIRATION_TIME_MINUTES = 100;
 

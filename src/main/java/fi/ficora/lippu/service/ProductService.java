@@ -2,9 +2,7 @@ package fi.ficora.lippu.service;
 
 import fi.ficora.lippu.domain.Fare;
 import fi.ficora.lippu.domain.Product;
-import fi.ficora.lippu.domain.Timetable;
 import fi.ficora.lippu.domain.Transport;
-import fi.ficora.lippu.domain.model.ProductDescription;
 import fi.ficora.lippu.domain.model.ProductList;
 import fi.ficora.lippu.domain.model.Travel;
 import fi.ficora.lippu.repository.DataRepository;
@@ -21,7 +19,6 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -52,8 +49,7 @@ public class ProductService implements IProductService{
 
             products = productRepository.findByToLatAndToLon(
                     toLat, toLon);
-            ProductList productList = checkProductTimetable(products, date);
-            return productList;
+            return checkProductTimetable(products, date);
         } else {
             return null;
         }
@@ -65,8 +61,7 @@ public class ProductService implements IProductService{
 
             products = productRepository.findByFromLatAndFromLon(
                     fromLat, fromLon);
-            ProductList productList = checkProductTimetable(products, date);
-            return productList;
+            return checkProductTimetable(products, date);
         } else {
             return null;
         }
@@ -81,8 +76,7 @@ public class ProductService implements IProductService{
 
             products = productRepository.findByFromLatAndFromLonAndToLatAndToLon(
                     fromLat, fromLon, toLat,toLon);
-            ProductList productList = checkProductTimetable(products, date);
-            return productList;
+            return checkProductTimetable(products, date);
         } else {
             return null;
         }
@@ -114,8 +108,8 @@ public class ProductService implements IProductService{
     public Fare getFare(String id) {
         // @todo replace stub implementation
         Fare fare = new Fare();
-        fare.setAmount(Double.valueOf(14));
-        fare.setVat(Double.valueOf(10));
+        fare.setAmount(14d);
+        fare.setVat(10d);
         fare.setCurrency("EUR");
         fare.setProductId(id);
         return fare;
@@ -160,7 +154,7 @@ public class ProductService implements IProductService{
     }
     private List<Product> checkProductTimetable2(List<Product> products,
                                               OffsetDateTime date) {
-        List<Product> productList = new ArrayList<Product>();
+        List<Product> productList = new ArrayList<>();
         for(Product product: products) {
             if(timetableService.hasProductDepartures(date, product)) {
                 productList.add(product);

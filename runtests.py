@@ -21,7 +21,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     log_arg = args.log.upper()
     numeric_level = getattr(logging, log_arg, None)
-    if (log_arg != None and log_arg != "") and not isinstance(numeric_level, int):
+    if (log_arg is not None and log_arg != "") and not isinstance(numeric_level, int):
         raise ValueError('Invalid log level: %s' % args.log)
     logging.basicConfig(level=numeric_level)
     logging.info("Starting LIPPU-project integration tests")

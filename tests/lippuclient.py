@@ -38,9 +38,9 @@ def generate_headers(account_id, token=None, language=None):
                'X-Transaction-Id': str(uuid.uuid4()),
                'X-Initiator': account_id,
                'content-type' :'application/json'}
-    if(language != None):
+    if(language is not None):
         headers['Accept-Language'] = language
-    if(token != None):
+    if(token is not None):
         headers['X-Authorization'] = token
     return headers
 
@@ -58,11 +58,11 @@ def product_query(base_url, headers, date=None, parameters=None):
     :return: Requests response.
 
     """
-    if date == None:
+    if date is None:
         logging.debug("product_query, date was None, getting current date.")
         date = datetime.datetime.now()
     datepart = date.strftime('%Y-%m-%d')
-    if parameters == None:
+    if parameters is None:
         response = requests.get(base_url + PRODUCTS_ENDPOINT +
                             '/' + datepart,
                             headers=headers)
@@ -173,6 +173,7 @@ def authentication_commit_request(base_url, headers, snonce, key_id, key_path, a
 def authenticate(base_url, transaction_id, account_id, key_id, key_path, alg):
     """
     Helper function to get an authentication response from the service.
+    :param alg:
     :param base_url: <str> URL for the server base
     :param transaction_id: <str> Identifier for the transaction
     :param account_id: <str> Client account id
@@ -185,7 +186,7 @@ def authenticate(base_url, transaction_id, account_id, key_id, key_path, alg):
     headers = generate_headers(account_id)
     headers['X-Transaction-Id'] = transaction_id
     r_init = authentication_init_request(base_url, headers, account_id)
-    if r_init.status_code == 200 and r_init.json()['nonce'] != None:
+    if r_init.status_code == 200 and r_init.json()['nonce'] is not None:
         headers['X-Message-Id'] = str(uuid.uuid4())
         r_commit = authentication_commit_request(base_url,
                                              headers,
@@ -205,24 +206,24 @@ def get_authentication_token(base_url, transaction_id, account_id, key_id, key_p
 
     """
     response = authenticate(base_url, transaction_id, account_id, key_id, key_path, ALG_RSA_SHA256)
-    if(response != None
+    if(response is not None
        and response.status_code == 200
-       and response.json() != None
-       and response.json()['token'] != None):
+       and response.json() is not None
+       and response.json()['token'] is not None):
         return response.json()['token']
     else:
         logging.info("Failed to get authentication token is, response is %s" % response)
         return None
 
 def sign_data(private_key_loc, data):
-    '''
+    """
     Signs data with given . Expects RSA
     private key location as a parameter.
 
     :param private_key_loc: <str> Path to your private key
     :param data: <str> Data to be signed
     :return: base64 encoded signature
-    '''
+    """
     key = open(private_key_loc, "r").read()
     rsakey = RSA.importKey(key)
     signer = PKCS1_v1_5.new(rsakey)

@@ -1,4 +1,5 @@
 package fi.ficora.lippu;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.SpringApplication;
@@ -14,7 +15,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  */
 @SpringBootApplication
 @EnableSwagger2
-@ComponentScan(basePackages = { "fi.ficora.lippu", "fi.ficora.lippu.controller" })
+@ComponentScan(basePackages = { "fi.ficora.lippu",
+                                "fi.ficora.lippu.controller" })
 @EnableMapRepositories
 public class Application implements CommandLineRunner {
 
@@ -30,7 +32,8 @@ public class Application implements CommandLineRunner {
         new SpringApplication(Application.class).run(args);
     }
 
-    static class ExitException extends RuntimeException implements ExitCodeGenerator {
+    static class ExitException extends RuntimeException
+            implements ExitCodeGenerator {
         private static final long serialVersionUID = 1L;
 
         @Override

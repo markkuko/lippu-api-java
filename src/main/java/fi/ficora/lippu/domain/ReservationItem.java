@@ -3,7 +3,6 @@ package fi.ficora.lippu.domain;
 import fi.ficora.lippu.domain.model.CustomerInfo;
 import org.springframework.data.annotation.Id;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -17,7 +16,7 @@ public class ReservationItem {
     private OffsetDateTime validFrom;
     private OffsetDateTime validTo;
     private List<CustomerInfo> customerInfo;
-    private List<String> chosenExtraReservationDatas;
+    private List<String> chosenExtraReservationData;
     private boolean confirmed;
     private String productId;
     private String caseId;
@@ -71,12 +70,12 @@ public class ReservationItem {
         return this;
     }
 
-    public List<String> getChosenExtraReservationDatas() {
-        return chosenExtraReservationDatas;
+    public List<String> getChosenExtraReservationData() {
+        return chosenExtraReservationData;
     }
 
-    public ReservationItem setChosenExtraReservationDatas(List<String> chosenExtraReservationDatas) {
-        this.chosenExtraReservationDatas = chosenExtraReservationDatas;
+    public ReservationItem setChosenExtraReservationData(List<String> chosenExtraReservationData) {
+        this.chosenExtraReservationData = chosenExtraReservationData;
         return this;
     }
 

@@ -30,8 +30,8 @@ public class TimetableService implements ITimetableService{
     /**
      * Computes does the product given as a parameters operate
      * on the given  day.
-     * @param date
-     * @param product Product to
+     * @param date Search products based on this date
+     * @param product Product to be searched.
      * @return Boolean value, true if the product operates on the given day
      * and false otherwise.
      */
@@ -42,12 +42,12 @@ public class TimetableService implements ITimetableService{
 
     }
     /**
-     * Computes does the product given as a parameters operate
-     * on the given day and is the
-     * @param date
-     * @param product Product to
+     * Search if the product has departures on the day
+     * after the given time.
+     * @param date Wanted departure time and date.
+     * @param product Product to be searched.
      * @return Boolean value, true if the product operates on the given day
-     * and false otherwise.
+     * and has departures past the time.
      */
     public boolean hasProductDepartures(OffsetDateTime date, Product product) {
         Timetable timetable = timetableRepository.findByProductId(
@@ -76,8 +76,8 @@ public class TimetableService implements ITimetableService{
     }
     /**
      * Computes the departure time for the product on the given day
-     * @param date
-     * @param product P
+     * @param date Date of the departure.
+     * @param product Product for the
      * @return Boolean value, true if the product operates on the given day
      * and false otherwise.
      */
@@ -86,7 +86,7 @@ public class TimetableService implements ITimetableService{
                 product.getId());
         if(timetable != null) {
             ZoneOffset offset = OffsetDateTime.now().getOffset();
-            OffsetDateTime time = OffsetDateTime.of(date.getYear(),
+            return OffsetDateTime.of(date.getYear(),
                     date.getMonthValue(),
                     date.getDayOfMonth(),
                     timetable.getHour(),
@@ -95,7 +95,6 @@ public class TimetableService implements ITimetableService{
                     0,
                     offset
                     );
-            return time;
 
         } else {
             return null;
@@ -109,7 +108,7 @@ public class TimetableService implements ITimetableService{
      * @return List of product ids which have departures on the day
      */
     public List<String> getProductIdsOperateOnDay(DayOfWeek day) {
-        List<String> products  = new ArrayList<String>();
+        List<String> products  = new ArrayList<>();
         for (Timetable timetable : timetableRepository.findAll()) {
             if(timetable.getOperatedOn().contains(day)) {
                 products.add(timetable.getProductId());

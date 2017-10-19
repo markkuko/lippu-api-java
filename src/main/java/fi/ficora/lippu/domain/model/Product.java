@@ -2,11 +2,9 @@ package fi.ficora.lippu.domain.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import fi.ficora.lippu.domain.model.Accessibility;
 import fi.ficora.lippu.domain.model.CoordinateLocation;
 import fi.ficora.lippu.domain.model.ExtraService;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;

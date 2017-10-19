@@ -29,11 +29,14 @@ public interface IAuthService {
      * @param snonce Server side nonce
      * @param keyId Client key id
      * @param alg Algorithm client used for signature
-     * @return Authentication for client which has JWT Authentication token, expire time and clientId.
-     * @throws UnsupportedEncodingException
-     * @throws JoseException
+     * @return Authentication for client which has JWT Authentication token,
+     * expire time and clientId.
+     * @throws UnsupportedEncodingException Unsupported encoding when reading
+     * file.
+     * @throws JoseException Exception in JWT creation.
      */
-    public Auth verifyAuthentication(String data, String cnonce, String snonce, String keyId, String alg)
+    Auth verifyAuthentication(String data, String cnonce, String snonce,
+                              String keyId, String alg)
             throws UnsupportedEncodingException, JoseException;
 
 
@@ -43,20 +46,20 @@ public interface IAuthService {
      * @param client Client account id
      * @return Nonce if its valid or null
      */
-    public Nonce verifyNonce(String nonceValue, String client);
+    Nonce verifyNonce(String nonceValue, String client);
 
     /**
      * Retrieves client information of the current user.
      * @return Client id (principal) of the user.
      */
-    public String getClientId();
+    String getClientId();
 
     /**
-     * Generates serverside nonce for a client and stores it.
+     * Generates server side nonce for a client and stores it.
      * @param account Client account indicator to generate nonce for.
      * @return The created @{@link Nonce}.
      */
-    public Nonce generateNonce(String account) throws AccountNotFoundException;
+    Nonce generateNonce(String account) throws AccountNotFoundException;
 
     /**
      * Verifies that current user is authorized to access
@@ -65,7 +68,7 @@ public interface IAuthService {
      * @throws NotAuthorizedException If user is not allowed to access the resource,
      * {@link NotAuthorizedException}is thrown.
      */
-    public void verifyAuthorization(ReservationItem item) throws NotAuthorizedException;
+    void verifyAuthorization(ReservationItem item) throws NotAuthorizedException;
 
     /**
      * Verifies that current user is authorized to access the resource.
@@ -74,5 +77,5 @@ public interface IAuthService {
      * @throws NotAuthorizedException If user is not allowed to access the resource,
      * {@link NotAuthorizedException}is thrown.
      */
-    public void verifyAuthorization(Reservation reservation) throws NotAuthorizedException;
+    void verifyAuthorization(Reservation reservation) throws NotAuthorizedException;
 }

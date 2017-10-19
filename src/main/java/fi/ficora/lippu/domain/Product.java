@@ -1,13 +1,13 @@
 package fi.ficora.lippu.domain;
 
 import fi.ficora.lippu.domain.model.Accessibility;
-import fi.ficora.lippu.domain.model.CombinedLocation;
 import fi.ficora.lippu.domain.model.ExtraService;
 import org.springframework.data.annotation.Id;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("SpellCheckingInspection")
 public class Product {
 
 
@@ -79,7 +79,8 @@ public class Product {
         return accessibilities;
     }
 
-    public void setAccessibilities(List<Accessibility> accessibilities) {
+    @SuppressWarnings("SpellCheckingInspection")
+    public void setAccessibilities(@SuppressWarnings("SpellCheckingInspection") List<Accessibility> accessibilities) {
         this.accessibilities = accessibilities;
     }
 
@@ -141,6 +142,6 @@ public class Product {
 
     @Override
     public String toString() {
-        return id + name;
+        return id;
     }
 }

@@ -15,7 +15,7 @@ public class TicketService implements ITicketService{
 
 
     public String generateTicket(ReservationItem item) {
-        // @todo replace stub implemenation
+        // @todo replace stub implementation
         return UUID.randomUUID().toString();
     }
 

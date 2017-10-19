@@ -1,10 +1,8 @@
 package fi.ficora.lippu.service;
 
-import fi.ficora.lippu.config.Constants;
 import fi.ficora.lippu.domain.Product;
 import fi.ficora.lippu.domain.Reservation;
 import fi.ficora.lippu.domain.ReservationItem;
-import fi.ficora.lippu.domain.model.ReservationRequest;
 import fi.ficora.lippu.domain.model.ReservationRequestReservations;
 import fi.ficora.lippu.domain.model.Travel;
 import fi.ficora.lippu.domain.model.TravelPassenger;
@@ -23,31 +21,30 @@ public interface IReservationService {
      * Removes reservation from repository.
      * @param caseId Reservation caseId
      * @return Operation result code
-     * @see @{@link Constants}.
      */
-    public int delete(String caseId) throws NotAuthorizedException;
+    int delete(String caseId) throws NotAuthorizedException;
 
     /**
      * Confirms previous reservation made with availability
      * query.
      * @return List of reservation items, that have been confirmed.
      */
-    public List<ReservationItem> confirmReservation(List<ReservationRequestReservations>
-                                                            reservations);
+    List<ReservationItem> confirmReservation(List<ReservationRequestReservations>
+                                                     reservations);
     /**
      * Creates new empty reservation.
      *
      * @return Created reservation.
      */
-    public Reservation create();
+    Reservation create();
 
     /**
      * Counts reservations for given product on the given day.
-     * @param product
+     * @param product Count reservations for this product.
      * @param travelDate The date where
      * @return Count how many confirmed
      */
-    public long getReservationCount(Product product, LocalDate travelDate);
+    long getReservationCount(Product product, LocalDate travelDate);
 
     /**
      * Creates new a {@link ReservationItem}
@@ -59,15 +56,15 @@ public interface IReservationService {
      * @return Count how many confirmed
      */
 
-    public ReservationItem createResevartionItem(Product product,
-                                                 Reservation reservation,
-                                                 Travel travel,
-                                                 TravelPassenger passenger);
+    ReservationItem createReservationItem(Product product,
+                                          Reservation reservation,
+                                          Travel travel,
+                                          TravelPassenger passenger);
 
     /**
      * Add the given {@link ReservationItem} to the database.
      * @param item The reservation item to save.
      * @return The saved reservation item.
      */
-    public ReservationItem addResevationItem(ReservationItem item);
+    ReservationItem addReservationItem(ReservationItem item);
 }

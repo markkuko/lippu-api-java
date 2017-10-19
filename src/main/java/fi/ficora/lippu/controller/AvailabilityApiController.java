@@ -1,15 +1,27 @@
 package fi.ficora.lippu.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.ficora.lippu.domain.Product;
 import fi.ficora.lippu.domain.Reservation;
 import fi.ficora.lippu.domain.ReservationItem;
-import fi.ficora.lippu.domain.model.*;
-import fi.ficora.lippu.service.*;
+import fi.ficora.lippu.domain.model.ApiError;
+import fi.ficora.lippu.domain.model.AvailabilityRequest;
+import fi.ficora.lippu.domain.model.AvailabilityResponse;
+import fi.ficora.lippu.domain.model.Travel;
+import fi.ficora.lippu.domain.model.TravelAvailability;
+import fi.ficora.lippu.domain.model.TravelPassenger;
+import fi.ficora.lippu.service.IAuthService;
+import fi.ficora.lippu.service.IAvailabilityService;
+import fi.ficora.lippu.service.ITimetableService;
+import fi.ficora.lippu.service.IProductService;
 import fi.ficora.lippu.util.ConversionUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.math.BigDecimal;
+import java.util.Locale;
+import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,19 +29,13 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.math.BigDecimal;
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
-import javax.validation.Valid;
+
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-11T13:35:10.864+03:00")
 
@@ -82,7 +88,7 @@ public class AvailabilityApiController implements AvailabilityApi {
         }
         Product product = productService.getProduct(body.getTravel(), body.getContract());
         if(product != null) {
-            Reservation reservation = availabilityService.checkForCapasity(product,
+            Reservation reservation = availabilityService.checkForCapacity(product,
                 body.getTravel().getDateTime().toLocalDate(),
                 body.getPassengers().size());
             if(reservation != null) {

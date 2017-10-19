@@ -57,8 +57,6 @@ class TestWholeChain(unittest.TestCase):
                                                      token=token,
                                                      language="fi")
 
-        t = datetime.datetime.now()
-
         # Trip availaibility inquiry
         travel = self.testdata['travel_data']
         travel["travel"]["dateTime"]  = zulu.now().shift(days=2). \

@@ -2,11 +2,11 @@ package fi.ficora.lippu.domain;
 
 import org.springframework.data.annotation.Id;
 
-public class Capasity {
+public class Capacity {
     @Id
     private String id;
     private String productId;
-    private int maxCapasity;
+    private int maxCapacity;
 
     public String getProductId() {
         return productId;
@@ -16,12 +16,12 @@ public class Capasity {
         this.productId = productId;
     }
 
-    public int getMaxCapasity() {
-        return maxCapasity;
+    public int getMaxCapacity() {
+        return maxCapacity;
     }
 
-    public void setMaxCapasity(int maxCapasity) {
-        this.maxCapasity = maxCapasity;
+    public void setMaxCapacity(int maxCapacity) {
+        this.maxCapacity = maxCapacity;
     }
 
     public String getId() {

@@ -2,7 +2,6 @@ package fi.ficora.lippu.domain.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import fi.ficora.lippu.domain.model.ProductFare;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

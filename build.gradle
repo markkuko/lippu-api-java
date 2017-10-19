@@ -24,11 +24,12 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'org.owasp.dependencycheck'
 apply plugin: 'findbugs'
 
+
 //FindBugs task that load security rules only
 task findSecurityBugs(type: FindBugs) {
 
-    classes = fileTree(project.rootDir.absolutePath).include("**/*.class");
-    source = fileTree(project.rootDir.absolutePath).include("**/*.java");
+    classes = fileTree(project.rootDir.absolutePath).include("**/*.class")
+    source = fileTree(project.rootDir.absolutePath).include("**/*.java")
     classpath = files()
     pluginClasspath = project.configurations.findbugsPlugins
 
@@ -54,6 +55,7 @@ repositories {
 }
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
 
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')

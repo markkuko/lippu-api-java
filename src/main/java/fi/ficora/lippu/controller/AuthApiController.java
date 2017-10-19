@@ -1,32 +1,37 @@
 package fi.ficora.lippu.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.ficora.lippu.domain.Auth;
 import fi.ficora.lippu.domain.Nonce;
-import fi.ficora.lippu.domain.model.*;
+import fi.ficora.lippu.domain.model.AccountId;
+import fi.ficora.lippu.domain.model.ApiError;
+import fi.ficora.lippu.domain.model.AuthenticationInitResponse;
+import fi.ficora.lippu.domain.model.AuthenticationRequest;
+import fi.ficora.lippu.domain.model.AuthenticationResponse;
 import fi.ficora.lippu.exception.AccountNotFoundException;
 import fi.ficora.lippu.service.IAuthService;
 import fi.ficora.lippu.util.ConversionUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.data.annotation.Id;
-import org.springframework.stereotype.Controller;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+import java.util.Locale;
 import javax.validation.Valid;
-
-import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.context.MessageSource;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.math.BigDecimal;
-import java.time.OffsetDateTime;
-import java.util.Locale;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-11T13:35:10.864+03:00")
 
@@ -42,7 +47,6 @@ public class AuthApiController implements AuthApi {
 
     @Autowired
     private IAuthService authService;
-
 
     public AuthApiController(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;

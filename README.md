@@ -1,10 +1,10 @@
 # Java implementation for Lippu-project API
 
 
-## Howto run
+## How to run
 Project uses gradle-build tool to build software artifacts. It can also be
 used to build standalone runnable jar-file. You also need Java 8 SDK
-and openssl to create encpyption keys.
+and openssl to create encryption keys.
 
 Start the service by running, which will create server and client keys
 to the directory `keys`.
@@ -57,5 +57,5 @@ file *tests/testdata/testdata.json* and in the environment
 definitions in the *tests/env.json*.
 
 ## License
-This work is licended under EUPL (European Union Public Licence) version 1.2. See [LICENSE.txt](LICENSE.txt)
+This work is licenced under EUPL (European Union Public Licence) version 1.2. See [LICENSE.txt](LICENSE.txt)
 for more information.

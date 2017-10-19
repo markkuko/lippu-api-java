@@ -17,7 +17,7 @@ keys/client/client1.pem:
 keys/client/client1.pub: keys/client/client1.pem
 	openssl rsa -in keys/client/client1.pem -pubout > keys/client/client1.pub
 
-keys: keys/client/client1.pub keys/operator.pub keys/operator.key;
+keys: keys/client/client1.pub keys/operator.pub keys/operator.key
 
 # Creates uberjar from the sources. Build process uses docker image
 # to have reproducible builds.
