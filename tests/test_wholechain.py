@@ -28,6 +28,9 @@ class TestWholeChain(unittest.TestCase):
     """ Test the complete reservation request chain"""
 
     def setUp(self):
+        """
+        Set up test data for the test cases.
+        """
         testdata_file='tests/testdata/testdata.json'
         testdata_json=open(testdata_file)
         self.testdata = json.load(testdata_json)
@@ -39,6 +42,9 @@ class TestWholeChain(unittest.TestCase):
 
 
     def tearDown(self):
+        """
+        Tear down test data
+        """
         pass
 
     def test_make_reservation_and_delete(self):
@@ -74,7 +80,7 @@ class TestWholeChain(unittest.TestCase):
         for a in r_availability.json()['availability']:
             reservation['reservations'].append({'reservationData': a['reservationData'],
              'customerInfo': [{'name': 'Matti','phone': 'adsf', 'email': 'asdf'}]})
-        logging.info("Sending reservation request %s" % (reservation))
+        logging.info("Sending reservation request %s" % reservation)
         r_reservation = requests.post(self.envdata['reservation_url'],
                                        headers=headers, json=reservation)
         logging.info("test_make_reservation_and_delete, reservation response %s"
@@ -82,12 +88,12 @@ class TestWholeChain(unittest.TestCase):
         self.assertEqual(r_reservation.status_code, 200)
         # Delete the resevation
         headers['X-Message-Id'] = str(uuid.uuid4())
-        caseId = r_reservation.json()['caseId']
+        case_id = r_reservation.json()['caseId']
         r_delete = requests.delete(self.envdata['reservation_url']+ '/'
-                                         + caseId ,
+                                         + case_id  ,
                                          headers=headers)
         logging.info("test_make_reservation_and_delete, reservation delete for %s, response: %s"
-                      %(caseId, r_delete.text))
+                      %(case_id, r_delete.text))
         self.assertEqual(r_delete.status_code, 200)
 
 

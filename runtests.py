@@ -2,7 +2,6 @@
 """
 Lippu-project test suite runner.
 """
-from __future__ import print_function
 
 import unittest
 import logging

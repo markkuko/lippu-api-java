@@ -2,11 +2,8 @@
 """
     Client functions to access Lippu-API service.
 """
-from __future__ import print_function
-import time, datetime
-import unittest
+import datetime
 import requests
-from pprint import pprint
 import uuid
 import base64
 import logging
@@ -38,9 +35,9 @@ def generate_headers(account_id, token=None, language=None):
                'X-Transaction-Id': str(uuid.uuid4()),
                'X-Initiator': account_id,
                'content-type' :'application/json'}
-    if(language is not None):
+    if language is not None:
         headers['Accept-Language'] = language
-    if(token is not None):
+    if token is not None:
         headers['X-Authorization'] = token
     return headers
 

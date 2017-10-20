@@ -12,8 +12,6 @@
 
 """
 
-from __future__ import absolute_import
-
 import os
 import sys
 import tests.lippuclient
@@ -28,6 +26,9 @@ class TestReservationApi(unittest.TestCase):
     """ ReservationApi unit test stubs """
 
     def setUp(self):
+        """
+        Set up test data for the test cases.
+        """
         testdata_file='tests/testdata/testdata.json'
         testdata_json=open(testdata_file)
         self.testdata = json.load(testdata_json)
@@ -38,6 +39,9 @@ class TestReservationApi(unittest.TestCase):
         env_json.close()
 
     def tearDown(self):
+        """
+        Tear down test data.
+        """
         pass
 
     def test_reservation_(self):
@@ -141,7 +145,7 @@ class TestReservationApi(unittest.TestCase):
         reservation = {'reservations': [
             {'reservationData': r_availability.json()['availability'][0]['reservationData'],
              'customerInfo': [{'name': 'Matti','phone': 'adsf', 'email': 'asdf'}]}]}
-        logging.info("Sending reservation %s" % (reservation))
+        logging.info("Sending reservation %s" % reservation)
         r_reservation = requests.post(self.envdata['reservation_url'],
                                       headers=headers, json=reservation)
         logging.info("test_reservation_delete, reservation response %s"

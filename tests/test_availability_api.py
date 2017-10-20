@@ -25,6 +25,9 @@ class TestAvailabilityApi(unittest.TestCase):
     """ AvailabilityApi unit test stubs """
 
     def setUp(self):
+        """
+        Set up test data for the test cases.
+        """
         testdata_file='tests/testdata/testdata.json'
         testdata_json=open(testdata_file)
         self.testdata = json.load(testdata_json)
@@ -36,6 +39,9 @@ class TestAvailabilityApi(unittest.TestCase):
 
 
     def tearDown(self):
+        """
+        Tear down test data.
+        """
         pass
 
     def test_availability(self):
@@ -54,8 +60,6 @@ class TestAvailabilityApi(unittest.TestCase):
         headers = tests.lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
                                                      token=token,
                                                      language="fi")
-
-        t = datetime.datetime.now()
 
         # Trip availaibility inquiry
         travel = self.testdata['travel_data']

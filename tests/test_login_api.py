@@ -32,6 +32,10 @@ class TestLoginApi(unittest.TestCase):
     """ LoginApi unit test stubs """
 
     def setUp(self):
+        """
+        Set up test data for the test cases.
+        """
+
         testdata_file='tests/testdata/testdata.json'
         testdata_json=open(testdata_file)
         self.testdata = json.load(testdata_json)
@@ -42,6 +46,9 @@ class TestLoginApi(unittest.TestCase):
         env_json.close()
         pass
     def tearDown(self):
+        """
+        Tear down.
+        """
         pass
     def test_commit_auth(self):
         """
@@ -92,7 +99,6 @@ class TestLoginApi(unittest.TestCase):
         t = zulu.now()
         account_id=self.testdata['valid_client1']
 
-        headers = lippuclient.generate_headers(account_id=account_id)
         response = lippuclient.authenticate(self.envdata['base_url'],
                                     str(uuid.uuid4()),
                                     account_id,
@@ -158,7 +164,6 @@ class TestLoginApi(unittest.TestCase):
         nonce = str(uuid.uuid4())
         headers['X-Message-Id'] = str(uuid.uuid4())
         nonces = r_init.json()['nonce'] + nonce
-        data = base64.b64encode(nonces.encode()).decode("utf-8")
         commit_body = {'data':str(uuid.uuid4()), 'pubKeyId':self.testdata['key_id_client1'],
                        'cnonce':nonce,'snonce': r_init.json()['nonce'],'alg':'RSA+SHA256'}
         r_commit = requests.post(self.envdata['auth_url'] + '/commit',
@@ -187,7 +192,7 @@ class TestLoginApi(unittest.TestCase):
         headers['X-Message-Id'] = str(uuid.uuid4())
         nonces = r_init.json()['nonce'] + nonce
         data = base64.b64encode(nonces.encode()).decode("utf-8")
-        commit_body = {'data':str(uuid.uuid4()), 'pubKeyId':self.testdata['non_valid_key_id_client1'],
+        commit_body = {'data':data, 'pubKeyId':self.testdata['non_valid_key_id_client1'],
                        'cnonce':nonce,'snonce': r_init.json()['nonce'],'alg':'RSA+SHA256'}
         r_commit = requests.post(self.envdata['auth_url'] + '/commit',
                                  headers=headers, json=commit_body)
@@ -215,7 +220,7 @@ class TestLoginApi(unittest.TestCase):
         nonce = str(uuid.uuid4())
         nonces =  r_init.json()['nonce'] + nonce
         data = base64.b64encode(nonces.encode()).decode("utf-8")
-        commit_body = {'data':str(uuid.uuid4()), 'pubKeyId': None,
+        commit_body = {'data':data, 'pubKeyId': None,
                        'cnonce':nonce,'snonce': r_init.json()['nonce'],'alg':'RSA+SHA256'}
         r_commit = requests.post(self.envdata['auth_url'] + '/commit',
                                  headers=headers, json=commit_body)

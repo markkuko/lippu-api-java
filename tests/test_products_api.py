@@ -25,6 +25,9 @@ class TestProductsApi(unittest.TestCase):
     """ ProductsApi unit test """
 
     def setUp(self):
+        """
+        Set up test data for the test cases.
+        """
         testdata_file='tests/testdata/testdata.json'
         testdata_json=open(testdata_file)
         self.testdata = json.load(testdata_json)
