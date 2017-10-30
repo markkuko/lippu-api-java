@@ -42,6 +42,28 @@
     "suitablePassengerCategories": ["Adult", "Child","Senior"]
   },
   {
+    "_class" : "fi.ficora.lippu.domain.Product",
+    "id" : "63787ead-29b4-4b5b-8c99-695ae28e2da8",
+    "name" : "Single ticket",
+    "productType": "PRODUCT-SINGLE-TICKET",
+    "contract": "CONTRACT-362243",
+    "description": "The validity of a single ticket starts at the time of purchase. The validity period will be printed to the ticket.",
+    "fromLat": 60.4,
+    "fromLon": 25.7,
+    "fromId": "Po3001",
+    "toLat": 60.5,
+    "toLon": 26.9,
+    "accessibilities": [
+      {"title": "WHEELCHAIR", "fare": {"currency" : "EUR", "amount": 0, "vatPercent": 0},
+        "description" : "Space for wheelchair"}
+    ],
+    "extraServices": [
+      {"title": "CHILDSEAT", "fare": { "amount" : 13, "currency": "EUR", "vatPercent": 10},
+        "description" : "Separate child safety seat for the travel."}
+    ],
+    "suitablePassengerCategories": ["Adult", "Child","Senior"]
+  },
+  {
     "_class" : "fi.ficora.lippu.domain.Capacity",
     "productId" : "be0f6694-6ca1-4175-a25f-28a709380ad4",
     "maxCapacity": 60
@@ -54,6 +76,17 @@
       "MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY", "SUNDAY"
     ],
     "hour" : 20,
+    "minutes": 0
+
+  },
+  {
+    "_class" : "fi.ficora.lippu.domain.Timetable",
+    "id" : "e3db58ef-0c21-41e9-bb58-b294b056a3c2",
+    "productId" : "63787ead-29b4-4b5b-8c99-695ae28e2da8",
+    "operatedOn": [
+      "MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY"
+    ],
+    "hour" : 19,
     "minutes": 0
 
   },

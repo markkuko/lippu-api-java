@@ -3,6 +3,8 @@ package fi.ficora.lippu.service;
 import fi.ficora.lippu.domain.Fare;
 import fi.ficora.lippu.domain.Product;
 import fi.ficora.lippu.domain.Transport;
+import fi.ficora.lippu.domain.model.Accessibility;
+import fi.ficora.lippu.domain.model.ProductDescription;
 import fi.ficora.lippu.domain.model.ProductList;
 import fi.ficora.lippu.domain.model.Travel;
 import fi.ficora.lippu.repository.DataRepository;
@@ -20,6 +22,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -43,24 +46,34 @@ public class ProductService implements IProductService{
 
     }
     public ProductList getAvailableProductsTo(LocalDate date, Double toLat,
-                                                Double toLon) {
+                                                Double toLon,
+                                              List<Accessibility> accessibilities) {
         List<Product> products;
         if(date != null && toLon != null && toLat != null) {
 
             products = productRepository.findByToLatAndToLon(
                     toLat, toLon);
+            if(accessibilities.size() > 0) {
+                products = filterByAccessibilities(products,
+                        accessibilities);
+            }
             return checkProductTimetable(products, date);
         } else {
             return null;
         }
     }
     public ProductList getAvailableProductsFrom(LocalDate date, Double fromLat,
-                                            Double fromLon) {
+                                            Double fromLon,
+                                                List<Accessibility> accessibilities) {
         List<Product> products;
         if(date != null && fromLon != null && fromLat != null) {
 
             products = productRepository.findByFromLatAndFromLon(
                     fromLat, fromLon);
+            if(accessibilities.size() > 0) {
+                products = filterByAccessibilities(products,
+                        accessibilities);
+            }
             return checkProductTimetable(products, date);
         } else {
             return null;
@@ -69,27 +82,41 @@ public class ProductService implements IProductService{
     }
     public ProductList getAvailableProducts(LocalDate date, Double fromLat,
                                             Double fromLon, Double toLat,
-                                            Double toLon) {
+                                            Double toLon,List<Accessibility> accessibilities) {
         List<Product> products;
         if(date != null && fromLon != null && fromLat != null &&
                 toLat != null && toLon != null) {
 
             products = productRepository.findByFromLatAndFromLonAndToLatAndToLon(
                     fromLat, fromLon, toLat,toLon);
+            if(accessibilities.size() > 0) {
+                products = filterByAccessibilities(products,
+                        accessibilities);
+            }
             return checkProductTimetable(products, date);
         } else {
             return null;
         }
 
     }
-    public ProductList getAvailableProducts(LocalDate date) {
+    public ProductList getAvailableProducts(LocalDate date,
+                                            List<Accessibility> accessibilities) {
         DayOfWeek day = date.getDayOfWeek();
         List<String> products = timetableService.getProductIdsOperateOnDay(day);
         ProductList productList = new ProductList();
         for(String productId: products) {
             Product product = productRepository.findOne(productId);
-            productList.add(ConversionUtil.productToProductDescription(product,
-                timetableService.getProductDeparture(date, product)));
+            // Check are there required accessibilities
+            if(accessibilities.size() > 0) {
+                if(hasRequiredAccessibityFeatures(product,
+                        accessibilities)) {
+                    productList.add(ConversionUtil.productToProductDescription(product,
+                            timetableService.getProductDeparture(date, product)));
+                }
+            } else {
+                productList.add(ConversionUtil.productToProductDescription(product,
+                        timetableService.getProductDeparture(date, product)));
+            }
         }
         return productList;
     }
@@ -129,7 +156,7 @@ public class ProductService implements IProductService{
         List<Product> validProducts=
                 checkProductTimetable2(products,travel.getDateTime());
         // @todo handle case where multiple product found
-        if(validProducts.size() > 0) {
+        if(validProducts.size() == 1) {
             return validProducts.get(0);
         } else {
             return null;
@@ -164,4 +191,45 @@ public class ProductService implements IProductService{
         return productList;
     }
 
+    private List<Product> filterByAccessibilities(List<Product> products,
+                                                  List<Accessibility> accessibilities) {
+
+        List<Product> returnProducts = new ArrayList<>();
+        for(Product product: products) {
+            if(hasRequiredAccessibityFeatures(
+                    product, accessibilities)) {
+                returnProducts.add(product);
+            }
+        }
+        return returnProducts;
+    }
+    private boolean hasRequiredAccessibityFeatures(Product product,
+                                                   List<Accessibility> accessibilities) {
+        boolean foundAll = true;
+        for (Accessibility accessibility1 : accessibilities) {
+            boolean foundAccessibility = false;
+            for(Accessibility accessibility : product.getAccessibilities()) {
+                if(accessibility.getTitle().compareTo(
+                        accessibility1.getTitle()) == 0) {
+                    log.debug("Found accessibility:{}",
+                            accessibility.getTitle());
+                    foundAccessibility = true;
+                    break;
+                }
+            }
+            if(!foundAccessibility) {
+                log.debug("Did not find accessibility {} in the product {}",
+                        accessibility1.getTitle(),
+                        product.getId()
+                );
+                foundAll = false;
+                break;
+            }
+        }
+        if(foundAll) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

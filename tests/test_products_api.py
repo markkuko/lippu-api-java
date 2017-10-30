@@ -43,6 +43,11 @@ class TestProductsApi(unittest.TestCase):
 
 
     def test_products_current_date(self):
+        """
+        Test API endpoint with current date. Expects
+        two products in the response.
+
+        """
         token = tests.lippuclient.get_authentication_token(self.envdata['base_url'],
                                                            str(uuid.uuid4()),
                                                            self.testdata['valid_client1'],
@@ -57,16 +62,31 @@ class TestProductsApi(unittest.TestCase):
         logging.info("test_products_current_date, response: %s ", response.json())
         self.assertEqual(response.status_code, 200)
         self.assertGreater(len(response.json()["products"]), 0)
-        self.assertEqual(response.json()["products"][0]["contract"], valid_response["products"]["contract"])
         self.assertEqual(response.json()["passengerCategories"],
                          valid_response["passengerCategories"])
-        self.assertEqual(response.json()["products"][0]["productType"], valid_response["products"]["productType"])
-        self.assertEqual(response.json()["products"][0]["accessibility"],
-                         valid_response["products"]["accessibility"])
-        self.assertEqual(response.json()["products"][0]["suitablePassengerCategories"],
-                         valid_response["products"]["suitablePassengerCategories"])
+        for pr in response.json()["products"]:
+            if pr["contract"] is valid_response["products1"]["contract"]:
+                self.assertEqual(pr["contract"]["contract"], valid_response["products1"]["contract"])
+                self.assertEqual(pr["contract"]["productType"], valid_response["products1"]["productType"])
+                self.assertEqual(pr["contract"]["accessibility"],
+                         valid_response["products1"]["accessibility"])
+                self.assertEqual(pr["contract"]["suitablePassengerCategories"],
+                         valid_response["products1"]["suitablePassengerCategories"])
+            if pr["contract"] is valid_response["products2"]["contract"]:
+                self.assertEqual(pr["contract"]["productType"], valid_response["products2"]["productType"])
+                self.assertEqual(pr["contract"]["accessibility"],
+                             valid_response["products2"]["accessibility"])
+                self.assertEqual(pr["contract"]["extraServices"],
+                                 valid_response["products2"]["extraServices"])
+                self.assertEqual(pr["contract"]["suitablePassengerCategories"],
+                             valid_response["products2"]["suitablePassengerCategories"])
 
     def test_products_from_coordinates(self):
+        """
+        Test API endpoint with current date and from coordinates. Expects
+        one product in the response.
+
+        """
         token = tests.lippuclient.get_authentication_token(self.envdata['base_url'],
                                                            str(uuid.uuid4()),
                                                            self.testdata['valid_client1'],
@@ -86,14 +106,57 @@ class TestProductsApi(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertGreater(len(response.json()), 0)
-        self.assertEqual(response.json()["products"][0]["contract"], valid_response["products"]["contract"])
+        self.assertEqual(len(response.json()["products"]), 1)
+        self.assertEqual(response.json()["products"][0]["contract"],
+                         valid_response["products1"]["contract"])
         self.assertEqual(response.json()["passengerCategories"],
                          valid_response["passengerCategories"])
-        self.assertEqual(response.json()["products"][0]["productType"], valid_response["products"]["productType"])
+        self.assertEqual(response.json()["products"][0]["productType"],
+                         valid_response["products1"]["productType"])
         self.assertEqual(response.json()["products"][0]["accessibility"],
-                         valid_response["products"]["accessibility"])
+                         valid_response["products1"]["accessibility"])
         self.assertEqual(response.json()["products"][0]["suitablePassengerCategories"],
-                         valid_response["products"]["suitablePassengerCategories"])
+                         valid_response["products1"]["suitablePassengerCategories"])
+
+    def test_products_to_coordinates(self):
+        """
+        Test API endpoint with next monday and to coordinates. Expects
+        one product in the response.
+
+        """
+        token = tests.lippuclient.get_authentication_token(self.envdata['base_url'],
+                                                           str(uuid.uuid4()),
+                                                           self.testdata['valid_client1'],
+                                                           self.testdata['key_id_client1'],
+                                                           self.testdata['key_path_client1'])
+        headers = tests.lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
+                                                     token=token,
+                                                     language="fi")
+
+        t = datetime.datetime.now()
+        t = t + datetime.timedelta(days=(7 - t.weekday()))
+        valid_response = self.testdata['test_products_current_date_response']
+        query = {"toLat": "60.5","toLon":"26.9"}
+        response = tests.lippuclient.product_query(self.envdata['base_url'],
+                                                   headers,
+                                                   t, query)
+        logging.info("test_products_to_coordinates, response:" + response.text)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertGreater(len(response.json()), 0)
+        self.assertEqual(len(response.json()["products"]), 1)
+        self.assertEqual(response.json()["products"][0]["contract"],
+                         valid_response["products2"]["contract"])
+        self.assertEqual(response.json()["passengerCategories"],
+                         valid_response["passengerCategories"])
+        self.assertEqual(response.json()["products"][0]["productType"],
+                         valid_response["products2"]["productType"])
+        self.assertEqual(response.json()["products"][0]["accessibility"],
+                         valid_response["products2"]["accessibility"])
+        self.assertEqual(response.json()["products"][0]["suitablePassengerCategories"],
+                         valid_response["products2"]["suitablePassengerCategories"])
+        self.assertEqual(response.json()["products"][0]["extraServices"],
+                         valid_response["products2"]["extraServices"])
     def test_products_coordinates(self):
 
         token = tests.lippuclient.get_authentication_token(self.envdata['base_url'],
@@ -116,14 +179,14 @@ class TestProductsApi(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()["products"]), 1)
-        self.assertEqual(response.json()["products"][0]["contract"], valid_response["products"]["contract"])
+        self.assertEqual(response.json()["products"][0]["contract"], valid_response["products1"]["contract"])
         self.assertEqual(response.json()["passengerCategories"],
                          valid_response["passengerCategories"])
-        self.assertEqual(response.json()["products"][0]["productType"], valid_response["products"]["productType"])
+        self.assertEqual(response.json()["products"][0]["productType"], valid_response["products1"]["productType"])
         self.assertEqual(response.json()["products"][0]["accessibility"],
-                         valid_response["products"]["accessibility"])
+                         valid_response["products1"]["accessibility"])
         self.assertEqual(response.json()["products"][0]["suitablePassengerCategories"],
-                         valid_response["products"]["suitablePassengerCategories"])
+                         valid_response["products1"]["suitablePassengerCategories"])
     def test_products_date_in_the_past(self):
         """
         Test case for products
@@ -169,6 +232,28 @@ class TestProductsApi(unittest.TestCase):
         self.assertEqual(len(response.json()["products"]), 0)
 
 
+    def test_products_invalid_accessibility(self):
+        """
+        Test API endpoint with current date and
+
+        """
+        token = tests.lippuclient.get_authentication_token(self.envdata['base_url'],
+                                                           str(uuid.uuid4()),
+                                                           self.testdata['valid_client1'],
+                                                           self.testdata['key_id_client1'],
+                                                           self.testdata['key_path_client1'])
+        headers = tests.lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
+                                                     token=token,
+                                                     language="fi")
+        valid_response = self.testdata['test_products_current_date_response']
+        query = {"accessibility": ["PUSHCHAIR", "TESTING"]}
+        t = datetime.datetime.now()
+        response = tests.lippuclient.product_query(self.envdata['base_url'],
+                                                   headers,
+                                                   t, query)
+        logging.info("test_products_invalid_accessibility, response: %s ", response.json())
+        self.assertEqual(response.status_code, 400)
+
     def test_products_non_valid_token(self):
         """
         Test case for using non valid authentication token for products query
@@ -183,6 +268,71 @@ class TestProductsApi(unittest.TestCase):
                                                    t)
         logging.info("test_products_non_valid_token %s" % response .text)
         self.assertEqual(response.status_code, 403)
+
+    def test_products_filter_accessibility(self):
+        """
+        Test API endpoint with next monday and request
+        wheelchair access. Expect one product from endpoint.
+
+        """
+        t = datetime.datetime.now()
+        t = t + datetime.timedelta(days=(7 - t.weekday()))
+        token = tests.lippuclient.get_authentication_token(self.envdata['base_url'],
+                                                           str(uuid.uuid4()),
+                                                           self.testdata['valid_client1'],
+                                                           self.testdata['key_id_client1'],
+                                                           self.testdata['key_path_client1'])
+        headers = tests.lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
+                                                     token=token,
+                                                     language="fi")
+        query = {"accessibility": ["WHEELCHAIR"]}
+        valid_response = self.testdata['test_products_current_date_response']
+        response = tests.lippuclient.product_query(self.envdata['base_url'],
+                                                   headers,
+                                                   t,query)
+        logging.info("test_products_filter_accessibility, response: %s ", response.json())
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()["products"]), 1)
+        self.assertEqual(response.json()["passengerCategories"],
+                         valid_response["passengerCategories"])
+        for pr in response.json()["products"]:
+            if pr["contract"] is valid_response["products2"]["contract"]:
+                self.assertEqual(pr["contract"]["productType"], valid_response["products2"]["productType"])
+                self.assertEqual(pr["contract"]["accessibility"],
+                                 valid_response["products2"]["accessibility"])
+                self.assertEqual(pr["contract"]["extraServices"],
+                                 valid_response["products2"]["extraServices"])
+                self.assertEqual(pr["contract"]["suitablePassengerCategories"],
+                                 valid_response["products2"]["suitablePassengerCategories"])
+
+    def test_products_filter_accessibility(self):
+        """
+        Test API endpoint with next monday and request
+        wheelchair and step_free_access access. Expect
+        0 products as a result.
+
+        """
+        t = datetime.datetime.now()
+        t = t + datetime.timedelta(days=(7 - t.weekday()))
+        token = tests.lippuclient.get_authentication_token(self.envdata['base_url'],
+                                                           str(uuid.uuid4()),
+                                                           self.testdata['valid_client1'],
+                                                           self.testdata['key_id_client1'],
+                                                           self.testdata['key_path_client1'])
+        headers = tests.lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
+                                                     token=token,
+                                                     language="fi")
+        query = {"accessibility": ["WHEELCHAIR", "STEP_FREE_ACCESS"]}
+        valid_response = self.testdata['test_products_current_date_response']
+        response = tests.lippuclient.product_query(self.envdata['base_url'],
+                                                   headers,
+                                                   t,query)
+        logging.info("test_products_filter_accessibility, response: %s ", response.json())
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()["products"]), 0)
+        self.assertEqual(response.json()["passengerCategories"],
+                         valid_response["passengerCategories"])
+
 
 if __name__ == '__main__':
     unittest.main()

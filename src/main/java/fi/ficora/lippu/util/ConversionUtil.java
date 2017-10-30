@@ -25,6 +25,7 @@ public class ConversionUtil {
                 .validFrom(validFrom)
                 .validTo(validFrom.plusMinutes(Constants.TICKET_VALID_PERIOD_IN_MINUTES))
                 .accessibility(product.getAccessibilities())
+                .extraServices(product.getExtraServices())
                 .suitablePassengerCategories(product.getSuitablePassengerCategories());
 
     }

@@ -44,7 +44,7 @@
     ]
   },
   "test_products_current_date_response" : {
-    "products": {
+    "products1": {
       "contract": "CONTRACT-AB123CD",
       "productType": "PRODUCT-SINGLE-TICKET",
       "accessibility": [{
@@ -58,6 +58,26 @@
       "suitablePassengerCategories":["Adult", "Child", "Senior"]
 
   },
+    "products2": {
+      "contract": "CONTRACT-362243",
+      "productType": "PRODUCT-SINGLE-TICKET",
+      "accessibility": [{
+        "title": "WHEELCHAIR",
+        "additionalInformation" : null,
+        "fare" : {"amount": 0, "currency":"EUR", "vatPercent": 0},
+        "description" : "Space for wheelchair"
+      }],
+      "extraServices": [{
+        "title": "CHILDSEAT",
+        "fare": { "amount" : 13, "currency": "EUR", "vatPercent": 10},
+        "extraServiceReservationData" : null,
+        "description" : "Separate child safety seat for the travel."
+      }
+
+      ],
+      "suitablePassengerCategories":["Adult", "Child", "Senior"]
+
+    },
     "passengerCategories": ["Adult", "Child", "Senior", "Youth"]
   }
 }

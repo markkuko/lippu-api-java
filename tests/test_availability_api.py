@@ -83,7 +83,7 @@ class TestAvailabilityApi(unittest.TestCase):
             for applicable in item['applicableForPassengers']:
                 self.assertNotEqual(applicable, 'None')
                 self.assertEqual(applicable['category'] in
-                                 product['products']['suitablePassengerCategories'], True)
+                                 product['products1']['suitablePassengerCategories'], True)
         self.assertEqual(r.json()['travel']['dateTime'].startswith(
             zulu.now().shift(days=2). \
                 replace(hour=20, minute=00).format('%Y-%m-%dT%H:%M')

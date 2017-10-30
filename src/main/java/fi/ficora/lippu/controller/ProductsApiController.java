@@ -2,6 +2,7 @@ package fi.ficora.lippu.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.ficora.lippu.config.Constants;
+import fi.ficora.lippu.domain.model.Accessibility;
 import fi.ficora.lippu.domain.model.ApiError;
 import fi.ficora.lippu.domain.model.ProductList;
 import fi.ficora.lippu.domain.model.ProductQueryResponse;
@@ -14,8 +15,14 @@ import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -41,6 +48,8 @@ public class ProductsApiController implements ProductsApi {
 
     @Autowired
     private IProductService productService;
+
+    private static final Logger log = LoggerFactory.getLogger(ProductsApiController.class);
     public ProductsApiController(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
@@ -72,10 +81,31 @@ public class ProductsApiController implements ProductsApi {
             @RequestParam(value = "toLat", required = false) Double toLat,
             @ApiParam(value = "Longitude part of a coordinate to narrow products query to a certain location.") @Valid
             @RequestParam(value = "toLon", required = false) Double toLon,
+            @ApiParam(value = "List of required accessibility options for the product.",
+                    allowableValues = "WHEELCHAIR, PUSHCHAIR, PASSENGER_CART, LOW-FLOOR, GUIDE_DOG, ONBOARD_ASSISTANCE," +
+                            "BOARDING_ASSISTANCE, UNACCOMPANIED_MINOR_ASSISTANCE, STEP_FREE_ACCESS") @Valid
+            @RequestParam(value = "accessibility", required = false) List<String> accessibility,
             @RequestHeader(value = "Accept", required = false) String accept) throws Exception {
 
-
-        // @todo Replace stub implementation
+        List<Accessibility> accessibilities = new ArrayList<>();
+        if(accessibility != null) {
+            for (String accessibilityTitle: accessibility) {
+                Accessibility.TitleEnum aacc = Accessibility.TitleEnum.
+                        fromValue(accessibilityTitle);
+                if(aacc == null){
+                    log.info("Invalid accessibility: {}", accessibilityTitle);
+                    ApiError error = new ApiError();
+                    error.setStatusCode(new BigDecimal(400));
+                    error.setMessage(messageSource.getMessage(
+                            "http.error.message.400.accessiblity",
+                            new Object[]{accessibilityTitle}, Locale.ENGLISH));
+                    return new ResponseEntity<ApiError>(error,
+                            HttpStatus.BAD_REQUEST);
+                } else {
+                    accessibilities.add(new Accessibility().title(aacc));
+                }
+            }
+        }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate localDate = LocalDate.parse(date, formatter);
         if(localDate.isBefore(LocalDate.now())) {
@@ -93,24 +123,25 @@ public class ProductsApiController implements ProductsApi {
                     Double.valueOf(oneDigit.format(fromLat)),
                     Double.valueOf(oneDigit.format(fromLon)),
                     Double.valueOf(oneDigit.format(toLat)),
-                    Double.valueOf(oneDigit.format(toLon)));
+                    Double.valueOf(oneDigit.format(toLon)),
+                    accessibilities);
 
         } else if(fromLat != null && fromLon != null) {
             productList = productService.getAvailableProductsFrom(localDate,
                     Double.valueOf(oneDigit.format(fromLat)),
-                    Double.valueOf(oneDigit.format(fromLon)));
+                    Double.valueOf(oneDigit.format(fromLon)),
+                    accessibilities);
         } else if(toLat != null && toLon != null) {
-            productList = productService.getAvailableProductsFrom(localDate,
+            productList = productService.getAvailableProductsTo(localDate,
                     Double.valueOf(oneDigit.format(toLat)),
-                    Double.valueOf(oneDigit.format(toLon)));
+                    Double.valueOf(oneDigit.format(toLon)),
+                    accessibilities);
         } else {
-            productList = productService.getAvailableProducts(localDate);
+            productList = productService.getAvailableProducts(localDate,
+                    accessibilities);
         }
-
         response.setProducts(productList);
         response.setPassengerCategories(productService.getPassengerCategories());
-
         return new ResponseEntity<ProductQueryResponse>(response, HttpStatus.OK);
-
     }
 }
