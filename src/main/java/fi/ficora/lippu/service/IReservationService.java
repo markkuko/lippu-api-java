@@ -3,6 +3,7 @@ package fi.ficora.lippu.service;
 import fi.ficora.lippu.domain.Product;
 import fi.ficora.lippu.domain.Reservation;
 import fi.ficora.lippu.domain.ReservationItem;
+import fi.ficora.lippu.domain.model.ExtraService;
 import fi.ficora.lippu.domain.model.ReservationRequestReservations;
 import fi.ficora.lippu.domain.model.Travel;
 import fi.ficora.lippu.domain.model.TravelPassenger;
@@ -12,7 +13,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * Interface declaration for Reservation functionality.
+ * Interface declaration for Reservation functionality. Methods
+ * to create and delete reservation and reservation codes.
  */
 public interface IReservationService {
 
@@ -67,4 +69,13 @@ public interface IReservationService {
      * @return The saved reservation item.
      */
     ReservationItem addReservationItem(ReservationItem item);
+
+    /**
+     * Generates reservation code for extra service to be
+     * included in the reservation item.
+     * @see {@link ReservationItem}
+     * @param service The service to generate the reservation code for.
+     * @return String representation for the extra service reservation code.
+     */
+    String generateExtraServiceReservationCode(ExtraService service);
 }

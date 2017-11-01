@@ -4,9 +4,11 @@ import fi.ficora.lippu.domain.Product;
 import fi.ficora.lippu.domain.Reservation;
 import fi.ficora.lippu.domain.ReservationItem;
 import fi.ficora.lippu.domain.model.Travel;
+import fi.ficora.lippu.domain.model.TravelAvailability;
 import fi.ficora.lippu.domain.model.TravelPassenger;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Interface declaration for Availability functionality.
@@ -26,20 +28,20 @@ public interface IAvailabilityService {
      * @param travel Information about the travel.
      * @return Reserved item.
      */
-    ReservationItem addAvailability(Reservation reservation,
-                                    Product product,
-                                    TravelPassenger passenger,
-                                    Travel travel);
+    TravelAvailability addAvailability(Reservation reservation,
+                                       Product product,
+                                       TravelPassenger passenger,
+                                       Travel travel);
 
     /**
      * Checks if there are available capacity for given product,
      * in the given date with amount of passengers.
      * @param product Product for the capacity check
      * @param travelDate Date for the travel.
-     * @param passengers Number of passengers.
+     * @param passengers List of Travel Passengers
      * @return Reservation for the capacity reservation if necessary
      * capacity is available, otherwice null.
      */
     Reservation checkForCapacity(Product product, LocalDate travelDate,
-                                 int passengers);
+                                 List<TravelPassenger> passengers);
 }

@@ -3,10 +3,7 @@ package fi.ficora.lippu.service;
 import fi.ficora.lippu.domain.Fare;
 import fi.ficora.lippu.domain.Product;
 import fi.ficora.lippu.domain.Transport;
-import fi.ficora.lippu.domain.model.Accessibility;
-import fi.ficora.lippu.domain.model.ProductDescription;
-import fi.ficora.lippu.domain.model.ProductList;
-import fi.ficora.lippu.domain.model.Travel;
+import fi.ficora.lippu.domain.model.*;
 import fi.ficora.lippu.repository.DataRepository;
 import fi.ficora.lippu.repository.ProductRepository;
 import fi.ficora.lippu.repository.TimetableRepository;
@@ -133,7 +130,7 @@ public class ProductService implements IProductService{
 
 
     public Fare getFare(String id) {
-        // @todo replace stub implementation
+        // @todo replace stub implementation, which would calculate proper prices.
         Fare fare = new Fare();
         fare.setAmount(14d);
         fare.setVat(10d);
@@ -153,6 +150,7 @@ public class ProductService implements IProductService{
                         travel.getFrom().getLon(),
                         travel.getTo().getLat(),
                         travel.getTo().getLon());
+
         List<Product> validProducts=
                 checkProductTimetable2(products,travel.getDateTime());
         // @todo handle case where multiple product found
@@ -203,33 +201,55 @@ public class ProductService implements IProductService{
         }
         return returnProducts;
     }
-    private boolean hasRequiredAccessibityFeatures(Product product,
+    public boolean hasRequiredAccessibityFeatures(Product product,
                                                    List<Accessibility> accessibilities) {
         boolean foundAll = true;
-        for (Accessibility accessibility1 : accessibilities) {
+        for (Accessibility accessibility : accessibilities) {
             boolean foundAccessibility = false;
-            for(Accessibility accessibility : product.getAccessibilities()) {
-                if(accessibility.getTitle().compareTo(
-                        accessibility1.getTitle()) == 0) {
+            if (accessibility.getTitle().equals(Accessibility.TitleEnum.UNKNOWN)) {
+                foundAccessibility = true;
+            } else {
+                Accessibility accessibility2 = getAccessibilityFromProduct(product,
+                        accessibility.getTitle());
+                if (accessibility2 != null) {
                     log.debug("Found accessibility:{}",
-                            accessibility.getTitle());
+                            accessibility2.getTitle());
                     foundAccessibility = true;
-                    break;
                 }
             }
             if(!foundAccessibility) {
                 log.debug("Did not find accessibility {} in the product {}",
-                        accessibility1.getTitle(),
+                        accessibility.getTitle(),
                         product.getId()
                 );
                 foundAll = false;
                 break;
             }
         }
-        if(foundAll) {
-            return true;
-        } else {
-            return false;
+        return foundAll;
+    }
+    public Accessibility getAccessibilityFromProduct(Product product,
+                                          Accessibility.TitleEnum title) {
+        for (Accessibility accessibility : product.getAccessibilities()) {
+            if (accessibility.getTitle().compareTo(
+                    title) == 0) {
+                log.debug("Found accessibility:{}",
+                        accessibility.getTitle());
+                return accessibility;
+            }
         }
+        return null;
+    }
+    public ExtraService getExtraServiceFromProduct(Product product,
+                                                    String title) {
+        for (ExtraService extraService : product.getExtraServices()) {
+            if (extraService.getTitle().compareTo(
+                    title) == 0) {
+                log.debug("Found extraService:{}",
+                        extraService.getTitle());
+                return extraService;
+            }
+        }
+        return null;
     }
 }

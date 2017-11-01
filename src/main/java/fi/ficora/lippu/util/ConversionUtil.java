@@ -8,10 +8,11 @@ import fi.ficora.lippu.domain.model.*;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.List;
 
 /**
- * Utility class, which has static conversions from class to another
- * and general string methods.
+ * Utility class, which has general string methods and
+ * static methods to convert classes to another class.
  */
 public class ConversionUtil {
 
@@ -31,18 +32,24 @@ public class ConversionUtil {
     }
 
     public static TravelAvailability reservationItemToTravelPassenger(
-            ReservationItem item) {
-        TravelPassenger passenger = new TravelPassenger()
+            ReservationItem item, TravelPassenger passenger,
+                List<Accessibility> accessibilities,
+                List<ExtraService> services) {
+        TravelPassenger returnPassenger = new TravelPassenger()
                 .category(item.getPassengerCategory());
+        returnPassenger.setAccessibility(accessibilities);
+        if(services.size() > 0) {
+            returnPassenger.setExtraServices(services);
+        }
         return new TravelAvailability()
                 .reservationData(item.getReservationData())
-                .addApplicableForPassengersItem(passenger)
+                .addApplicableForPassengersItem(returnPassenger)
                 .validTo(item.getReservationValidTo());
     }
     public static ProductFare fareToProductFare(Fare fare) {
         return new ProductFare()
                 .currency(fare.getCurrency())
-                .vatPercent(new BigDecimal(fare.getVat()))
+                .vatPercent(BigDecimal.valueOf(fare.getVat()))
                 .amount(fare.getAmount());
     }
 

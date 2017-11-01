@@ -285,6 +285,156 @@ class TestAvailabilityApi(unittest.TestCase):
         self.assertEqual(r.status_code, 400)
         self.assertEqual(r.json()["statusCode"], 400)
 
+    def test_availability_accessibility(self):
+        """
+        Test case for a valid availability query. Reads the
+        travel properties from test-data.json, sets the
+        travel dateTime to next monday at 11:00Z.
+        Expects valid response for a transport leaving
+        19:00+3, one availability for the passenger adult with
+        WHEELCHAIR accessibility feature in the reservation.
+        """
+        token = tests.lippuclient.get_authentication_token(self.envdata['base_url'],
+                                                           str(uuid.uuid4()),
+                                                           self.testdata['valid_client1'],
+                                                           self.testdata['key_id_client1'],
+                                                           self.testdata['key_path_client1'])
+        headers = tests.lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
+                                                     token=token,
+                                                     language="fi")
+
+        # Trip availaibility inquiry
+        travel = self.testdata['travel_data_accessibility']
+        product = self.testdata['test_products_current_date_response']
+        t = datetime.datetime.now()
+        travel["travel"]["dateTime"]  = zulu.now().shift(days=(7 - t.weekday())). \
+            replace(hour=11, minute=00).isoformat()
+        r = requests.post(self.envdata['availability_url'],
+                          headers=headers, json=travel)
+        logging.info("test_availability_accessibility, availability response: %s"
+                     % r.json())
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(len(r.json()['availability']), 1)
+        self.assertEqual(r.json()['contract'], travel['contract'])
+        self.assertEqual(r.json()['travel']['productType'], travel['travel']['productType'])
+        self.assertEqual(r.json()['travel']['to']['lat'], travel['travel']['to']['lat'])
+        self.assertEqual(r.json()['travel']['to']['lon'], travel['travel']['to']['lon'])
+        self.assertEqual(r.json()['travel']['from']['lat'], travel['travel']['from']['lat'])
+        self.assertEqual(r.json()['travel']['from']['lon'], travel['travel']['from']['lon'])
+        for item in r.json()['availability']:
+            self.assertNotEqual(item['applicableForPassengers'], 'None')
+            self.assertEqual(item['fare']['currency'], 'EUR')
+            self.assertEqual(item['fare']['amount'], 14)
+            self.assertEqual(item['fare']['vatPercent'], 10)
+            for applicable in item['applicableForPassengers']:
+                self.assertEqual(applicable['category'], 'Adult')
+                self.assertEqual(applicable['category'] in
+                                 product['products2']['suitablePassengerCategories'], True)
+                self.assertEqual(applicable['accessibility'][0]['title'], 'WHEELCHAIR')
+                self.assertEqual(applicable['accessibility'][0]['fare']['currency'], 'EUR')
+                self.assertEqual(applicable['accessibility'][0]['fare']['amount'], 0)
+                self.assertEqual(applicable['accessibility'][0]['fare']['vatPercent'], 0)
+        self.assertEqual(r.json()['travel']['dateTime'].startswith(
+            zulu.now().shift(days=(7 - t.weekday())). \
+                replace(hour=19, minute=00).format('%Y-%m-%dT%H:%M')
+        ), True)
+        logging.info("Departure time: %s" % zulu.parse(r.json()['travel']['dateTime']))
+
+    def test_availability_extra_services(self):
+        """
+        Test case for a valid availability query with valid extraService. Reads the
+        travel properties from test-data.json, sets the
+        travel dateTime to next monday at 11:00Z.
+        Expects valid response for a transport leaving
+        19:00+3, one availability for the passenger child with
+        CHILDSEAT extra service.
+        """
+        token = tests.lippuclient.get_authentication_token(self.envdata['base_url'],
+                                                           str(uuid.uuid4()),
+                                                           self.testdata['valid_client1'],
+                                                           self.testdata['key_id_client1'],
+                                                           self.testdata['key_path_client1'])
+        headers = tests.lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
+                                                     token=token,
+                                                     language="fi")
+
+        # Trip availaibility inquiry
+        travel = self.testdata['travel_data_extra_services']
+        product = self.testdata['test_products_current_date_response']
+        t = datetime.datetime.now()
+        travel["travel"]["dateTime"]  = zulu.now().shift(days=(7 - t.weekday())). \
+            replace(hour=11, minute=00).isoformat()
+        r = requests.post(self.envdata['availability_url'],
+                          headers=headers, json=travel)
+        logging.info("test_availability_extra_services, availability response: %s"
+                     % r.json())
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(len(r.json()['availability']), 1)
+        self.assertEqual(r.json()['contract'], travel['contract'])
+        self.assertEqual(r.json()['travel']['productType'], travel['travel']['productType'])
+        self.assertEqual(r.json()['travel']['to']['lat'], travel['travel']['to']['lat'])
+        self.assertEqual(r.json()['travel']['to']['lon'], travel['travel']['to']['lon'])
+        self.assertEqual(r.json()['travel']['from']['lat'], travel['travel']['from']['lat'])
+        self.assertEqual(r.json()['travel']['from']['lon'], travel['travel']['from']['lon'])
+        for item in r.json()['availability']:
+            self.assertNotEqual(item['applicableForPassengers'], 'None')
+            self.assertEqual(item['fare']['currency'], 'EUR')
+            self.assertEqual(item['fare']['amount'], 14)
+            self.assertEqual(item['fare']['vatPercent'], 10)
+            for applicable in item['applicableForPassengers']:
+                self.assertEqual(applicable['category'], 'Child')
+                self.assertEqual(applicable['category'] in
+                                 product['products2']['suitablePassengerCategories'], True)
+                self.assertEqual(applicable['extraServices'][0]['title'], 'CHILDSEAT')
+                self.assertNotEqual(applicable['extraServices'][0]['extraServiceReservationData'], None)
+                self.assertNotEqual(applicable['extraServices'][0]['extraServiceReservationData'],
+                                    "EXTRA-CHILD-SEAT-115311")
+                self.assertEqual(applicable['extraServices'][0]['extraServiceReservationData']
+                                 .startswith("EXTRA-CHILDSEAT-"), True)
+                self.assertEqual(applicable['extraServices'][0]['fare']['currency'], 'EUR')
+                self.assertEqual(applicable['extraServices'][0]['fare']['amount'], 13)
+                self.assertEqual(applicable['extraServices'][0]['fare']['vatPercent'], 10)
+        self.assertEqual(r.json()['travel']['dateTime'].startswith(
+            zulu.now().shift(days=(7 - t.weekday())). \
+                replace(hour=19, minute=00).format('%Y-%m-%dT%H:%M')
+        ), True)
+        logging.info("Departure time: %s" % zulu.parse(r.json()['travel']['dateTime']))
+
+    def test_availability_invalid_extra_services(self):
+        """
+        Test case for a availability query with invalid extraService.
+        Expects valid response for a transport leaving, but with
+        no availabilities as the one passenger has invalid
+        extraService
+        """
+        token = tests.lippuclient.get_authentication_token(self.envdata['base_url'],
+                                                           str(uuid.uuid4()),
+                                                           self.testdata['valid_client1'],
+                                                           self.testdata['key_id_client1'],
+                                                           self.testdata['key_path_client1'])
+        headers = tests.lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
+                                                     token=token,
+                                                     language="fi")
+
+        # Trip availaibility inquiry
+        travel = self.testdata['travel_data_extra_services']
+        travel['passengers'][0]['extraServices'][0]['title'] = "TESTINGINVALIDSERVICE"
+        product = self.testdata['test_products_current_date_response']
+        t = datetime.datetime.now()
+        travel["travel"]["dateTime"]  = zulu.now().shift(days=(7 - t.weekday())). \
+            replace(hour=11, minute=00).isoformat()
+        r = requests.post(self.envdata['availability_url'],
+                          headers=headers, json=travel)
+        logging.info("test_availability_invalid_extra_services, availability response: %s"
+                     % r.json())
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(len(r.json()['availability']), 0)
+        self.assertEqual(r.json()['contract'], travel['contract'])
+        self.assertEqual(r.json()['travel']['productType'], travel['travel']['productType'])
+        self.assertEqual(r.json()['travel']['to']['lat'], travel['travel']['to']['lat'])
+        self.assertEqual(r.json()['travel']['to']['lon'], travel['travel']['to']['lon'])
+        self.assertEqual(r.json()['travel']['from']['lat'], travel['travel']['from']['lat'])
+        self.assertEqual(r.json()['travel']['from']['lon'], travel['travel']['from']['lon'])
 
 if __name__ == '__main__':
     unittest.main()

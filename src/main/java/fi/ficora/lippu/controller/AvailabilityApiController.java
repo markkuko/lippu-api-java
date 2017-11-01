@@ -4,22 +4,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.ficora.lippu.domain.Product;
 import fi.ficora.lippu.domain.Reservation;
 import fi.ficora.lippu.domain.ReservationItem;
-import fi.ficora.lippu.domain.model.ApiError;
-import fi.ficora.lippu.domain.model.AvailabilityRequest;
-import fi.ficora.lippu.domain.model.AvailabilityResponse;
-import fi.ficora.lippu.domain.model.Travel;
-import fi.ficora.lippu.domain.model.TravelAvailability;
-import fi.ficora.lippu.domain.model.TravelPassenger;
+import fi.ficora.lippu.domain.model.*;
 import fi.ficora.lippu.service.IAuthService;
 import fi.ficora.lippu.service.IAvailabilityService;
 import fi.ficora.lippu.service.ITimetableService;
 import fi.ficora.lippu.service.IProductService;
+import fi.ficora.lippu.util.ApiErrorUtil;
 import fi.ficora.lippu.util.ConversionUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import javax.validation.Valid;
 import org.slf4j.Logger;
@@ -56,7 +54,7 @@ public class AvailabilityApiController implements AvailabilityApi {
     private MessageSource messageSource;
     @Autowired
     private IProductService productService;
-    private static final Logger log = LoggerFactory.getLogger(AuthApiController.class);
+    private static final Logger log = LoggerFactory.getLogger(AvailabilityApiController.class);
 
     public AvailabilityApiController(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
@@ -74,23 +72,16 @@ public class AvailabilityApiController implements AvailabilityApi {
                 xTransactionId,
                 xMessageId,
                 xInitiator);
-            // @todo Replace stub implementation
         AvailabilityResponse response = new AvailabilityResponse();
-        if(body.getTravel().getFrom().getLat() == null ||
-                body.getTravel().getFrom().getLon() == null ||
-                body.getTravel().getFrom().getLat() == null ||
-                body.getTravel().getTo().getLon() == null) {
-            ApiError error = new ApiError().
-                    statusCode(new BigDecimal(400))
-                    .message(messageSource.getMessage("http.error.message.400.elements",
-                            null, Locale.ENGLISH));
-            return new ResponseEntity<ApiError>(error, HttpStatus.BAD_REQUEST);
+        if(!validateCoordinates(body)) {
+            return new ResponseEntity<ApiError>(ApiErrorUtil.generateApiError400(
+                    messageSource.getMessage("http.error.message.400.elements",
+                            null, Locale.ENGLISH)), HttpStatus.BAD_REQUEST);
         }
         Product product = productService.getProduct(body.getTravel(), body.getContract());
         if(product != null) {
             Reservation reservation = availabilityService.checkForCapacity(product,
-                body.getTravel().getDateTime().toLocalDate(),
-                body.getPassengers().size());
+                body.getTravel().getDateTime().toLocalDate(), body.getPassengers());
             if(reservation != null) {
                 Travel travel = body.getTravel();
                 travel.setDateTime(timetableService.getProductDeparture(travel.getDateTime().toLocalDate(),
@@ -99,31 +90,39 @@ public class AvailabilityApiController implements AvailabilityApi {
                 response.setContract(product.getContract());
 
                 for (TravelPassenger passenger : body.getPassengers()) {
-                    ReservationItem item = availabilityService.addAvailability(
+                    TravelAvailability item = availabilityService.addAvailability(
                             reservation,product, passenger, body.getTravel());
-                    TravelAvailability availability = ConversionUtil.reservationItemToTravelPassenger(item);
-                    availability.fare(ConversionUtil.fareToProductFare(
-                            productService.getFare(product.getId())));
-                    availability.transport(ConversionUtil.transportToModelTransport(
-                            productService.getTransport(product.getId())));
-                    response.addAvailabilityItem(availability);
+                    if(item != null) {
+                        response.addAvailabilityItem(item );
+                    } else {
+                        log.debug("Got null for availabity add");
+                    }
                 }
                 return new ResponseEntity<AvailabilityResponse>(response, HttpStatus.OK);
             } else {
+                log.debug("Got null for capacity check.");
                 response.setTravel(body.getTravel());
                 response.setContract(body.getContract());
                 return new ResponseEntity<AvailabilityResponse>(response, HttpStatus.OK);
-
             }
         } else {
-            ApiError error = new ApiError().
-                    statusCode(BigDecimal.valueOf(400))
-                    .message(messageSource.getMessage("http.error.message.400.productnotfound",
-                            null, Locale.ENGLISH));
-            return new ResponseEntity<ApiError>(error, HttpStatus.BAD_REQUEST);
+            log.debug("Product not found, returning 400");
+            return new ResponseEntity<ApiError>(ApiErrorUtil.generateApiError400(
+                    messageSource.getMessage("http.error.message.400.productnotfound",
+                            null, Locale.ENGLISH)), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    private boolean validateCoordinates(AvailabilityRequest body) {
+        if(body.getTravel().getFrom().getLat() == null ||
+                body.getTravel().getFrom().getLon() == null ||
+                body.getTravel().getFrom().getLat() == null ||
+                body.getTravel().getTo().getLon() == null) {
+            return false;
+        } else {
+            return true;
         }
 
     }
-
 
 }

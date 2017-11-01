@@ -69,6 +69,11 @@
     "maxCapacity": 60
   },
   {
+    "_class" : "fi.ficora.lippu.domain.Capacity",
+    "productId" : "63787ead-29b4-4b5b-8c99-695ae28e2da8",
+    "maxCapacity": 30
+  },
+  {
     "_class" : "fi.ficora.lippu.domain.Timetable",
     "id" : "d11cc238-6148-4c11-a86a-b66220beadb0",
     "productId" : "be0f6694-6ca1-4175-a25f-28a709380ad4",
@@ -95,6 +100,12 @@
     "productId" : "be0f6694-6ca1-4175-a25f-28a709380ad4",
     "operator": "Liikennöitsijä OY AB (Y-1234567)",
     "vehicleInfo": "Linja-auto Mikkeli-Lahti"
+  },
+  {
+    "_class" : "fi.ficora.lippu.domain.Transport",
+    "productId" : "63787ead-29b4-4b5b-8c99-695ae28e2da8",
+    "operator": "Liikennöitsijä OY AB (Y-1234567)",
+    "vehicleInfo": "Linja-auto Porvoo-Kotka"
   }
 ]
 

@@ -43,6 +43,38 @@
       {"category":"Child"}
     ]
   },
+  "travel_data_accessibility" : {
+    "contract": "CONTRACT-362243",
+    "travel": {
+      "productType": "PRODUCT-SINGLE-TICKET",
+      "from": {"lat":  60.4,
+            "lon": 25.7},
+      "to": {
+        "lat": 60.5,
+        "lon": 26.9
+      }
+    },
+    "passengers": [
+      {"category":"Adult","accessibility": [{"title":"WHEELCHAIR"}]}
+    ]
+  },
+  "travel_data_extra_services" : {
+    "contract": "CONTRACT-362243",
+    "travel": {
+      "productType": "PRODUCT-SINGLE-TICKET",
+      "from": {"lat":  60.4,
+        "lon": 25.7},
+      "to": {
+        "lat": 60.5,
+        "lon": 26.9
+      }
+    },
+    "passengers": [
+      {"category":"Child","extraServices": [{"title":"CHILDSEAT",
+        "extraServiceReservationData":"EXTRA-CHILD-SEAT-115311",
+      "fare": {"amount": 13, "currency": "EUR", "vatPercent" : 10}}]}
+    ]
+  },
   "test_products_current_date_response" : {
     "products1": {
       "contract": "CONTRACT-AB123CD",
