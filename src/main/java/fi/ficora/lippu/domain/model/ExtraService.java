@@ -137,7 +137,7 @@ public class ExtraService   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ExtraService {\n");
+    sb.append("class ExtraServiceFeature {\n");
     
     sb.append("    title: ").append(toIndentedString(title)).append("\n");
     sb.append("    extraServiceReservationData: ").append(toIndentedString(extraServiceReservationData)).append("\n");

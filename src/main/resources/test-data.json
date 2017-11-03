@@ -57,7 +57,7 @@
       {"title": "WHEELCHAIR", "fare": {"currency" : "EUR", "amount": 0, "vatPercent": 0},
         "description" : "Space for wheelchair"}
     ],
-    "extraServices": [
+    "extraServiceFeatures": [
       {"title": "CHILDSEAT", "fare": { "amount" : 13, "currency": "EUR", "vatPercent": 10},
         "description" : "Separate child safety seat for the travel."}
     ],

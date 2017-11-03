@@ -1,7 +1,5 @@
 package fi.ficora.lippu.domain;
 
-import fi.ficora.lippu.domain.model.Accessibility;
-import fi.ficora.lippu.domain.model.ExtraService;
 import org.springframework.data.annotation.Id;
 
 import java.util.ArrayList;
@@ -24,8 +22,8 @@ public class Product {
     private String fromId;
     private String toId;
     private ArrayList<String> suitablePassengerCategories;
-    private List<Accessibility> accessibilities;
-    private List<ExtraService> extraServices;
+    private List<AccessibilityFeature> accessibilities;
+    private List<ExtraServiceFeature> extraServiceFeatures;
 
     public String getId() {
         return id;
@@ -75,21 +73,21 @@ public class Product {
         this.suitablePassengerCategories = suitablePassengerCategories;
     }
 
-    public List<Accessibility> getAccessibilities() {
+    public List<AccessibilityFeature> getAccessibilities() {
         return accessibilities;
     }
 
     @SuppressWarnings("SpellCheckingInspection")
-    public void setAccessibilities(@SuppressWarnings("SpellCheckingInspection") List<Accessibility> accessibilities) {
+    public void setAccessibilities(@SuppressWarnings("SpellCheckingInspection") List<AccessibilityFeature> accessibilities) {
         this.accessibilities = accessibilities;
     }
 
-    public List<ExtraService> getExtraServices() {
-        return extraServices;
+    public List<ExtraServiceFeature> getExtraServiceFeatures() {
+        return extraServiceFeatures;
     }
 
-    public void setExtraServices(List<ExtraService> extraServices) {
-        this.extraServices = extraServices;
+    public void setExtraServiceFeatures(List<ExtraServiceFeature> extraServiceFeatures) {
+        this.extraServiceFeatures = extraServiceFeatures;
     }
 
     public Double getFromLat() {

@@ -1,10 +1,10 @@
 package fi.ficora.lippu.service;
 
 import fi.ficora.lippu.config.Constants;
+import fi.ficora.lippu.domain.ExtraServiceFeature;
 import fi.ficora.lippu.domain.Product;
 import fi.ficora.lippu.domain.Reservation;
 import fi.ficora.lippu.domain.ReservationItem;
-import fi.ficora.lippu.domain.model.ExtraService;
 import fi.ficora.lippu.domain.model.ReservationRequestReservations;
 import fi.ficora.lippu.domain.model.Travel;
 import fi.ficora.lippu.domain.model.TravelPassenger;
@@ -151,7 +151,7 @@ public class ReservationService implements IReservationService {
     }
 
 
-    public String generateExtraServiceReservationCode(ExtraService service) {
+    public String generateExtraServiceReservationCode(ExtraServiceFeature service) {
         return "EXTRA-" + service.getTitle() + "-" +
                 UUID.randomUUID().toString();
     }

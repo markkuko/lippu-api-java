@@ -1,6 +1,6 @@
 package fi.ficora.lippu.service;
 
-import fi.ficora.lippu.domain.Fare;
+import fi.ficora.lippu.domain.*;
 import fi.ficora.lippu.domain.Product;
 import fi.ficora.lippu.domain.Transport;
 import fi.ficora.lippu.domain.model.*;
@@ -19,7 +19,6 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -133,7 +132,7 @@ public class ProductService implements IProductService{
         // @todo replace stub implementation, which would calculate proper prices.
         Fare fare = new Fare();
         fare.setAmount(14d);
-        fare.setVat(10d);
+        fare.setVatPercent(10d);
         fare.setCurrency("EUR");
         fare.setProductId(id);
         return fare;
@@ -209,11 +208,11 @@ public class ProductService implements IProductService{
             if (accessibility.getTitle().equals(Accessibility.TitleEnum.UNKNOWN)) {
                 foundAccessibility = true;
             } else {
-                Accessibility accessibility2 = getAccessibilityFromProduct(product,
+                AccessibilityFeature accessibilityFeature2 = getAccessibilityFromProduct(product,
                         accessibility.getTitle());
-                if (accessibility2 != null) {
+                if (accessibilityFeature2 != null) {
                     log.debug("Found accessibility:{}",
-                            accessibility2.getTitle());
+                            accessibilityFeature2.getTitle());
                     foundAccessibility = true;
                 }
             }
@@ -228,26 +227,26 @@ public class ProductService implements IProductService{
         }
         return foundAll;
     }
-    public Accessibility getAccessibilityFromProduct(Product product,
-                                          Accessibility.TitleEnum title) {
-        for (Accessibility accessibility : product.getAccessibilities()) {
-            if (accessibility.getTitle().compareTo(
-                    title) == 0) {
-                log.debug("Found accessibility:{}",
-                        accessibility.getTitle());
-                return accessibility;
+    public AccessibilityFeature getAccessibilityFromProduct(Product product,
+                                                            Accessibility.TitleEnum title) {
+        for (AccessibilityFeature accessibilityFeature : product.getAccessibilities()) {
+            if (accessibilityFeature.getTitle().toString().compareTo(
+                    title.toString()) == 0) {
+                log.debug("Found accessibilityFeature:{}",
+                        accessibilityFeature.getTitle());
+                return accessibilityFeature;
             }
         }
         return null;
     }
-    public ExtraService getExtraServiceFromProduct(Product product,
-                                                    String title) {
-        for (ExtraService extraService : product.getExtraServices()) {
-            if (extraService.getTitle().compareTo(
+    public ExtraServiceFeature getExtraServiceFromProduct(Product product,
+                                                          String title) {
+        for (ExtraServiceFeature extraServiceFeature : product.getExtraServiceFeatures()) {
+            if (extraServiceFeature.getTitle().compareTo(
                     title) == 0) {
-                log.debug("Found extraService:{}",
-                        extraService.getTitle());
-                return extraService;
+                log.debug("Found extraServiceFeature:{}",
+                        extraServiceFeature.getTitle());
+                return extraServiceFeature;
             }
         }
         return null;

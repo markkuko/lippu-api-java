@@ -69,12 +69,12 @@ public class AvailabilityService implements IAvailabilityService{
             ReservationItem item = reservationService.createReservationItem(
                         product, reservation, travel, passenger);
             reservationService.addReservationItem(item);
-            List<Accessibility> accessibilities=
+            List<AccessibilityFeature> accessibilities=
                     getAccessibilities(product, passenger.getAccessibility());
-            List<ExtraService> services=
+            List<ExtraServiceFeature> services=
                     getExtraServices(product, passenger.getExtraServices());
             TravelAvailability availability = ConversionUtil.
-                    reservationItemToTravelPassenger(item, passenger, accessibilities, services);
+                    reservationItemToTravelAvailability(item, passenger, accessibilities, services);
             availability.fare(ConversionUtil.fareToProductFare(
                     productService.getFare(product.getId())));
             availability.transport(ConversionUtil.transportToModelTransport(
@@ -112,7 +112,7 @@ public class AvailabilityService implements IAvailabilityService{
             log.debug("Check if product {} has extraService {}",
                     product.getId(), service.getTitle());
             boolean valid = false;
-            for(ExtraService service1: product.getExtraServices()) {
+            for(ExtraServiceFeature service1: product.getExtraServiceFeatures()) {
                 if(service.getTitle().equals(service1.getTitle())) {
                     // Found
                     log.debug("Found extra service {} in product {}.",
@@ -131,40 +131,40 @@ public class AvailabilityService implements IAvailabilityService{
 
         return true;
     }
-    private List<Accessibility> getAccessibilities(Product product, List<Accessibility>
-            accessibilities) {
-        List<Accessibility> returnList = new ArrayList<>();
+    private List<AccessibilityFeature> getAccessibilities(Product product,
+                                                          List<Accessibility> accessibilities) {
+        List<AccessibilityFeature> returnList = new ArrayList<>();
         if(accessibilities == null) {
             return returnList;
         }
         for(Accessibility accessibility : accessibilities) {
-            Accessibility accessibility1 =
+            AccessibilityFeature accessibilityFeature1 =
                     productService.getAccessibilityFromProduct(product,
                             accessibility.getTitle());
-            if(accessibility1 != null) {
-                returnList.add(accessibility1);
+            if(accessibilityFeature1 != null) {
+                returnList.add(accessibilityFeature1);
             }
         }
         return returnList;
     }
-    private List<ExtraService> getExtraServices(Product product, List<ExtraService>
+    private List<ExtraServiceFeature> getExtraServices(Product product, List<ExtraService>
             services) {
-        List<ExtraService> returnList = new ArrayList<>();
+        List<ExtraServiceFeature> returnList = new ArrayList<>();
         if(services == null) {
             return returnList;
         }
         for(ExtraService extraService : services) {
-            ExtraService extraService1 =
+            ExtraServiceFeature extraServiceFeature1 =
                     productService.getExtraServiceFromProduct(product,
                             extraService.getTitle());
-            if(extraService1 != null) {
-                ExtraService service = new ExtraService()
-                        .title(extraService1.getTitle())
-                        .description(extraService1.getDescription())
-                        .fare(extraService1.getFare())
-                        .extraServiceReservationData(
+            if(extraServiceFeature1 != null) {
+                ExtraServiceFeature service = new ExtraServiceFeature();
+                service.setTitle(extraServiceFeature1.getTitle());
+                service.setDescription(extraServiceFeature1.getDescription());
+                service.setFare(extraServiceFeature1.getFare());
+                service.setExtraServiceReservationData(
                         reservationService.generateExtraServiceReservationCode(
-                                extraService1));
+                                extraServiceFeature1));
                 returnList.add(service);
             }
         }

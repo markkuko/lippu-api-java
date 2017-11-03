@@ -1,9 +1,9 @@
 package fi.ficora.lippu.service;
 
+import fi.ficora.lippu.domain.ExtraServiceFeature;
 import fi.ficora.lippu.domain.Product;
 import fi.ficora.lippu.domain.Reservation;
 import fi.ficora.lippu.domain.ReservationItem;
-import fi.ficora.lippu.domain.model.ExtraService;
 import fi.ficora.lippu.domain.model.ReservationRequestReservations;
 import fi.ficora.lippu.domain.model.Travel;
 import fi.ficora.lippu.domain.model.TravelPassenger;
@@ -77,5 +77,5 @@ public interface IReservationService {
      * @param service The service to generate the reservation code for.
      * @return String representation for the extra service reservation code.
      */
-    String generateExtraServiceReservationCode(ExtraService service);
+    String generateExtraServiceReservationCode(ExtraServiceFeature service);
 }

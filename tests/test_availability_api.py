@@ -436,5 +436,70 @@ class TestAvailabilityApi(unittest.TestCase):
         self.assertEqual(r.json()['travel']['from']['lat'], travel['travel']['from']['lat'])
         self.assertEqual(r.json()['travel']['from']['lon'], travel['travel']['from']['lon'])
 
+    def test_availability_empty_extra_services(self):
+        """
+        Test case for a availability query with invalid extraService.
+        Expects valid response for a transport leaving, but with
+        no availabilities as the one passenger has invalid
+        extraService
+        """
+        token = tests.lippuclient.get_authentication_token(self.envdata['base_url'],
+                                                           str(uuid.uuid4()),
+                                                           self.testdata['valid_client1'],
+                                                           self.testdata['key_id_client1'],
+                                                           self.testdata['key_path_client1'])
+        headers = tests.lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
+                                                     token=token,
+                                                     language="fi")
+
+        # Trip availaibility inquiry
+        travel = self.testdata['travel_data_extra_services']
+        travel['passengers'][0]['extraServices'][0]['title'] = ""
+        product = self.testdata['test_products_current_date_response']
+        t = datetime.datetime.now()
+        travel["travel"]["dateTime"]  = zulu.now().shift(days=(7 - t.weekday())). \
+            replace(hour=11, minute=00).isoformat()
+        r = requests.post(self.envdata['availability_url'],
+                          headers=headers, json=travel)
+        logging.info("test_availability_invalid_extra_services, availability response: %s"
+                     % r.json())
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(len(r.json()['availability']), 0)
+        self.assertEqual(r.json()['contract'], travel['contract'])
+        self.assertEqual(r.json()['travel']['productType'], travel['travel']['productType'])
+        self.assertEqual(r.json()['travel']['to']['lat'], travel['travel']['to']['lat'])
+        self.assertEqual(r.json()['travel']['to']['lon'], travel['travel']['to']['lon'])
+        self.assertEqual(r.json()['travel']['from']['lat'], travel['travel']['from']['lat'])
+        self.assertEqual(r.json()['travel']['from']['lon'], travel['travel']['from']['lon'])
+
+    def test_availability_invalid_accessibility(self):
+        """
+        Test case for a availability query with invalid accessibility feature.
+        Reads the travel properties from test-data.json, sets the
+        travel dateTime to next monday at 11:00Z.
+        Expects response with zero travel availabilities.
+        """
+        token = tests.lippuclient.get_authentication_token(self.envdata['base_url'],
+                                                           str(uuid.uuid4()),
+                                                           self.testdata['valid_client1'],
+                                                           self.testdata['key_id_client1'],
+                                                           self.testdata['key_path_client1'])
+        headers = tests.lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
+                                                     token=token,
+                                                     language="fi")
+
+        # Trip availaibility inquiry
+        travel = self.testdata['travel_data_accessibility']
+        travel["passengers"][0]["accessibility"][0]["title"] = "TESTING_ACCESSIBILITY"
+        product = self.testdata['test_products_current_date_response']
+        t = datetime.datetime.now()
+        travel["travel"]["dateTime"]  = zulu.now().shift(days=(7 - t.weekday())). \
+            replace(hour=11, minute=00).isoformat()
+        r = requests.post(self.envdata['availability_url'],
+                          headers=headers, json=travel)
+        logging.info("test_availability_invalid_accessibility, availability response: %s"
+                     % r.json())
+        self.assertEqual(r.status_code, 400)
+
 if __name__ == '__main__':
     unittest.main()

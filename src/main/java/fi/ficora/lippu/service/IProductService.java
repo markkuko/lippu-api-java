@@ -1,8 +1,6 @@
 package fi.ficora.lippu.service;
 
-import fi.ficora.lippu.domain.Fare;
-import fi.ficora.lippu.domain.Product;
-import fi.ficora.lippu.domain.Transport;
+import fi.ficora.lippu.domain.*;
 import fi.ficora.lippu.domain.model.Accessibility;
 import fi.ficora.lippu.domain.model.ExtraService;
 import fi.ficora.lippu.domain.model.ProductList;
@@ -10,7 +8,6 @@ import fi.ficora.lippu.domain.model.Travel;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Interface declaration for Product functionality.
@@ -128,20 +125,20 @@ public interface IProductService {
      * Search certain {@link Accessibility}  from the products accessibilities.
      * The accessibility is given as the title attribute to the method.
      * @param product Product from which the accessibility feature is searched.
-     * @param title List of required Accessibility features for the product
+     * @param title List of required AccessibilityFeature features for the product
      * @return The given {@link Accessibility} object from the product or null if
      * not found.
      */
-    Accessibility getAccessibilityFromProduct(Product product,
-                                                    Accessibility.TitleEnum title);
+    AccessibilityFeature getAccessibilityFromProduct(Product product,
+                                                     Accessibility.TitleEnum title);
 
     /**
-     * Search certain {@link ExtraService} from the products extraServices. The ExtraService's
+     * Search certain {@link ExtraService} from the products extraServices. The ExtraServiceFeature's
      * title is given as the title attribute to the method.
-     * @param product Product for which the ExtraService feature check is made.
-     * @param title The title for the ExtraService to search from the product.
+     * @param product Product for which the ExtraServiceFeature feature check is made.
+     * @param title The title for the ExtraServiceFeature to search from the product.
      * @return The {@link ExtraService} object from the product or null if
      * not found.
      */
-    ExtraService getExtraServiceFromProduct(Product product, String title);
+    ExtraServiceFeature getExtraServiceFromProduct(Product product, String title);
 }

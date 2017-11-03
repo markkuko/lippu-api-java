@@ -13,7 +13,7 @@ public class Fare {
 
     private Double amount;
 
-    private Double vat;
+    private Double vatPercent;
 
     public String getId() {
         return id;
@@ -47,11 +47,11 @@ public class Fare {
         this.amount = amount;
     }
 
-    public Double getVat() {
-        return vat;
+    public Double getVatPercent() {
+        return vatPercent;
     }
 
-    public void setVat(Double vat) {
-        this.vat = vat;
+    public void setVatPercent(Double vatPercent) {
+        this.vatPercent = vatPercent;
     }
 }

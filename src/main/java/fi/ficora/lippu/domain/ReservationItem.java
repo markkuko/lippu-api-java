@@ -1,8 +1,5 @@
 package fi.ficora.lippu.domain;
 
-import fi.ficora.lippu.domain.model.Accessibility;
-import fi.ficora.lippu.domain.model.CustomerInfo;
-import fi.ficora.lippu.domain.model.ExtraService;
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
@@ -19,8 +16,8 @@ public class ReservationItem {
     private OffsetDateTime validTo;
     private List<CustomerInfo> customerInfo;
     private List<String> chosenExtraReservationData;
-    private List<ExtraService> extraServices;
-    private List<Accessibility> accessibilities;
+    private List<ExtraServiceFeature> extraServiceFeatures;
+    private List<AccessibilityFeature> accessibilities;
     private boolean confirmed;
     private String productId;
     private String caseId;
@@ -147,19 +144,19 @@ public class ReservationItem {
         this.reservationValidTo = reservationValidTo;
     }
 
-    public List<ExtraService> getExtraServices() {
-        return extraServices;
+    public List<ExtraServiceFeature> getExtraServiceFeatures() {
+        return extraServiceFeatures;
     }
 
-    public void setExtraServices(List<ExtraService> extraServices) {
-        this.extraServices = extraServices;
+    public void setExtraServiceFeatures(List<ExtraServiceFeature> extraServiceFeatures) {
+        this.extraServiceFeatures = extraServiceFeatures;
     }
 
-    public List<Accessibility> getAccessibilities() {
+    public List<AccessibilityFeature> getAccessibilities() {
         return accessibilities;
     }
 
-    public void setAccessibilities(List<Accessibility> accessibilities) {
+    public void setAccessibilities(List<AccessibilityFeature> accessibilities) {
         this.accessibilities = accessibilities;
     }
 }

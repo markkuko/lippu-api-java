@@ -11,7 +11,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * Accessibility
+ * AccessibilityFeature
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-30T10:16:24.190+03:00")
@@ -184,7 +184,7 @@ public class Accessibility   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Accessibility {\n");
+    sb.append("class AccessibilityFeature {\n");
     
     sb.append("    title: ").append(toIndentedString(title)).append("\n");
     sb.append("    additionalInformation: ").append(toIndentedString(additionalInformation)).append("\n");
