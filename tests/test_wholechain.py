@@ -21,7 +21,7 @@ import zulu
 from pprint import pprint
 import requests
 import logging
-import tests.lippuclient
+from tests import lippuclient
 
 
 class TestWholeChain(unittest.TestCase):
@@ -54,12 +54,12 @@ class TestWholeChain(unittest.TestCase):
         the reservation.
 
         """
-        token = tests.lippuclient.get_authentication_token(self.envdata['base_url'],
+        token = lippuclient.get_authentication_token(self.envdata['base_url'],
                                                            str(uuid.uuid4()),
                                                            self.testdata['valid_client1'],
                                                            self.testdata['key_id_client1'],
                                                            self.testdata['key_path_client1'])
-        headers = tests.lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
+        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
                                                      token=token,
                                                      language="fi")
 
@@ -67,8 +67,8 @@ class TestWholeChain(unittest.TestCase):
         travel = self.testdata['travel_data']
         travel["travel"]["dateTime"]  = zulu.now().shift(days=2). \
             replace(hour=14, minute=00).isoformat()
-        r_availability = requests.post(self.envdata['availability_url'],
-                                  headers=headers, json=travel)
+        r_availability = lippuclient.availability_request(self.envdata['base_url'],
+                                  headers=headers, payload=travel)
         logging.info("test_make_reservation_and_delete, availability response: %s"
                      % r_availability)
         self.assertEqual(r_availability.status_code, 200)
@@ -81,17 +81,17 @@ class TestWholeChain(unittest.TestCase):
             reservation['reservations'].append({'reservationData': a['reservationData'],
              'customerInfo': [{'name': 'Matti','phone': 'adsf', 'email': 'asdf'}]})
         logging.info("Sending reservation request %s" % reservation)
-        r_reservation = requests.post(self.envdata['reservation_url'],
-                                       headers=headers, json=reservation)
+        r_reservation = lippuclient.reservation_request(self.envdata['base_url'],
+                                       headers=headers, payload=reservation)
         logging.info("test_make_reservation_and_delete, reservation response %s"
                      % r_reservation.text)
         self.assertEqual(r_reservation.status_code, 200)
         # Delete the resevation
         headers['X-Message-Id'] = str(uuid.uuid4())
         case_id = r_reservation.json()['caseId']
-        r_delete = requests.delete(self.envdata['reservation_url']+ '/'
-                                         + case_id  ,
-                                         headers=headers)
+        r_delete = lippuclient.reservation_delete(self.envdata['base_url'],
+                                                        headers=headers,
+                                                        reservation_id=case_id)
         logging.info("test_make_reservation_and_delete, reservation delete for %s, response: %s"
                       %(case_id, r_delete.text))
         self.assertEqual(r_delete.status_code, 200)

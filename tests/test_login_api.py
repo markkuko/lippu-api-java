@@ -153,8 +153,8 @@ class TestLoginApi(unittest.TestCase):
         """
 
         headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'])
-        r_init = requests.post(self.envdata['auth_url'] + '/init',
-                               headers=headers, json={'account': self.testdata['valid_client1']})
+        r_init = lippuclient.authentication_init_request(self.envdata['base_url'],
+                               headers=headers, account_id=self.testdata['valid_client1'])
 
         logging.info("test_commit_auth_invalid_signature, init response: %s" % r_init.text)
         self.assertEqual(r_init.status_code, 200)
@@ -166,7 +166,7 @@ class TestLoginApi(unittest.TestCase):
         nonces = r_init.json()['nonce'] + nonce
         commit_body = {'data':str(uuid.uuid4()), 'pubKeyId':self.testdata['key_id_client1'],
                        'cnonce':nonce,'snonce': r_init.json()['nonce'],'alg':'RSA+SHA256'}
-        r_commit = requests.post(self.envdata['auth_url'] + '/commit',
+        r_commit = requests.post(self.envdata['base_url'] + lippuclient.AUTHENTICATION_COMMIT_ENDPOINT,
                                  headers=headers, json=commit_body)
 
         logging.info("test_commit_auth_invalid_signature, commit response: %s" % r_commit.text)
@@ -180,8 +180,10 @@ class TestLoginApi(unittest.TestCase):
         """
 
         headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'])
-        r_init = requests.post(self.envdata['auth_url'] + '/init',
-                               headers=headers, json={'account': self.testdata['valid_client1']})
+        r_init = lippuclient.authentication_init_request(self.envdata['base_url'],
+                                                 headers=headers,
+                                                 account_id=self.testdata['valid_client1'])
+
 
         logging.info("test_commit_auth_keyid_not_found, init response: %s" % r_init.text)
         self.assertEqual(r_init.status_code, 200)
@@ -194,7 +196,8 @@ class TestLoginApi(unittest.TestCase):
         data = base64.b64encode(nonces.encode()).decode("utf-8")
         commit_body = {'data':data, 'pubKeyId':self.testdata['non_valid_key_id_client1'],
                        'cnonce':nonce,'snonce': r_init.json()['nonce'],'alg':'RSA+SHA256'}
-        r_commit = requests.post(self.envdata['auth_url'] + '/commit',
+        r_commit = requests.post(self.envdata['base_url'] +
+                                 lippuclient.AUTHENTICATION_COMMIT_ENDPOINT,
                                  headers=headers, json=commit_body)
 
         logging.info("test_commit_auth_keyid_not_found, commit response: %s" % r_commit.text)
@@ -208,8 +211,8 @@ class TestLoginApi(unittest.TestCase):
         """
 
         headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'])
-        r_init = requests.post(self.envdata['auth_url'] + '/init',
-                               headers=headers, json={'account': self.testdata['valid_client1']})
+        r_init = lippuclient.authentication_init_request(self.envdata['base_url'],
+                               headers=headers, account_id=self.testdata['valid_client1'])
 
         logging.info("test_commit_auth_keyid_null, init response: %s" % r_init.text)
         self.assertEqual(r_init.status_code, 200)
@@ -222,7 +225,8 @@ class TestLoginApi(unittest.TestCase):
         data = base64.b64encode(nonces.encode()).decode("utf-8")
         commit_body = {'data':data, 'pubKeyId': None,
                        'cnonce':nonce,'snonce': r_init.json()['nonce'],'alg':'RSA+SHA256'}
-        r_commit = requests.post(self.envdata['auth_url'] + '/commit',
+        r_commit = requests.post(self.envdata['base_url'] +
+                                 lippuclient.AUTHENTICATION_COMMIT_ENDPOINT,
                                  headers=headers, json=commit_body)
 
         logging.info("test_commit_auth_keyid_not_found, commit response: %s" % r_commit.text)

@@ -15,6 +15,8 @@ from base64 import b64encode, b64decode
 character_set = "utf-8"
 
 AUTHENTICATION_ENDPOINT = "/auth"
+AUTHENTICATION_INIT_ENDPOINT = AUTHENTICATION_ENDPOINT + "/init"
+AUTHENTICATION_COMMIT_ENDPOINT = AUTHENTICATION_ENDPOINT + "/commit"
 PRODUCTS_ENDPOINT = "/products"
 AVAILABILITY_ENDPOINT = "/availability"
 RESERVATION_ENDPOINT = "/reservation"
@@ -133,7 +135,7 @@ def authentication_init_request(base_url, headers, account_id):
 
     # Initialize authentication
     logging.debug("authentication_init_request, start")
-    response = requests.post(base_url + "/" + AUTHENTICATION_ENDPOINT + '/init',
+    response = requests.post(base_url + AUTHENTICATION_INIT_ENDPOINT,
                            headers=headers, json={'account': account_id})
     logging.debug("authentication_init_request, response %s" % response)
     return response
@@ -162,7 +164,7 @@ def authentication_commit_request(base_url, headers, snonce, key_id, key_path, a
     logging.debug("authentication_request, signed_data: %s" % signed_data)
     commit_body = {'data':signed_data, 'pubKeyId':key_id, 'cnonce':nonce,
                    'snonce': snonce, 'alg':alg}
-    response = requests.post(base_url + "/" + AUTHENTICATION_ENDPOINT  + '/commit',
+    response = requests.post(base_url + AUTHENTICATION_COMMIT_ENDPOINT,
                              headers=headers, json=commit_body)
 
     return response
