@@ -1,4 +1,6 @@
-# Shell commands to build jar in alpine JDK8 docker container
+# Shell commands to build the lippu-service.jar in alpine JDK8 docker container
+# After build is done, copy the jar to artifacts directory to make it available
+# outside the container.
 apk update
 apk add git
 git clone https://github.com/markkuko/lippu-api-java

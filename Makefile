@@ -26,13 +26,9 @@ artifacts/lippu-service.jar:
 	sudo docker run --rm -i -v ${PWD}/artifacts:/opt/artifacts:Z  openjdk:8-jdk-alpine sh < build.sh
 	sudo chown -R $(id -u):$(id -u) artifacts/
 
-# Builds docker iamge.
-build_image: artifacts/lippu-service.jar
-	sudo docker build -f Dockerfile --build-arg jar=lippu-service.jar -t lippu/lippu .
-
 # Starts container from the lippu-docker image on port 8080.
-run: build_image keys
-	sudo docker run --rm -d -v ${PWD}/keys:/opt/lippu/keys:Z -e JAR_NAME=lippu-service.jar --name lippu-service -p 8080:8080 lippu/lippu
+run: artifacts/lippu-service.jar keys
+	sudo docker-compose up --build
 
 # Stops the lippu-docker container.
 stop:

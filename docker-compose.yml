@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+
+  lippu-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        jar: lippu-service.jar 
+    image: lippu/lippu
+    environment:
+      - JAR_NAME=lippu-service.jar 
+    volumes:
+      - ./keys:/opt/lippu/keys:Z
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile-nginx
+    ports:
+      - "80:80"

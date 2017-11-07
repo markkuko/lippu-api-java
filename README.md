@@ -3,28 +3,40 @@
 This is a simple work-in-progress implementation
 of the [Lippu-API](https://github.com/finnishtransportagency/lippu-api).
 This is meant as an example and should not be used in production.
-For example it lacks route planning and services with multiple
+It  for example lacks route planning and services with multiple
 stops. Test data currently have two routes with departure
 and arrival stop.
 
 The data storage is implemented with 
-[]Spring Data Key-Value](https://docs.spring.io/spring-data/keyvalue/docs/current/reference/html/)
-repositories and such lacks many usefull features of
-the SQL Databases and makes hard to certain complicated
-queries over multiple different key-value repositories.
+[Spring Data Key-Value](https://docs.spring.io/spring-data/keyvalue/docs/current/reference/html/)
+repositories and such lacks many features of
+the SQL Databases. This shifts some of the query logic
+to business logic side instead of a database query.
  
 ## How to run
 Project uses gradle-build tool to build software artifacts. It can also be
 used to build standalone runnable jar-file. You also need Java 8 SDK
-and openssl to create encryption keys.
+to build and run the service and openssl to create encryption keys.  
 
-Start the service by running, which will create server and client keys
-to the directory `keys`.
+### As a docker container
+This requires docker and docker-compose to be found in the
+$PATH. Start the service
+by running the following command:
 ```
-sh run.sh
+make run
 ```
+This will generate server and client keys to the directory `keys`,
+build a uberjar of the lippu-service using docker container, start
+the lippu-service and nginx-service using *docker-compose*.
 
-To run the server without generating keys, use command:
+Nginx-proxy listening on port 80 and will proxy traffic to the
+lippu-service:
+* Lippu-service http://localhost:80/stubs/
+* The swagger UI at http://localhost:80/stubs/swagger-ui.html 
+
+### As a spring boot service
+To run the server as a spring boot service without generating keys,
+use command:
 ```
 ./gradlew clean bootRun
 ```
@@ -41,8 +53,10 @@ require python3. You can setup the virtualenv with the command:
 make test_setup
 ```
 It will generate the lippu-test virtualenv and installs
-required python packages for it. The you can run
-the tests (start the lippu service before running tests):
+required python packages for it. Then you can run
+the tests (start the lippu service before running tests
+and make user the *tests/env.json* has correct address
+in the *base_url*):
 ```
 make test
 ```
