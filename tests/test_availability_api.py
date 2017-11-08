@@ -19,6 +19,7 @@ import json
 from pprint import pprint
 import requests
 import logging
+import os
 from tests import lippuclient
 
 class TestAvailabilityApi(unittest.TestCase):
@@ -34,7 +35,9 @@ class TestAvailabilityApi(unittest.TestCase):
         testdata_json.close()
         env_file='tests/env.json'
         env_json=open(env_file)
-        self.envdata = json.load(env_json)
+        target_environment= os.getenv('target_environment', 'test')
+        logging.debug("TestAvailabilityApi: Setting target environment %s", target_environment)
+        self.envdata = json.load(env_json)[target_environment]
         env_json.close()
 
 

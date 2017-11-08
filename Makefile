@@ -1,5 +1,7 @@
 # Generate necessary server and client keys.
 
+ENVIRONMENT?=TEST
+LOGLEVEL?=WARNING
 keys/operator.pem:
 	@mkdir -p keys
 	openssl genrsa -out keys/operator.pem 2048
@@ -58,5 +60,5 @@ test:
 	(\
 		source `which virtualenvwrapper.sh`; \
 		workon lippu-test; \
-		python3 runtests.py --log=$$LOG; \
+		python3 runtests.py --log=$(LOGLEVEL) --environment=$(ENVIRONMENT); \
 	)

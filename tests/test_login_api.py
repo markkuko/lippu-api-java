@@ -42,7 +42,9 @@ class TestLoginApi(unittest.TestCase):
         testdata_json.close()
         env_file='tests/env.json'
         env_json=open(env_file)
-        self.envdata = json.load(env_json)
+        target_environment= os.getenv('target_environment', 'test')
+        logging.debug("TestLoginApi: Setting target environment %s", target_environment)
+        self.envdata = json.load(env_json)[target_environment]
         env_json.close()
         pass
     def tearDown(self):

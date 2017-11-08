@@ -6,6 +6,7 @@ Lippu-project test suite runner.
 import unittest
 import logging
 import argparse
+import sys, os
 from tests import test_login_api, test_availability_api, test_reservation_api, test_wholechain, test_products_api
 #, test_availability_api, kk
 
@@ -17,12 +18,20 @@ if __name__ == '__main__':
                                            'if you want outputs from requests '
                                            'and DEBUG for full debug messages',
                         default='WARNING')
+    parser.add_argument('--environment','-e', help='Sets which environment to use,'
+                                                   'TEST for test environment,'
+                                                   'DEV for dev environment,'
+                                                   'values for env are set in tests/env.json,',
+                        default='test')
     args = parser.parse_args()
     log_arg = args.log.upper()
+    env_arg = args.environment.lower()
     numeric_level = getattr(logging, log_arg, None)
     if (log_arg is not None and log_arg != "") and not isinstance(numeric_level, int):
         raise ValueError('Invalid log level: %s' % args.log)
     logging.basicConfig(level=numeric_level)
+    # Setting target environment for the tests, default is test.
+    os.environ['target_environment'] = env_arg
     logging.info("Starting LIPPU-project integration tests")
     # Define test classes to run
     test_classes_to_run = [
@@ -45,3 +54,4 @@ if __name__ == '__main__':
     runner = unittest.TextTestRunner()
     results = runner.run(big_suite)
     logging.info("LIPPU-project integration tests finished")
+    sys.exit(not results.wasSuccessful())
