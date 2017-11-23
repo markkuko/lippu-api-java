@@ -2,9 +2,12 @@ package fi.ficora.lippu.domain.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import fi.ficora.lippu.domain.model.Accessibility;
 import fi.ficora.lippu.domain.model.CoordinateLocation;
 import fi.ficora.lippu.domain.model.ExtraService;
+import fi.ficora.lippu.domain.model.Product;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -17,7 +20,7 @@ import javax.validation.constraints.*;
  * ProductDescription
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-30T10:16:24.190+03:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-11-22T16:56:34.734+02:00")
 
 public class ProductDescription   {
   @JsonProperty("productType")
@@ -188,7 +191,7 @@ public class ProductDescription   {
 
   public ProductDescription addExtraServicesItem(ExtraService extraServicesItem) {
     if (this.extraServices == null) {
-      this.extraServices = new ArrayList<ExtraService>();
+      this.extraServices = new ArrayList<>();
     }
     this.extraServices.add(extraServicesItem);
     return this;
@@ -217,7 +220,7 @@ public class ProductDescription   {
 
   public ProductDescription addAccessibilityItem(Accessibility accessibilityItem) {
     if (this.accessibility == null) {
-      this.accessibility = new ArrayList<Accessibility>();
+      this.accessibility = new ArrayList<>();
     }
     this.accessibility.add(accessibilityItem);
     return this;
@@ -288,7 +291,7 @@ public class ProductDescription   {
 
   public ProductDescription addSuitablePassengerCategoriesItem(String suitablePassengerCategoriesItem) {
     if (this.suitablePassengerCategories == null) {
-      this.suitablePassengerCategories = new ArrayList<String>();
+      this.suitablePassengerCategories = new ArrayList<>();
     }
     this.suitablePassengerCategories.add(suitablePassengerCategoriesItem);
     return this;

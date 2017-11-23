@@ -81,7 +81,7 @@ class TestWholeChain(unittest.TestCase):
         headers['X-Message-Id'] = str(uuid.uuid4())
         reservation = {'reservations': []}
         for a in r_availability.json()['availability']:
-            reservation['reservations'].append({'reservationData': a['reservationData'],
+            reservation['reservations'].append({'travelEntitlementId': a['travelEntitlementId'],
              'customerInfo': [{'name': 'Matti','phone': 'adsf', 'email': 'asdf'}]})
         logging.info("Sending reservation request %s" % reservation)
         r_reservation = lippuclient.reservation_request(self.envdata['base_url'],

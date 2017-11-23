@@ -389,10 +389,10 @@ class TestAvailabilityApi(unittest.TestCase):
                 self.assertEqual(applicable['category'] in
                                  product['products2']['suitablePassengerCategories'], True)
                 self.assertEqual(applicable['extraServices'][0]['title'], 'CHILDSEAT')
-                self.assertNotEqual(applicable['extraServices'][0]['extraServiceReservationData'], None)
-                self.assertNotEqual(applicable['extraServices'][0]['extraServiceReservationData'],
+                self.assertNotEqual(applicable['extraServices'][0]['extraServiceReservationId'], None)
+                self.assertNotEqual(applicable['extraServices'][0]['extraServiceReservationId'],
                                     "EXTRA-CHILD-SEAT-115311")
-                self.assertEqual(applicable['extraServices'][0]['extraServiceReservationData']
+                self.assertEqual(applicable['extraServices'][0]['extraServiceReservationId']
                                  .startswith("EXTRA-CHILDSEAT-"), True)
                 self.assertEqual(applicable['extraServices'][0]['fare']['currency'], 'EUR')
                 self.assertEqual(applicable['extraServices'][0]['fare']['amount'], 13)

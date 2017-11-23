@@ -4,7 +4,7 @@ public class ExtraServiceFeature {
 
     private String title;
     private String description;
-    private String extraServiceReservationData;
+    private String extraServiceReservationId;
     private Fare fare;
 
     public String getTitle() {
@@ -23,12 +23,12 @@ public class ExtraServiceFeature {
         this.description = description;
     }
 
-    public String getExtraServiceReservationData() {
-        return extraServiceReservationData;
+    public String getExtraServiceReservationId() {
+        return extraServiceReservationId;
     }
 
-    public void setExtraServiceReservationData(String extraServiceReservationData) {
-        this.extraServiceReservationData = extraServiceReservationData;
+    public void setExtraServiceReservationId(String extraServiceReservationId) {
+        this.extraServiceReservationId = extraServiceReservationId;
     }
 
     public Fare getFare() {

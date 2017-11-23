@@ -10,7 +10,7 @@ public class ReservationItem {
 
     @Id
     private String id;
-    private String reservationData;
+    private String travelEntitlementId;
     private String ticketPayload;
     private OffsetDateTime validFrom;
     private OffsetDateTime validTo;
@@ -26,12 +26,12 @@ public class ReservationItem {
     private String passengerCategory;
     private OffsetDateTime reservationValidTo;
 
-    public String getReservationData() {
-        return reservationData;
+    public String getTravelEntitlementId() {
+        return travelEntitlementId;
     }
 
-    public ReservationItem setReservationData(String reservationData) {
-        this.reservationData = reservationData;
+    public ReservationItem setTravelEntitlementId(String travelEntitlementId) {
+        this.travelEntitlementId = travelEntitlementId;
         return this;
     }
 

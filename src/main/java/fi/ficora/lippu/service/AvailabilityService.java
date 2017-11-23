@@ -63,34 +63,29 @@ public class AvailabilityService implements IAvailabilityService{
                                            TravelPassenger passenger,
                                            Travel travel) {
         // @todo validation checks only product type and contract
-        if(validatePassengerAccessibilityAvailability(passenger, product)
-                    && validatePassengerExtraServiceAvailability(passenger, product)) {
-
-            ReservationItem item = reservationService.createReservationItem(
-                        product, reservation, travel, passenger);
-            reservationService.addReservationItem(item);
-            List<AccessibilityFeature> accessibilities=
-                    getAccessibilities(product, passenger.getAccessibility());
-            List<ExtraServiceFeature> services=
-                    getExtraServices(product, passenger.getExtraServices());
-            TravelAvailability availability = ConversionUtil.
-                    reservationItemToTravelAvailability(item, passenger, accessibilities, services);
-            availability.fare(ConversionUtil.fareToProductFare(
-                    productService.getFare(product.getId())));
-            availability.transport(ConversionUtil.transportToModelTransport(
-                    productService.getTransport(product.getId())));
-            return availability;
-
-        } else {
+        if(!(validPassengerAccessibilityAvailability(passenger, product)
+                    && validPassengerExtraServiceAvailability(passenger, product))) {
             log.debug("Could not validate accessiblity or extra service," +
                     "returning null.");
             return null;
         }
-
-
+        ReservationItem item = reservationService.createReservationItem(
+                    product, reservation, travel, passenger);
+        reservationService.addReservationItem(item);
+        List<AccessibilityFeature> accessibilities=
+                getAccessibilities(product, passenger.getAccessibility());
+        List<ExtraServiceFeature> services=
+                getExtraServices(product, passenger.getExtraServices());
+        TravelAvailability availability = ConversionUtil.
+                reservationItemToTravelAvailability(item, passenger, accessibilities, services);
+        availability.fare(ConversionUtil.fareToProductFare(
+                productService.getFare(product.getId())));
+        availability.transport(ConversionUtil.transportToModelTransport(
+                productService.getTransport(product.getId())));
+        return availability;
     }
 
-    private boolean validatePassengerAccessibilityAvailability(
+    private boolean validPassengerAccessibilityAvailability(
             TravelPassenger passenger, Product product) {
         if(passenger.getAccessibility() == null) {
             return true;
@@ -102,12 +97,12 @@ public class AvailabilityService implements IAvailabilityService{
             return false;
         }
     }
-    private boolean validatePassengerExtraServiceAvailability(
+    private boolean validPassengerExtraServiceAvailability(
             TravelPassenger passenger, Product product) {
         if(passenger.getExtraServices() == null) {
             return true;
         }
-        for(ExtraService service: passenger.getExtraServices()) {
+        for(ExtraServiceBase service: passenger.getExtraServices()) {
 
             log.debug("Check if product {} has extraService {}",
                     product.getId(), service.getTitle());
@@ -132,12 +127,12 @@ public class AvailabilityService implements IAvailabilityService{
         return true;
     }
     private List<AccessibilityFeature> getAccessibilities(Product product,
-                                                          List<Accessibility> accessibilities) {
+                                                          List<? extends AccessibilityBase> accessibilities) {
         List<AccessibilityFeature> returnList = new ArrayList<>();
         if(accessibilities == null) {
             return returnList;
         }
-        for(Accessibility accessibility : accessibilities) {
+        for(AccessibilityBase accessibility : accessibilities) {
             AccessibilityFeature accessibilityFeature1 =
                     productService.getAccessibilityFromProduct(product,
                             accessibility.getTitle());
@@ -147,13 +142,13 @@ public class AvailabilityService implements IAvailabilityService{
         }
         return returnList;
     }
-    private List<ExtraServiceFeature> getExtraServices(Product product, List<ExtraService>
+    private List<ExtraServiceFeature> getExtraServices(Product product, List<ExtraServiceBase>
             services) {
         List<ExtraServiceFeature> returnList = new ArrayList<>();
         if(services == null) {
             return returnList;
         }
-        for(ExtraService extraService : services) {
+        for(ExtraServiceBase extraService : services) {
             ExtraServiceFeature extraServiceFeature1 =
                     productService.getExtraServiceFromProduct(product,
                             extraService.getTitle());
@@ -162,7 +157,7 @@ public class AvailabilityService implements IAvailabilityService{
                 service.setTitle(extraServiceFeature1.getTitle());
                 service.setDescription(extraServiceFeature1.getDescription());
                 service.setFare(extraServiceFeature1.getFare());
-                service.setExtraServiceReservationData(
+                service.setExtraServiceReservationId(
                         reservationService.generateExtraServiceReservationCode(
                                 extraServiceFeature1));
                 returnList.add(service);

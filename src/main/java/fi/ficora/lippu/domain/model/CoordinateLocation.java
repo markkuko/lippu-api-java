@@ -2,16 +2,20 @@ package fi.ficora.lippu.domain.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import fi.ficora.lippu.domain.model.Location;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * Location description for the point of desparture or point of destination. Can be stop a location with using stopId and stopPlatform (for example a bus stop) or a coordinate locate using lat and lon numbers.
  */
 @ApiModel(description = "Location description for the point of desparture or point of destination. Can be stop a location with using stopId and stopPlatform (for example a bus stop) or a coordinate locate using lat and lon numbers.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-30T10:16:24.190+03:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-11-22T16:56:34.734+02:00")
 
 public class CoordinateLocation   {
   @JsonProperty("description")

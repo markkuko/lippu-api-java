@@ -3,7 +3,7 @@ package fi.ficora.lippu.domain.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import fi.ficora.lippu.domain.model.ExtraServiceBase;
+import fi.ficora.lippu.domain.model.ExtraService;
 import fi.ficora.lippu.domain.model.ProductFare;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -12,13 +12,15 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * Extra services for passenger, like transporting animal.
+ * Reservation data for the reserved extra service.
  */
-@ApiModel(description = "Extra services for passenger, like transporting animal.")
+@ApiModel(description = "Reservation data for the reserved extra service.")
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-11-22T16:56:34.734+02:00")
 
-public class ExtraService extends ExtraServiceBase {
+public class ExtraServiceReservation   {
+  @JsonProperty("title")
+  private String title = null;
 
   @JsonProperty("description")
   private String description = null;
@@ -26,8 +28,31 @@ public class ExtraService extends ExtraServiceBase {
   @JsonProperty("fare")
   private ProductFare fare = null;
 
+  @JsonProperty("extraServiceReservationId")
+  private String extraServiceReservationId = null;
 
-  public ExtraService description(String description) {
+  public ExtraServiceReservation title(String title) {
+    this.title = title;
+    return this;
+  }
+
+   /**
+   * Get title
+   * @return title
+  **/
+  @ApiModelProperty(required = true, value = "")
+  @NotNull
+
+
+  public String getTitle() {
+    return title;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
+  }
+
+  public ExtraServiceReservation description(String description) {
     this.description = description;
     return this;
   }
@@ -47,7 +72,7 @@ public class ExtraService extends ExtraServiceBase {
     this.description = description;
   }
 
-  public ExtraService fare(ProductFare fare) {
+  public ExtraServiceReservation fare(ProductFare fare) {
     this.fare = fare;
     return this;
   }
@@ -68,6 +93,26 @@ public class ExtraService extends ExtraServiceBase {
     this.fare = fare;
   }
 
+  public ExtraServiceReservation extraServiceReservationId(String extraServiceReservationId) {
+    this.extraServiceReservationId = extraServiceReservationId;
+    return this;
+  }
+
+   /**
+   * Get extraServiceReservationId
+   * @return extraServiceReservationId
+  **/
+  @ApiModelProperty(value = "")
+
+
+  public String getExtraServiceReservationId() {
+    return extraServiceReservationId;
+  }
+
+  public void setExtraServiceReservationId(String extraServiceReservationId) {
+    this.extraServiceReservationId = extraServiceReservationId;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -77,25 +122,27 @@ public class ExtraService extends ExtraServiceBase {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ExtraService extraService = (ExtraService) o;
-    return Objects.equals(this.title, extraService.title) &&
-        Objects.equals(this.description, extraService.description) &&
-        Objects.equals(this.fare, extraService.fare);
+    ExtraServiceReservation extraServiceReservation = (ExtraServiceReservation) o;
+    return Objects.equals(this.title, extraServiceReservation.title) &&
+        Objects.equals(this.description, extraServiceReservation.description) &&
+        Objects.equals(this.fare, extraServiceReservation.fare) &&
+        Objects.equals(this.extraServiceReservationId, extraServiceReservation.extraServiceReservationId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(title, description, fare);
+    return Objects.hash(title, description, fare, extraServiceReservationId);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ExtraService {\n");
+    sb.append("class ExtraServiceReservation {\n");
     
     sb.append("    title: ").append(toIndentedString(title)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    fare: ").append(toIndentedString(fare)).append("\n");
+    sb.append("    extraServiceReservationId: ").append(toIndentedString(extraServiceReservationId)).append("\n");
     sb.append("}");
     return sb.toString();
   }

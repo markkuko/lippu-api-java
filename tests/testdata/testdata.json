@@ -8,7 +8,7 @@
   "non_valid_reservation_data" : {
     "reservations": [
       {
-        "reservationData": "InRyYXZlbCI6IFsNCiAgICB7DQogICAgICAidHJhdmVsVHlwZSI6ICJDb29yZGluYXRlQmFzZWRUcmF2ZWwiLA0KICAgICAgImZyb20iOiB7DQogICAgICAgICJsYXQiOiA2MC4yLA0KICAgICAgICAibG9uIjogMjQuOCwNCiAgICAgICAgIm",
+        "travelEntitlementId": "InRyYXZlbCI6IFsNCiAgICB7DQogICAgICAidHJhdmVsVHlwZSI6ICJDb29yZGluYXRlQmFzZWRUcmF2ZWwiLA0KICAgICAgImZyb20iOiB7DQogICAgICAgICJsYXQiOiA2MC4yLA0KICAgICAgICAibG9uIjogMjQuOCwNCiAgICAgICAgIm",
         "customerInfo": [
           {
             "name": "Matti Matkustaja",
@@ -18,10 +18,10 @@
         ]
       },
       {
-        "reservationData": "XXXXXXXXXXXXXXXXXdHJhdmVsVHlwZSI6ICJDb29yZGluYXRlQmFzZWRUcmF2ZWwiLA0KICAgICAgImZyb20iOiB7DQogICAgICAgICJsYXQiOiA2MC4yLA0KICAgICAgICAibG9uIjogMjQuOCwNCiAgICAgICAgIm"
+        "travelEntitlementId": "XXXXXXXXXXXXXXXXXdHJhdmVsVHlwZSI6ICJDb29yZGluYXRlQmFzZWRUcmF2ZWwiLA0KICAgICAgImZyb20iOiB7DQogICAgICAgICJsYXQiOiA2MC4yLA0KICAgICAgICAibG9uIjogMjQuOCwNCiAgICAgICAgIm"
       },
       {
-        "reservationData": "YYYYYYYYYYYYYYYYYYB7DQogICAgICAidHJhdmVsVHlwZSI6ICJDb29yZGluYXRlQmFzZWRUcmF2ZWwiLA0KICAgICAgImZyb20iOiB7DQogICAgICAgICJsYXQiOiA2MC4yLA0KICAgICAgICAibG9uIjogMjQuOCwNCiAgICAgICAgIm"
+        "travelEntitlementId": "YYYYYYYYYYYYYYYYYYB7DQogICAgICAidHJhdmVsVHlwZSI6ICJDb29yZGluYXRlQmFzZWRUcmF2ZWwiLA0KICAgICAgImZyb20iOiB7DQogICAgICAgICJsYXQiOiA2MC4yLA0KICAgICAgICAibG9uIjogMjQuOCwNCiAgICAgICAgIm"
       }
     ]
   },
@@ -70,9 +70,7 @@
       }
     },
     "passengers": [
-      {"category":"Child","extraServices": [{"title":"CHILDSEAT",
-        "extraServiceReservationData":"EXTRA-CHILD-SEAT-115311",
-      "fare": {"amount": 13, "currency": "EUR", "vatPercent" : 10}}]}
+      {"category":"Child","extraServices": [{"title":"CHILDSEAT"}]}
     ]
   },
   "test_products_current_date_response" : {
@@ -101,9 +99,8 @@
       }],
       "extraServices": [{
         "title": "CHILDSEAT",
-        "fare": { "amount" : 13, "currency": "EUR", "vatPercent": 10},
-        "extraServiceReservationData" : null,
-        "description" : "Separate child safety seat for the travel."
+        "description" : "Separate child safety seat for the travel.",
+        "fare": { "currency": "EUR", "amount" : 13.0, "vatPercent": 10.0}
       }
 
       ],

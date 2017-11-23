@@ -10,19 +10,19 @@ import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-11T13:35:10.864+03:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-11-22T16:56:34.734+02:00")
 
 @Configuration
-class SwaggerDocumentationConfig {
+public class SwaggerDocumentationConfig {
 
-    private ApiInfo apiInfo() {
+    ApiInfo apiInfo() {
         return new ApiInfoBuilder()
             .title("Lippu")
-            .description("Transport Code broughts together legal provisions on transport market under one act. The LIPPU-project was created to help transport operators enable Mobility as a Service (MaaS) capabilities. This is API specification of LIPPU-project. NOTE, The ticket payment capabilities are scoped out from LIPPU-project.")
-            .license("")
-            .licenseUrl("http://unlicense.org")
+            .description("Transport Code broughts together legal provisions on transport market under one act. The LIPPU-project was created to help transport operators enable Mobility as a Service (MaaS) capabilities. This is API specification of LIPPU-project. NOTE, the ticket payment capabilities are scoped out from LIPPU-project.")
+            .license("EUPL v1.2")
+            .licenseUrl("https://joinup.ec.europa.eu/sites/default/files/ckeditor_files/files/EUPL%20v1_2%20EN(1).txt")
             .termsOfServiceUrl("")
-            .version("0.1")
+            .version("0.4.0-SNAPSHOT")
             .contact(new Contact("","", ""))
             .build();
     }

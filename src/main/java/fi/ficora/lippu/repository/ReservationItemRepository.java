@@ -15,7 +15,7 @@ public interface ReservationItemRepository extends CrudRepository<ReservationIte
                                                               LocalDateTime from, LocalDateTime to);
 
     long count();
-    ReservationItem findOneByReservationData(String reservationData);
+    ReservationItem findOneByTravelEntitlementId(String travelEntitlementId);
     List<ReservationItem> findAllByCaseId(String caseId);
 
     List<ReservationItem> findAllByConfirmedAndReservationValidToBetween(boolean confirmed,

@@ -189,7 +189,7 @@ public class ProductService implements IProductService{
     }
 
     private List<Product> filterByAccessibilities(List<Product> products,
-                                                  List<Accessibility> accessibilities) {
+                                                  List<? extends AccessibilityBase> accessibilities) {
 
         List<Product> returnProducts = new ArrayList<>();
         for(Product product: products) {
@@ -201,14 +201,15 @@ public class ProductService implements IProductService{
         return returnProducts;
     }
     public boolean hasRequiredAccessibityFeatures(Product product,
-                                                   List<Accessibility> accessibilities) {
+                                                   List<? extends AccessibilityBase> accessibilities) {
         boolean foundAll = true;
-        for (Accessibility accessibility : accessibilities) {
+        for (AccessibilityBase accessibility : accessibilities) {
             boolean foundAccessibility = false;
             if (accessibility.getTitle().equals(Accessibility.TitleEnum.UNKNOWN)) {
                 foundAccessibility = true;
             } else {
-                AccessibilityFeature accessibilityFeature2 = getAccessibilityFromProduct(product,
+                AccessibilityFeature accessibilityFeature2 =
+                        getAccessibilityFromProduct(product,
                         accessibility.getTitle());
                 if (accessibilityFeature2 != null) {
                     log.debug("Found accessibility:{}",

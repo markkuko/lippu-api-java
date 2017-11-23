@@ -2,18 +2,21 @@ package fi.ficora.lippu.domain.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import fi.ficora.lippu.domain.model.ReservationRequestReservations;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * ReservationRequest
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-30T10:16:24.190+03:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-11-22T16:56:34.734+02:00")
 
 public class ReservationRequest   {
   @JsonProperty("reservations")
@@ -27,7 +30,7 @@ public class ReservationRequest   {
 
   public ReservationRequest addReservationsItem(ReservationRequestReservations reservationsItem) {
     if (this.reservations == null) {
-      this.reservations = new ArrayList<ReservationRequestReservations>();
+      this.reservations = new ArrayList<>();
     }
     this.reservations.add(reservationsItem);
     return this;

@@ -4,70 +4,22 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import fi.ficora.lippu.domain.model.AccessibilityBase;
 import fi.ficora.lippu.domain.model.ProductFare;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * AccessibilityFeature
+ * Accessibility
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-30T10:16:24.190+03:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-11-22T16:56:34.734+02:00")
 
-public class Accessibility   {
-  /**
-   * Gets or Sets title
-   */
-  public enum TitleEnum {
-    WHEELCHAIR("WHEELCHAIR"),
-    
-    PUSHCHAIR("PUSHCHAIR"),
-    
-    PASSENGER_CART("PASSENGER_CART"),
-    
-    LOW_FLOOR("LOW-FLOOR"),
-    
-    GUIDE_DOG("GUIDE_DOG"),
-    
-    ONBOARD_ASSISTANCE("ONBOARD_ASSISTANCE"),
-    
-    BOARDING_ASSISTANCE("BOARDING_ASSISTANCE"),
-    
-    UNACCOMPANIED_MINOR_ASSISTANCE("UNACCOMPANIED_MINOR_ASSISTANCE"),
-    
-    OTHER("OTHER"),
-    
-    STEP_FREE_ACCESS("STEP_FREE_ACCESS"),
-    
-    UNKNOWN("UNKNOWN");
+public class Accessibility  extends AccessibilityBase {
 
-    private String value;
-
-    TitleEnum(String value) {
-      this.value = value;
-    }
-
-    @Override
-    @JsonValue
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static TitleEnum fromValue(String text) {
-      for (TitleEnum b : TitleEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-  }
-
-  @JsonProperty("title")
-  private TitleEnum title = null;
 
   @JsonProperty("additionalInformation")
   private String additionalInformation = null;
@@ -83,21 +35,6 @@ public class Accessibility   {
     return this;
   }
 
-   /**
-   * Get title
-   * @return title
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
-
-
-  public TitleEnum getTitle() {
-    return title;
-  }
-
-  public void setTitle(TitleEnum title) {
-    this.title = title;
-  }
 
   public Accessibility additionalInformation(String additionalInformation) {
     this.additionalInformation = additionalInformation;
@@ -184,7 +121,7 @@ public class Accessibility   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class AccessibilityFeature {\n");
+    sb.append("class Accessibility {\n");
     
     sb.append("    title: ").append(toIndentedString(title)).append("\n");
     sb.append("    additionalInformation: ").append(toIndentedString(additionalInformation)).append("\n");

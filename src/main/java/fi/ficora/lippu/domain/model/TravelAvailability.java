@@ -2,25 +2,28 @@ package fi.ficora.lippu.domain.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import fi.ficora.lippu.domain.model.ProductFare;
 import fi.ficora.lippu.domain.model.Transport;
-import fi.ficora.lippu.domain.model.TravelPassenger;
+import fi.ficora.lippu.domain.model.TravelPassengerReservation;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * TravelAvailability
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-30T10:16:24.190+03:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-11-22T16:56:34.734+02:00")
 
 public class TravelAvailability   {
-  @JsonProperty("reservationData")
-  private String reservationData = null;
+  @JsonProperty("travelEntitlementId")
+  private String travelEntitlementId = null;
 
   @JsonProperty("validTo")
   private OffsetDateTime validTo = null;
@@ -33,26 +36,26 @@ public class TravelAvailability   {
 
   @JsonProperty("applicableForPassengers")
   @Valid
-  private List<TravelPassenger> applicableForPassengers = null;
+  private List<TravelPassengerReservation> applicableForPassengers = null;
 
-  public TravelAvailability reservationData(String reservationData) {
-    this.reservationData = reservationData;
+  public TravelAvailability travelEntitlementId(String travelEntitlementId) {
+    this.travelEntitlementId = travelEntitlementId;
     return this;
   }
 
    /**
-   * Ticket supply information provided by the transportation service. With this information transport service is able to identify offered service. Content can be database sequence, calculated identifier or crypted capacity data that after decryption describes ordered service to transportation operator. This alone should be enough to identify where and when passenger wants to go, and what kind of product he/she is using.
-   * @return reservationData
+   * Ticket id information provided by the transportation service. With this information transport service is able to identify offered service and travel entitlement. Content can be database sequence, UUID or some other identifier. This alone should be enough to identify where and when passenger wants to go, and what kind of product he/she is using.
+   * @return travelEntitlementId
   **/
-  @ApiModelProperty(value = "Ticket supply information provided by the transportation service. With this information transport service is able to identify offered service. Content can be database sequence, calculated identifier or crypted capacity data that after decryption describes ordered service to transportation operator. This alone should be enough to identify where and when passenger wants to go, and what kind of product he/she is using.")
+  @ApiModelProperty(value = "Ticket id information provided by the transportation service. With this information transport service is able to identify offered service and travel entitlement. Content can be database sequence, UUID or some other identifier. This alone should be enough to identify where and when passenger wants to go, and what kind of product he/she is using.")
 
 
-  public String getReservationData() {
-    return reservationData;
+  public String getTravelEntitlementId() {
+    return travelEntitlementId;
   }
 
-  public void setReservationData(String reservationData) {
-    this.reservationData = reservationData;
+  public void setTravelEntitlementId(String travelEntitlementId) {
+    this.travelEntitlementId = travelEntitlementId;
   }
 
   public TravelAvailability validTo(OffsetDateTime validTo) {
@@ -118,14 +121,14 @@ public class TravelAvailability   {
     this.transport = transport;
   }
 
-  public TravelAvailability applicableForPassengers(List<TravelPassenger> applicableForPassengers) {
+  public TravelAvailability applicableForPassengers(List<TravelPassengerReservation> applicableForPassengers) {
     this.applicableForPassengers = applicableForPassengers;
     return this;
   }
 
-  public TravelAvailability addApplicableForPassengersItem(TravelPassenger applicableForPassengersItem) {
+  public TravelAvailability addApplicableForPassengersItem(TravelPassengerReservation applicableForPassengersItem) {
     if (this.applicableForPassengers == null) {
-      this.applicableForPassengers = new ArrayList<TravelPassenger>();
+      this.applicableForPassengers = new ArrayList<>();
     }
     this.applicableForPassengers.add(applicableForPassengersItem);
     return this;
@@ -139,11 +142,11 @@ public class TravelAvailability   {
 
   @Valid
 
-  public List<TravelPassenger> getApplicableForPassengers() {
+  public List<TravelPassengerReservation> getApplicableForPassengers() {
     return applicableForPassengers;
   }
 
-  public void setApplicableForPassengers(List<TravelPassenger> applicableForPassengers) {
+  public void setApplicableForPassengers(List<TravelPassengerReservation> applicableForPassengers) {
     this.applicableForPassengers = applicableForPassengers;
   }
 
@@ -157,7 +160,7 @@ public class TravelAvailability   {
       return false;
     }
     TravelAvailability travelAvailability = (TravelAvailability) o;
-    return Objects.equals(this.reservationData, travelAvailability.reservationData) &&
+    return Objects.equals(this.travelEntitlementId, travelAvailability.travelEntitlementId) &&
         Objects.equals(this.validTo, travelAvailability.validTo) &&
         Objects.equals(this.fare, travelAvailability.fare) &&
         Objects.equals(this.transport, travelAvailability.transport) &&
@@ -166,7 +169,7 @@ public class TravelAvailability   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(reservationData, validTo, fare, transport, applicableForPassengers);
+    return Objects.hash(travelEntitlementId, validTo, fare, transport, applicableForPassengers);
   }
 
   @Override
@@ -174,7 +177,7 @@ public class TravelAvailability   {
     StringBuilder sb = new StringBuilder();
     sb.append("class TravelAvailability {\n");
     
-    sb.append("    reservationData: ").append(toIndentedString(reservationData)).append("\n");
+    sb.append("    travelEntitlementId: ").append(toIndentedString(travelEntitlementId)).append("\n");
     sb.append("    validTo: ").append(toIndentedString(validTo)).append("\n");
     sb.append("    fare: ").append(toIndentedString(fare)).append("\n");
     sb.append("    transport: ").append(toIndentedString(transport)).append("\n");

@@ -8,6 +8,7 @@ import fi.ficora.lippu.domain.Nonce;
 import fi.ficora.lippu.domain.Reservation;
 import fi.ficora.lippu.domain.ReservationItem;
 import fi.ficora.lippu.exception.AccountNotFoundException;
+import fi.ficora.lippu.exception.AuthVerificationFailed;
 import fi.ficora.lippu.exception.NotAuthorizedException;
 import fi.ficora.lippu.repository.ClientRepository;
 import fi.ficora.lippu.repository.DataRepository;
@@ -74,44 +75,46 @@ public class AuthService implements IAuthService {
     public Auth verifyAuthentication(String data, String cnonce,
                                      String snonce, String keyId,
                                      String alg)
-            throws UnsupportedEncodingException, JoseException {
+            throws UnsupportedEncodingException, JoseException, AuthVerificationFailed {
 
         Nonce serverNonce = verifyNonce(snonce);
-        if (serverNonce != null) {
-            Client client = this.clientRepository.findOne(serverNonce.
-                    getClient());
-            ClientKey key = this.findClientKey(client, keyId);
-            if (key != null) {
-                try {
-                    AuthService.log.debug("Decoding base64 payload {}", data);
-                    byte[] dataEncoded = Base64.getEncoder().encode(
-                            (serverNonce.getNonce() + cnonce)
-                                    .getBytes("utf-8"));
-                    boolean isValidSignature = AuthService.checkSignature(
-                            new String(dataEncoded, Charset.forName("UTF-8")),
-                            data, key.getKeyfile(), alg);
-                    AuthService.log.debug("Payload is {} {}  {}", isValidSignature, dataEncoded, data);
-                    if (isValidSignature) {
-                        Auth auth = this.generateJWT(client);
-                        this.nonceRepository.delete(serverNonce);
-                        return auth;
-                    } else {
-                        AuthService.log.info("Payload signature was not valid");
-                        return null;
-                    }
-                } catch (IllegalArgumentException e) {
-                    AuthService.log.debug("Exception while processing authentication payload {}", e.getMessage());
-                    this.nonceRepository.delete(serverNonce.getNonce());
-                    return null;
-                }
+        if (serverNonce == null) {
+            AuthService.log.info("Did not find valid nonce", snonce);
+            throw new AuthVerificationFailed("Server nonce was null");
+        }
+        Client client = this.clientRepository.findOne(serverNonce.
+                getClient());
+        ClientKey key = this.findClientKey(client, keyId);
+        if (key == null) {
+            AuthService.log.info("Did not find client's ({}) key with keyId {}",
+                    client.getAccount(), keyId);
+            throw new AuthVerificationFailed("Did not find client's key" +
+                    "with given keyId");
+        }
+        try {
+            AuthService.log.debug("Decoding base64 payload {}", data);
+            byte[] dataEncoded = Base64.getEncoder().encode(
+                    (serverNonce.getNonce() + cnonce)
+                            .getBytes("utf-8"));
+            boolean isValidSignature = AuthService.checkSignature(
+                    new String(dataEncoded, Charset.forName("UTF-8")),
+                    data, key.getKeyfile(), alg);
+            AuthService.log.debug("Payload is {} {}  {}", isValidSignature, dataEncoded, data);
+            if (isValidSignature) {
+                Auth auth = this.generateJWT(client);
+                this.nonceRepository.delete(serverNonce);
+                return auth;
             } else {
-                AuthService.log.info("Did not find client's ({}) key with keyId {}", client.getAccount(), keyId);
+                AuthService.log.info("Payload signature was not valid");
                 return null;
             }
-        } else {
-            AuthService.log.info("Did not find valid nonce", snonce);
-            return null;
+        } catch (IllegalArgumentException e) {
+            AuthService.log.debug("Exception while processing authentication payload {}", e.getMessage());
+            this.nonceRepository.delete(serverNonce.getNonce());
+            throw new AuthVerificationFailed("Exception while processing authentication payload:"+
+                    e.getMessage());
         }
+
     }
 
     /**

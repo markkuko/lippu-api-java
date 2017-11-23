@@ -3,8 +3,6 @@ package fi.ficora.lippu.domain.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import fi.ficora.lippu.domain.model.ExtraServiceBase;
-import fi.ficora.lippu.domain.model.ProductFare;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
@@ -18,54 +16,29 @@ import javax.validation.constraints.*;
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-11-22T16:56:34.734+02:00")
 
-public class ExtraService extends ExtraServiceBase {
+public class ExtraServiceBase   {
+  @JsonProperty("title")
+  protected String title = null;
 
-  @JsonProperty("description")
-  private String description = null;
-
-  @JsonProperty("fare")
-  private ProductFare fare = null;
-
-
-  public ExtraService description(String description) {
-    this.description = description;
+  public ExtraServiceBase title(String title) {
+    this.title = title;
     return this;
   }
 
    /**
-   * Get description
-   * @return description
+   * Get title
+   * @return title
   **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(required = true, value = "")
+  @NotNull
 
 
-  public String getDescription() {
-    return description;
+  public String getTitle() {
+    return title;
   }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public ExtraService fare(ProductFare fare) {
-    this.fare = fare;
-    return this;
-  }
-
-   /**
-   * Get fare
-   * @return fare
-  **/
-  @ApiModelProperty(value = "")
-
-  @Valid
-
-  public ProductFare getFare() {
-    return fare;
-  }
-
-  public void setFare(ProductFare fare) {
-    this.fare = fare;
+  public void setTitle(String title) {
+    this.title = title;
   }
 
 
@@ -77,25 +50,21 @@ public class ExtraService extends ExtraServiceBase {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ExtraService extraService = (ExtraService) o;
-    return Objects.equals(this.title, extraService.title) &&
-        Objects.equals(this.description, extraService.description) &&
-        Objects.equals(this.fare, extraService.fare);
+    ExtraServiceBase extraServiceBase = (ExtraServiceBase) o;
+    return Objects.equals(this.title, extraServiceBase.title);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(title, description, fare);
+    return Objects.hash(title);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ExtraService {\n");
+    sb.append("class ExtraServiceBase {\n");
     
     sb.append("    title: ").append(toIndentedString(title)).append("\n");
-    sb.append("    description: ").append(toIndentedString(description)).append("\n");
-    sb.append("    fare: ").append(toIndentedString(fare)).append("\n");
     sb.append("}");
     return sb.toString();
   }

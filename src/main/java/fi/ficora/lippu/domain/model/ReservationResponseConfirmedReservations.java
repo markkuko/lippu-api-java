@@ -2,23 +2,29 @@ package fi.ficora.lippu.domain.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.OffsetDateTime;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * ReservationResponseConfirmedReservations
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-30T10:16:24.190+03:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-11-22T16:56:34.734+02:00")
 
 public class ReservationResponseConfirmedReservations   {
-  @JsonProperty("reservationData")
-  private String reservationData = null;
+  @JsonProperty("travelEntitlementId")
+  private String travelEntitlementId = null;
 
   @JsonProperty("ticketPayload")
   private String ticketPayload = null;
+
+  @JsonProperty("ticketType")
+  private String ticketType = null;
 
   @JsonProperty("validFrom")
   private OffsetDateTime validFrom = null;
@@ -26,24 +32,24 @@ public class ReservationResponseConfirmedReservations   {
   @JsonProperty("validTo")
   private OffsetDateTime validTo = null;
 
-  public ReservationResponseConfirmedReservations reservationData(String reservationData) {
-    this.reservationData = reservationData;
+  public ReservationResponseConfirmedReservations travelEntitlementId(String travelEntitlementId) {
+    this.travelEntitlementId = travelEntitlementId;
     return this;
   }
 
    /**
-   * Reservation data
-   * @return reservationData
+   * The id for the travel entitlement.
+   * @return travelEntitlementId
   **/
-  @ApiModelProperty(value = "Reservation data")
+  @ApiModelProperty(value = "The id for the travel entitlement.")
 
 
-  public String getReservationData() {
-    return reservationData;
+  public String getTravelEntitlementId() {
+    return travelEntitlementId;
   }
 
-  public void setReservationData(String reservationData) {
-    this.reservationData = reservationData;
+  public void setTravelEntitlementId(String travelEntitlementId) {
+    this.travelEntitlementId = travelEntitlementId;
   }
 
   public ReservationResponseConfirmedReservations ticketPayload(String ticketPayload) {
@@ -52,10 +58,10 @@ public class ReservationResponseConfirmedReservations   {
   }
 
    /**
-   * Ticket payload. Format is agreed by API partners.
+   * Ticket payload. Format is agreed by API partners, ticketType can be used to distinguish different formats.
    * @return ticketPayload
   **/
-  @ApiModelProperty(value = "Ticket payload. Format is agreed by API partners.")
+  @ApiModelProperty(value = "Ticket payload. Format is agreed by API partners, ticketType can be used to distinguish different formats.")
 
 
   public String getTicketPayload() {
@@ -64,6 +70,26 @@ public class ReservationResponseConfirmedReservations   {
 
   public void setTicketPayload(String ticketPayload) {
     this.ticketPayload = ticketPayload;
+  }
+
+  public ReservationResponseConfirmedReservations ticketType(String ticketType) {
+    this.ticketType = ticketType;
+    return this;
+  }
+
+   /**
+   * The ticket type for the ticket payload, for example NFC, QR code, Barcode or Bluetooth. Different formats is agreed by API partners.
+   * @return ticketType
+  **/
+  @ApiModelProperty(value = "The ticket type for the ticket payload, for example NFC, QR code, Barcode or Bluetooth. Different formats is agreed by API partners.")
+
+
+  public String getTicketType() {
+    return ticketType;
+  }
+
+  public void setTicketType(String ticketType) {
+    this.ticketType = ticketType;
   }
 
   public ReservationResponseConfirmedReservations validFrom(OffsetDateTime validFrom) {
@@ -118,15 +144,16 @@ public class ReservationResponseConfirmedReservations   {
       return false;
     }
     ReservationResponseConfirmedReservations reservationResponseConfirmedReservations = (ReservationResponseConfirmedReservations) o;
-    return Objects.equals(this.reservationData, reservationResponseConfirmedReservations.reservationData) &&
+    return Objects.equals(this.travelEntitlementId, reservationResponseConfirmedReservations.travelEntitlementId) &&
         Objects.equals(this.ticketPayload, reservationResponseConfirmedReservations.ticketPayload) &&
+        Objects.equals(this.ticketType, reservationResponseConfirmedReservations.ticketType) &&
         Objects.equals(this.validFrom, reservationResponseConfirmedReservations.validFrom) &&
         Objects.equals(this.validTo, reservationResponseConfirmedReservations.validTo);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(reservationData, ticketPayload, validFrom, validTo);
+    return Objects.hash(travelEntitlementId, ticketPayload, ticketType, validFrom, validTo);
   }
 
   @Override
@@ -134,8 +161,9 @@ public class ReservationResponseConfirmedReservations   {
     StringBuilder sb = new StringBuilder();
     sb.append("class ReservationResponseConfirmedReservations {\n");
     
-    sb.append("    reservationData: ").append(toIndentedString(reservationData)).append("\n");
+    sb.append("    travelEntitlementId: ").append(toIndentedString(travelEntitlementId)).append("\n");
     sb.append("    ticketPayload: ").append(toIndentedString(ticketPayload)).append("\n");
+    sb.append("    ticketType: ").append(toIndentedString(ticketType)).append("\n");
     sb.append("    validFrom: ").append(toIndentedString(validFrom)).append("\n");
     sb.append("    validTo: ").append(toIndentedString(validTo)).append("\n");
     sb.append("}");

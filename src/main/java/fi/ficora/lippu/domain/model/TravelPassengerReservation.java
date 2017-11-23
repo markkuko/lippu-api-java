@@ -3,8 +3,8 @@ package fi.ficora.lippu.domain.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import fi.ficora.lippu.domain.model.AccessibilityBase;
-import fi.ficora.lippu.domain.model.ExtraServiceBase;
+import fi.ficora.lippu.domain.model.AccessibilityReservation;
+import fi.ficora.lippu.domain.model.ExtraServiceReservation;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
@@ -14,24 +14,24 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * TravelPassenger
+ * TravelPassengerReservation
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-11-22T16:56:34.734+02:00")
 
-public class TravelPassenger   {
+public class TravelPassengerReservation   {
   @JsonProperty("category")
   private String category = null;
 
   @JsonProperty("extraServices")
   @Valid
-  private List<ExtraServiceBase> extraServices = null;
+  private List<ExtraServiceReservation> extraServices = null;
 
   @JsonProperty("accessibility")
   @Valid
-  private List<AccessibilityBase> accessibility = null;
+  private List<AccessibilityReservation> accessibility = null;
 
-  public TravelPassenger category(String category) {
+  public TravelPassengerReservation category(String category) {
     this.category = category;
     return this;
   }
@@ -52,12 +52,12 @@ public class TravelPassenger   {
     this.category = category;
   }
 
-  public TravelPassenger extraServices(List<ExtraServiceBase> extraServices) {
+  public TravelPassengerReservation extraServices(List<ExtraServiceReservation> extraServices) {
     this.extraServices = extraServices;
     return this;
   }
 
-  public TravelPassenger addExtraServicesItem(ExtraServiceBase extraServicesItem) {
+  public TravelPassengerReservation addExtraServicesItem(ExtraServiceReservation extraServicesItem) {
     if (this.extraServices == null) {
       this.extraServices = new ArrayList<>();
     }
@@ -66,27 +66,27 @@ public class TravelPassenger   {
   }
 
    /**
-   * List of required extra services for the travel. Identifer for the extra service the title of extra service.
+   * Get extraServices
    * @return extraServices
   **/
-  @ApiModelProperty(value = "List of required extra services for the travel. Identifer for the extra service the title of extra service.")
+  @ApiModelProperty(value = "")
 
   @Valid
 
-  public List<ExtraServiceBase> getExtraServices() {
+  public List<ExtraServiceReservation> getExtraServices() {
     return extraServices;
   }
 
-  public void setExtraServices(List<ExtraServiceBase> extraServices) {
+  public void setExtraServices(List<ExtraServiceReservation> extraServices) {
     this.extraServices = extraServices;
   }
 
-  public TravelPassenger accessibility(List<AccessibilityBase> accessibility) {
+  public TravelPassengerReservation accessibility(List<AccessibilityReservation> accessibility) {
     this.accessibility = accessibility;
     return this;
   }
 
-  public TravelPassenger addAccessibilityItem(AccessibilityBase accessibilityItem) {
+  public TravelPassengerReservation addAccessibilityItem(AccessibilityReservation accessibilityItem) {
     if (this.accessibility == null) {
       this.accessibility = new ArrayList<>();
     }
@@ -95,18 +95,18 @@ public class TravelPassenger   {
   }
 
    /**
-   * List of required accessibility options for the travel.
+   * Get accessibility
    * @return accessibility
   **/
-  @ApiModelProperty(value = "List of required accessibility options for the travel.")
+  @ApiModelProperty(value = "")
 
   @Valid
 
-  public List<AccessibilityBase> getAccessibility() {
+  public List<AccessibilityReservation> getAccessibility() {
     return accessibility;
   }
 
-  public void setAccessibility(List<AccessibilityBase> accessibility) {
+  public void setAccessibility(List<AccessibilityReservation> accessibility) {
     this.accessibility = accessibility;
   }
 
@@ -119,10 +119,10 @@ public class TravelPassenger   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    TravelPassenger travelPassenger = (TravelPassenger) o;
-    return Objects.equals(this.category, travelPassenger.category) &&
-        Objects.equals(this.extraServices, travelPassenger.extraServices) &&
-        Objects.equals(this.accessibility, travelPassenger.accessibility);
+    TravelPassengerReservation travelPassengerReservation = (TravelPassengerReservation) o;
+    return Objects.equals(this.category, travelPassengerReservation.category) &&
+        Objects.equals(this.extraServices, travelPassengerReservation.extraServices) &&
+        Objects.equals(this.accessibility, travelPassengerReservation.accessibility);
   }
 
   @Override
@@ -133,7 +133,7 @@ public class TravelPassenger   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class TravelPassenger {\n");
+    sb.append("class TravelPassengerReservation {\n");
     
     sb.append("    category: ").append(toIndentedString(category)).append("\n");
     sb.append("    extraServices: ").append(toIndentedString(extraServices)).append("\n");

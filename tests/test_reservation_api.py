@@ -146,7 +146,7 @@ class TestReservationApi(unittest.TestCase):
         # Make reservation
         headers['X-Message-Id'] = str(uuid.uuid4())
         reservation = {'reservations': [
-            {'reservationData': r_availability.json()['availability'][0]['reservationData'],
+            {'travelEntitlementId': r_availability.json()['availability'][0]['travelEntitlementId'],
              'customerInfo': [{'name': 'Matti','phone': 'adsf', 'email': 'asdf'}]}]}
         logging.info("Sending reservation %s" % reservation)
         r_reservation = lippuclient.reservation_request(self.envdata['base_url'],

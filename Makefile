@@ -44,6 +44,10 @@ dev:
 run_local: build
 	sh run.sh
 
+# Cleans previously build jars
+clean:
+	rm artifacts/*jar
+
 # Creates python3 based virtualenv environment
 # for running integration tests.
 test_setup:

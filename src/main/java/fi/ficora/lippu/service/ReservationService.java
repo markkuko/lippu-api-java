@@ -82,7 +82,7 @@ public class ReservationService implements IReservationService {
         String clientId = authService.getClientId();
         for(ReservationRequestReservations reservation: reservations) {
             ReservationItem item = reservationItemRepository.
-                    findOneByReservationData(reservation.getReservationData());
+                    findOneByTravelEntitlementId(reservation.getTravelEntitlementId());
             try {
 
                 if (isValidReservation(item, reservation)) {
@@ -95,7 +95,7 @@ public class ReservationService implements IReservationService {
                 }
             } catch (NotAuthorizedException e) {
                 log.info("Client {} tried to confirm item {}, message: {}", clientId,
-                        item.getReservationData(), e.getMessage());
+                        item.getTravelEntitlementId(), e.getMessage());
             }
         }
         return items;
@@ -118,14 +118,14 @@ public class ReservationService implements IReservationService {
     private boolean isValidReservation(ReservationItem item,
                                        ReservationRequestReservations reservation) {
         if(item == null || item.getReservationValidTo() == null) {
-            log.info("Did not find reservation with reservation data {}",
-                    reservation.getReservationData());
+            log.info("Did not find reservation with travel entitlement id {}",
+                    reservation.getTravelEntitlementId());
             return false;
         }
 
         if (!item.getReservationValidTo().isAfter(OffsetDateTime.now())) {
             log.info("Reservation {} has expired",
-                    reservation.getReservationData() );
+                    reservation.getTravelEntitlementId() );
             return false;
         }
         return true;
@@ -137,7 +137,7 @@ public class ReservationService implements IReservationService {
         ReservationItem item = new ReservationItem();
         item.setPassengerCategory(passenger.getCategory());
         item.setConfirmed(false);
-        item.setReservationData(createReservationData());
+        item.setTravelEntitlementId(createReservationData());
         item.setProductId(product.getId());
         item.setTravelDate(travel.getDateTime().toLocalDate().atTime(12, 0));
         item.setReservationValidTo(OffsetDateTime.now().plusMinutes(

@@ -2,49 +2,79 @@ package fi.ficora.lippu.domain.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import fi.ficora.lippu.domain.model.CustomerInfo;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * ReservationRequestReservations
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-30T10:16:24.190+03:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-11-22T16:56:34.734+02:00")
 
 public class ReservationRequestReservations   {
-  @JsonProperty("reservationData")
-  private String reservationData = null;
+  @JsonProperty("travelEntitlementId")
+  private String travelEntitlementId = null;
+
+  @JsonProperty("ticketType")
+  private String ticketType = null;
 
   @JsonProperty("customerInfo")
   @Valid
   private List<CustomerInfo> customerInfo = null;
 
-  @JsonProperty("chosenExtraReservationDatas")
+  @JsonProperty("chosenExtraReservationIds")
   @Valid
-  private List<String> chosenExtraReservationDatas = null;
+  private List<String> chosenExtraReservationIds = null;
 
-  public ReservationRequestReservations reservationData(String reservationData) {
-    this.reservationData = reservationData;
+  @JsonProperty("chosenAccessibilityReservationIds")
+  @Valid
+  private List<String> chosenAccessibilityReservationIds = null;
+
+  public ReservationRequestReservations travelEntitlementId(String travelEntitlementId) {
+    this.travelEntitlementId = travelEntitlementId;
     return this;
   }
 
    /**
-   * Reservation data from availability response
-   * @return reservationData
+   * The id for a travel entitlement from availability response.
+   * @return travelEntitlementId
   **/
-  @ApiModelProperty(value = "Reservation data from availability response")
+  @ApiModelProperty(value = "The id for a travel entitlement from availability response.")
 
 
-  public String getReservationData() {
-    return reservationData;
+  public String getTravelEntitlementId() {
+    return travelEntitlementId;
   }
 
-  public void setReservationData(String reservationData) {
-    this.reservationData = reservationData;
+  public void setTravelEntitlementId(String travelEntitlementId) {
+    this.travelEntitlementId = travelEntitlementId;
+  }
+
+  public ReservationRequestReservations ticketType(String ticketType) {
+    this.ticketType = ticketType;
+    return this;
+  }
+
+   /**
+   * Requested type of the ticket. Must be one of the types the transport service supports.
+   * @return ticketType
+  **/
+  @ApiModelProperty(value = "Requested type of the ticket. Must be one of the types the transport service supports.")
+
+
+  public String getTicketType() {
+    return ticketType;
+  }
+
+  public void setTicketType(String ticketType) {
+    this.ticketType = ticketType;
   }
 
   public ReservationRequestReservations customerInfo(List<CustomerInfo> customerInfo) {
@@ -54,7 +84,7 @@ public class ReservationRequestReservations   {
 
   public ReservationRequestReservations addCustomerInfoItem(CustomerInfo customerInfoItem) {
     if (this.customerInfo == null) {
-      this.customerInfo = new ArrayList<CustomerInfo>();
+      this.customerInfo = new ArrayList<>();
     }
     this.customerInfo.add(customerInfoItem);
     return this;
@@ -76,32 +106,60 @@ public class ReservationRequestReservations   {
     this.customerInfo = customerInfo;
   }
 
-  public ReservationRequestReservations chosenExtraReservationDatas(List<String> chosenExtraReservationDatas) {
-    this.chosenExtraReservationDatas = chosenExtraReservationDatas;
+  public ReservationRequestReservations chosenExtraReservationIds(List<String> chosenExtraReservationIds) {
+    this.chosenExtraReservationIds = chosenExtraReservationIds;
     return this;
   }
 
-  public ReservationRequestReservations addChosenExtraReservationDatasItem(String chosenExtraReservationDatasItem) {
-    if (this.chosenExtraReservationDatas == null) {
-      this.chosenExtraReservationDatas = new ArrayList<String>();
+  public ReservationRequestReservations addChosenExtraReservationIdsItem(String chosenExtraReservationIdsItem) {
+    if (this.chosenExtraReservationIds == null) {
+      this.chosenExtraReservationIds = new ArrayList<>();
     }
-    this.chosenExtraReservationDatas.add(chosenExtraReservationDatasItem);
+    this.chosenExtraReservationIds.add(chosenExtraReservationIdsItem);
     return this;
   }
 
    /**
-   * Reservation data of chosen extra services.
-   * @return chosenExtraReservationDatas
+   * Reservation ids of chosen extra services.
+   * @return chosenExtraReservationIds
   **/
-  @ApiModelProperty(value = "Reservation data of chosen extra services.")
+  @ApiModelProperty(value = "Reservation ids of chosen extra services.")
 
 
-  public List<String> getChosenExtraReservationDatas() {
-    return chosenExtraReservationDatas;
+  public List<String> getChosenExtraReservationIds() {
+    return chosenExtraReservationIds;
   }
 
-  public void setChosenExtraReservationDatas(List<String> chosenExtraReservationDatas) {
-    this.chosenExtraReservationDatas = chosenExtraReservationDatas;
+  public void setChosenExtraReservationIds(List<String> chosenExtraReservationIds) {
+    this.chosenExtraReservationIds = chosenExtraReservationIds;
+  }
+
+  public ReservationRequestReservations chosenAccessibilityReservationIds(List<String> chosenAccessibilityReservationIds) {
+    this.chosenAccessibilityReservationIds = chosenAccessibilityReservationIds;
+    return this;
+  }
+
+  public ReservationRequestReservations addChosenAccessibilityReservationIdsItem(String chosenAccessibilityReservationIdsItem) {
+    if (this.chosenAccessibilityReservationIds == null) {
+      this.chosenAccessibilityReservationIds = new ArrayList<>();
+    }
+    this.chosenAccessibilityReservationIds.add(chosenAccessibilityReservationIdsItem);
+    return this;
+  }
+
+   /**
+   * Reservation ids of chosen accessibility features.
+   * @return chosenAccessibilityReservationIds
+  **/
+  @ApiModelProperty(value = "Reservation ids of chosen accessibility features.")
+
+
+  public List<String> getChosenAccessibilityReservationIds() {
+    return chosenAccessibilityReservationIds;
+  }
+
+  public void setChosenAccessibilityReservationIds(List<String> chosenAccessibilityReservationIds) {
+    this.chosenAccessibilityReservationIds = chosenAccessibilityReservationIds;
   }
 
 
@@ -114,14 +172,16 @@ public class ReservationRequestReservations   {
       return false;
     }
     ReservationRequestReservations reservationRequestReservations = (ReservationRequestReservations) o;
-    return Objects.equals(this.reservationData, reservationRequestReservations.reservationData) &&
+    return Objects.equals(this.travelEntitlementId, reservationRequestReservations.travelEntitlementId) &&
+        Objects.equals(this.ticketType, reservationRequestReservations.ticketType) &&
         Objects.equals(this.customerInfo, reservationRequestReservations.customerInfo) &&
-        Objects.equals(this.chosenExtraReservationDatas, reservationRequestReservations.chosenExtraReservationDatas);
+        Objects.equals(this.chosenExtraReservationIds, reservationRequestReservations.chosenExtraReservationIds) &&
+        Objects.equals(this.chosenAccessibilityReservationIds, reservationRequestReservations.chosenAccessibilityReservationIds);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(reservationData, customerInfo, chosenExtraReservationDatas);
+    return Objects.hash(travelEntitlementId, ticketType, customerInfo, chosenExtraReservationIds, chosenAccessibilityReservationIds);
   }
 
   @Override
@@ -129,9 +189,11 @@ public class ReservationRequestReservations   {
     StringBuilder sb = new StringBuilder();
     sb.append("class ReservationRequestReservations {\n");
     
-    sb.append("    reservationData: ").append(toIndentedString(reservationData)).append("\n");
+    sb.append("    travelEntitlementId: ").append(toIndentedString(travelEntitlementId)).append("\n");
+    sb.append("    ticketType: ").append(toIndentedString(ticketType)).append("\n");
     sb.append("    customerInfo: ").append(toIndentedString(customerInfo)).append("\n");
-    sb.append("    chosenExtraReservationDatas: ").append(toIndentedString(chosenExtraReservationDatas)).append("\n");
+    sb.append("    chosenExtraReservationIds: ").append(toIndentedString(chosenExtraReservationIds)).append("\n");
+    sb.append("    chosenAccessibilityReservationIds: ").append(toIndentedString(chosenAccessibilityReservationIds)).append("\n");
     sb.append("}");
     return sb.toString();
   }

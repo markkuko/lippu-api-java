@@ -1,10 +1,9 @@
 package fi.ficora.lippu.service;
 
 import fi.ficora.lippu.domain.*;
-import fi.ficora.lippu.domain.model.Accessibility;
-import fi.ficora.lippu.domain.model.ExtraService;
-import fi.ficora.lippu.domain.model.ProductList;
-import fi.ficora.lippu.domain.model.Travel;
+import fi.ficora.lippu.domain.Product;
+import fi.ficora.lippu.domain.Transport;
+import fi.ficora.lippu.domain.model.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -119,7 +118,7 @@ public interface IProductService {
      * false.
      */
     boolean hasRequiredAccessibityFeatures(Product product,
-                                                  List<Accessibility> accessibilities);
+                                                  List<? extends AccessibilityBase> accessibilities);
 
     /**
      * Search certain {@link Accessibility}  from the products accessibilities.

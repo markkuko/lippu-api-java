@@ -43,6 +43,8 @@ public class AccessibilityFeature {
 
     private Fare fare;
 
+    private String accessibilityReservationId;
+
     public TitleEnum getTitle() {
         return title;
     }
@@ -73,5 +75,13 @@ public class AccessibilityFeature {
 
     public void setFare(Fare fare) {
         this.fare = fare;
+    }
+
+    public String getAccessibilityReservationId() {
+        return accessibilityReservationId;
+    }
+
+    public void setAccessibilityReservationId(String accessibilityReservationId) {
+        this.accessibilityReservationId = accessibilityReservationId;
     }
 }
