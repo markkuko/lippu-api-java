@@ -107,7 +107,7 @@ public interface IProductService {
      * @param contract Contract for operation
      * @return Product matching the parameters or null.
      */
-    Product getProduct(Travel travel, String contract);
+    Product getProduct(TravelRequest travel, String contract);
 
     /**
      * Checks if product has all the required accessibility

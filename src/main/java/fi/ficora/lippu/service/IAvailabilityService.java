@@ -6,6 +6,7 @@ import fi.ficora.lippu.domain.ReservationItem;
 import fi.ficora.lippu.domain.model.Travel;
 import fi.ficora.lippu.domain.model.TravelAvailability;
 import fi.ficora.lippu.domain.model.TravelPassenger;
+import fi.ficora.lippu.domain.model.TravelRequest;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -31,7 +32,7 @@ public interface IAvailabilityService {
     TravelAvailability addAvailability(Reservation reservation,
                                        Product product,
                                        TravelPassenger passenger,
-                                       Travel travel);
+                                       TravelRequest travel);
 
     /**
      * Checks if there are available capacity for given product,

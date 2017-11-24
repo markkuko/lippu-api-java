@@ -61,7 +61,7 @@ public class AvailabilityService implements IAvailabilityService{
     public TravelAvailability addAvailability(Reservation reservation,
                                            Product product,
                                            TravelPassenger passenger,
-                                           Travel travel) {
+                                           TravelRequest travel) {
         // @todo validation checks only product type and contract
         if(!(validPassengerAccessibilityAvailability(passenger, product)
                     && validPassengerExtraServiceAvailability(passenger, product))) {

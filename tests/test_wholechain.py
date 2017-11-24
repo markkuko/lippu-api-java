@@ -68,7 +68,7 @@ class TestWholeChain(unittest.TestCase):
 
         # Trip availaibility inquiry
         travel = self.testdata['travel_data']
-        travel["travel"]["dateTime"]  = zulu.now().shift(days=2). \
+        travel["travel"]["departureTimeEarliest"]  = zulu.now().shift(days=2). \
             replace(hour=14, minute=00).isoformat()
         r_availability = lippuclient.availability_request(self.envdata['base_url'],
                                   headers=headers, payload=travel)

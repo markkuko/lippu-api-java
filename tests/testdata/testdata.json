@@ -29,7 +29,7 @@
     "contract": "CONTRACT-AB123CD",
     "travel": {
       "productType": "PRODUCT-SINGLE-TICKET",
-      "dateTime": "2017-10-23T07:20:04.474Z",
+      "departureTimeEarliest": "2017-10-23T07:20:04.474Z",
       "from": {"lat":  60.2,
                "lon": 24.8},
       "to": {

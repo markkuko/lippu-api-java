@@ -7,6 +7,7 @@ import fi.ficora.lippu.domain.ReservationItem;
 import fi.ficora.lippu.domain.model.ReservationRequestReservations;
 import fi.ficora.lippu.domain.model.Travel;
 import fi.ficora.lippu.domain.model.TravelPassenger;
+import fi.ficora.lippu.domain.model.TravelRequest;
 import fi.ficora.lippu.exception.NotAuthorizedException;
 
 import java.time.LocalDate;
@@ -60,7 +61,7 @@ public interface IReservationService {
 
     ReservationItem createReservationItem(Product product,
                                           Reservation reservation,
-                                          Travel travel,
+                                          TravelRequest travel,
                                           TravelPassenger passenger);
 
     /**

@@ -8,6 +8,7 @@ import fi.ficora.lippu.domain.ReservationItem;
 import fi.ficora.lippu.domain.model.ReservationRequestReservations;
 import fi.ficora.lippu.domain.model.Travel;
 import fi.ficora.lippu.domain.model.TravelPassenger;
+import fi.ficora.lippu.domain.model.TravelRequest;
 import fi.ficora.lippu.exception.NotAuthorizedException;
 import fi.ficora.lippu.repository.ReservationItemRepository;
 import fi.ficora.lippu.repository.ReservationRepository;
@@ -132,20 +133,21 @@ public class ReservationService implements IReservationService {
     }
     public ReservationItem createReservationItem(Product product,
                                                  Reservation reservation,
-                                                 Travel travel,
+                                                 TravelRequest travel,
                                                  TravelPassenger passenger) {
         ReservationItem item = new ReservationItem();
         item.setPassengerCategory(passenger.getCategory());
         item.setConfirmed(false);
         item.setTravelEntitlementId(createReservationData());
         item.setProductId(product.getId());
-        item.setTravelDate(travel.getDateTime().toLocalDate().atTime(12, 0));
+        item.setTravelDate(travel.getDepartureTimeEarliest().
+                toLocalDate().atTime(12, 0));
         item.setReservationValidTo(OffsetDateTime.now().plusMinutes(
                 Constants.RESERVATION_AVAILABILITY_MINUTES));
         item.setCaseId(reservation.getCaseId());
         item.setClientId(reservation.getClientId());
         item.setValidFrom(timetableService.getProductDeparture(
-                travel.getDateTime().toLocalDate(), product));
+                travel.getDepartureTimeEarliest().toLocalDate(), product));
         item.setValidTo(item.getValidFrom());
         return item;
     }

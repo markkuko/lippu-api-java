@@ -50,6 +50,9 @@ public class TimetableService implements ITimetableService{
      * and has departures past the time.
      */
     public boolean hasProductDepartures(OffsetDateTime date, Product product) {
+        if(date == null) {
+            date = OffsetDateTime.now();
+        }
         Timetable timetable = timetableRepository.findByProductId(
                 product.getId());
         if(timetable != null &&

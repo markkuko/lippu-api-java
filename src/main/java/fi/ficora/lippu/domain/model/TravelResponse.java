@@ -4,19 +4,22 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import fi.ficora.lippu.domain.model.CombinedLocation;
+import fi.ficora.lippu.domain.model.Travel;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.time.OffsetDateTime;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * Travel
+ * Travel response.
  */
+@ApiModel(description = "Travel response.")
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-11-24T14:36:56.606+02:00")
 
-public class Travel   {
+public class TravelResponse   {
   @JsonProperty("productType")
   private String productType = null;
 
@@ -29,7 +32,13 @@ public class Travel   {
   @JsonProperty("to")
   private CombinedLocation to = null;
 
-  public Travel productType(String productType) {
+  @JsonProperty("departureTime")
+  private OffsetDateTime departureTime = null;
+
+  @JsonProperty("arrivalTime")
+  private OffsetDateTime arrivalTime = null;
+
+  public TravelResponse productType(String productType) {
     this.productType = productType;
     return this;
   }
@@ -50,7 +59,7 @@ public class Travel   {
     this.productType = productType;
   }
 
-  public Travel serviceId(String serviceId) {
+  public TravelResponse serviceId(String serviceId) {
     this.serviceId = serviceId;
     return this;
   }
@@ -70,7 +79,7 @@ public class Travel   {
     this.serviceId = serviceId;
   }
 
-  public Travel from(CombinedLocation from) {
+  public TravelResponse from(CombinedLocation from) {
     this.from = from;
     return this;
   }
@@ -91,7 +100,7 @@ public class Travel   {
     this.from = from;
   }
 
-  public Travel to(CombinedLocation to) {
+  public TravelResponse to(CombinedLocation to) {
     this.to = to;
     return this;
   }
@@ -112,6 +121,48 @@ public class Travel   {
     this.to = to;
   }
 
+  public TravelResponse departureTime(OffsetDateTime departureTime) {
+    this.departureTime = departureTime;
+    return this;
+  }
+
+   /**
+   * The datetime for the transportation departure.
+   * @return departureTime
+  **/
+  @ApiModelProperty(value = "The datetime for the transportation departure.")
+
+  @Valid
+
+  public OffsetDateTime getDepartureTime() {
+    return departureTime;
+  }
+
+  public void setDepartureTime(OffsetDateTime departureTime) {
+    this.departureTime = departureTime;
+  }
+
+  public TravelResponse arrivalTime(OffsetDateTime arrivalTime) {
+    this.arrivalTime = arrivalTime;
+    return this;
+  }
+
+   /**
+   * The datetime for the transportation arrival to the destination.
+   * @return arrivalTime
+  **/
+  @ApiModelProperty(value = "The datetime for the transportation arrival to the destination.")
+
+  @Valid
+
+  public OffsetDateTime getArrivalTime() {
+    return arrivalTime;
+  }
+
+  public void setArrivalTime(OffsetDateTime arrivalTime) {
+    this.arrivalTime = arrivalTime;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -121,27 +172,31 @@ public class Travel   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Travel travel = (Travel) o;
-    return Objects.equals(this.productType, travel.productType) &&
-        Objects.equals(this.serviceId, travel.serviceId) &&
-        Objects.equals(this.from, travel.from) &&
-        Objects.equals(this.to, travel.to);
+    TravelResponse travelResponse = (TravelResponse) o;
+    return Objects.equals(this.productType, travelResponse.productType) &&
+        Objects.equals(this.serviceId, travelResponse.serviceId) &&
+        Objects.equals(this.from, travelResponse.from) &&
+        Objects.equals(this.to, travelResponse.to) &&
+        Objects.equals(this.departureTime, travelResponse.departureTime) &&
+        Objects.equals(this.arrivalTime, travelResponse.arrivalTime);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(productType, serviceId, from, to);
+    return Objects.hash(productType, serviceId, from, to, departureTime, arrivalTime);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Travel {\n");
+    sb.append("class TravelResponse {\n");
     
     sb.append("    productType: ").append(toIndentedString(productType)).append("\n");
     sb.append("    serviceId: ").append(toIndentedString(serviceId)).append("\n");
     sb.append("    from: ").append(toIndentedString(from)).append("\n");
     sb.append("    to: ").append(toIndentedString(to)).append("\n");
+    sb.append("    departureTime: ").append(toIndentedString(departureTime)).append("\n");
+    sb.append("    arrivalTime: ").append(toIndentedString(arrivalTime)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -3,8 +3,8 @@ package fi.ficora.lippu.domain.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import fi.ficora.lippu.domain.model.Travel;
 import fi.ficora.lippu.domain.model.TravelPassenger;
+import fi.ficora.lippu.domain.model.TravelRequest;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
@@ -17,14 +17,14 @@ import javax.validation.constraints.*;
  * AvailabilityRequest
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-11-22T16:56:34.734+02:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-11-24T14:36:56.606+02:00")
 
 public class AvailabilityRequest   {
   @JsonProperty("contract")
   private String contract = null;
 
   @JsonProperty("travel")
-  private Travel travel = null;
+  private TravelRequest travel = null;
 
   @JsonProperty("passengers")
   @Valid
@@ -50,7 +50,7 @@ public class AvailabilityRequest   {
     this.contract = contract;
   }
 
-  public AvailabilityRequest travel(Travel travel) {
+  public AvailabilityRequest travel(TravelRequest travel) {
     this.travel = travel;
     return this;
   }
@@ -63,11 +63,11 @@ public class AvailabilityRequest   {
 
   @Valid
 
-  public Travel getTravel() {
+  public TravelRequest getTravel() {
     return travel;
   }
 
-  public void setTravel(Travel travel) {
+  public void setTravel(TravelRequest travel) {
     this.travel = travel;
   }
 

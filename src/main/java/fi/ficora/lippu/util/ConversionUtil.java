@@ -3,16 +3,7 @@ package fi.ficora.lippu.util;
 import fi.ficora.lippu.config.Constants;
 import fi.ficora.lippu.domain.*;
 import fi.ficora.lippu.domain.Product;
-import fi.ficora.lippu.domain.model.ExtraService;
-import fi.ficora.lippu.domain.model.ExtraServiceReservation;
-import fi.ficora.lippu.domain.model.ProductDescription;
-import fi.ficora.lippu.domain.model.Accessibility;
-import fi.ficora.lippu.domain.model.AccessibilityReservation;
-import fi.ficora.lippu.domain.model.ProductFare;
-import fi.ficora.lippu.domain.model.ReservationResponseConfirmedReservations;
-import fi.ficora.lippu.domain.model.TravelAvailability;
-import fi.ficora.lippu.domain.model.TravelPassenger;
-import fi.ficora.lippu.domain.model.TravelPassengerReservation;
+import fi.ficora.lippu.domain.model.*;
 import fi.ficora.lippu.domain.model.Transport;
 
 import java.math.BigDecimal;
@@ -136,51 +127,57 @@ public class ConversionUtil {
     public static List<ExtraService> extraServiceListToApi(List<ExtraServiceFeature> list) {
         if(list == null ) {
             return null;
-        } else {
-            List<ExtraService> extraServicesList
-                    = new ArrayList<>();
-            for (ExtraServiceFeature service: list) {
-                extraServicesList.add(extraServiceToApi(service));
-            }
-            return extraServicesList;
         }
+        List<ExtraService> extraServicesList
+                = new ArrayList<>();
+        for (ExtraServiceFeature service: list) {
+            extraServicesList.add(extraServiceToApi(service));
+        }
+        return extraServicesList;
     }
 
     public static List<ExtraServiceReservation>
         extraServiceListToApiReservation(List<ExtraServiceFeature> list) {
         if(list == null ) {
             return null;
-        } else {
-            List<ExtraServiceReservation> extraServicesList
-                    = new ArrayList<>();
-            for (ExtraServiceFeature service: list) {
-                extraServicesList.add(extraServiceToApiReservation(service));
-            }
-            return extraServicesList;
         }
+        List<ExtraServiceReservation> extraServicesList
+                = new ArrayList<>();
+        for (ExtraServiceFeature service: list) {
+            extraServicesList.add(extraServiceToApiReservation(service));
+        }
+        return extraServicesList;
+
     }
     public static List<AccessibilityReservation> accessibilityListToApiReservation(List<AccessibilityFeature> list) {
         if(list == null ) {
             return null;
-        } else {
-            List<AccessibilityReservation> accessibilityList = new ArrayList<>();
-            for (AccessibilityFeature accessibilityFeature : list) {
-                accessibilityList.add(accessibilityReservationToApi(accessibilityFeature));
-            }
-            return accessibilityList;
         }
+        List<AccessibilityReservation> accessibilityList = new ArrayList<>();
+        for (AccessibilityFeature accessibilityFeature : list) {
+            accessibilityList.add(accessibilityReservationToApi(accessibilityFeature));
+        }
+        return accessibilityList;
     }
     public static List<Accessibility> accessibilityListToApi(List<AccessibilityFeature> list) {
         if(list == null ) {
             return null;
-        } else {
-            List<Accessibility> accessibilityList = new ArrayList<>();
-            for (AccessibilityFeature accessibilityFeature : list) {
-                accessibilityList.add(accessibilityToApi(accessibilityFeature));
-            }
-            return accessibilityList;
         }
+        List<Accessibility> accessibilityList = new ArrayList<>();
+        for (AccessibilityFeature accessibilityFeature : list) {
+            accessibilityList.add(accessibilityToApi(accessibilityFeature));
+        }
+        return accessibilityList;
     }
+    public static TravelResponse travelRequestToResponse(TravelRequest travel) {
+        return new TravelResponse()
+                .from(travel.getFrom())
+                .to(travel.getTo())
+                .productType(travel.getProductType())
+                .serviceId(travel.getServiceId())
+                .departureTime(travel.getDepartureTimeEarliest());
+    }
+
     /**
      * Sanitizes string for logs, currently mitigates CRLF_INJECTION_LOGS type vulnerabilities.
      * @param message Message for log output.

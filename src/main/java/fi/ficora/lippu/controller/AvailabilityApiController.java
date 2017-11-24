@@ -16,6 +16,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -79,7 +80,9 @@ public class AvailabilityApiController implements AvailabilityApi {
                             null, Locale.ENGLISH)), HttpStatus.BAD_REQUEST);
         }
         // Get produdct
-        Product product = productService.getProduct(body.getTravel(), body.getContract());
+        TravelRequest travelRequest = body.getTravel();
+        travelRequest = updateDates(travelRequest);
+        Product product = productService.getProduct(travelRequest, body.getContract());
         if(product == null) {
             log.debug("Product not found, returning 400");
             return new ResponseEntity<ApiError>(ApiErrorUtil.generateApiError400(
@@ -88,17 +91,21 @@ public class AvailabilityApiController implements AvailabilityApi {
         }
         // Capasity check,
         Reservation reservation = availabilityService.checkForCapacity(product,
-            body.getTravel().getDateTime().toLocalDate(), body.getPassengers());
+                travelRequest.getDepartureTimeEarliest().toLocalDate(),
+                body.getPassengers());
         if(reservation == null) {
             log.debug("Got null for capacity check.");
-            response.setTravel(body.getTravel());
+            response.setTravel(ConversionUtil.travelRequestToResponse(
+                    body.getTravel()));
             response.setContract(body.getContract());
             return new ResponseEntity<AvailabilityResponse>(response, HttpStatus.OK);
         }
-        Travel travel = body.getTravel();
-        travel.setDateTime(timetableService.getProductDeparture(travel.getDateTime().toLocalDate(),
+        TravelResponse travel = ConversionUtil.travelRequestToResponse(
+                travelRequest);
+        travel.setDepartureTime(timetableService.getProductDeparture(
+                travelRequest.getDepartureTimeEarliest().toLocalDate(),
                 product));
-        response.setTravel(body.getTravel());
+        response.setTravel(travel);
         response.setContract(product.getContract());
 
         for (TravelPassenger passenger : body.getPassengers()) {
@@ -123,6 +130,13 @@ public class AvailabilityApiController implements AvailabilityApi {
             return true;
         }
 
+    }
+    private TravelRequest updateDates(TravelRequest request) {
+        if(request.getDepartureTimeEarliest() == null
+                && request.getArrivalTimeLatest() == null) {
+            request.setDepartureTimeEarliest(OffsetDateTime.now());
+        }
+        return request;
     }
 
 }

@@ -142,7 +142,7 @@ public class ProductService implements IProductService{
         return transportRepository.findByProductId(id);
 
     }
-    public Product getProduct(Travel travel, String contract) {
+    public Product getProduct(TravelRequest travel, String contract) {
         List<Product> products = productRepository.
                 findByFromLatAndFromLonAndToLatAndToLon(
                         travel.getFrom().getLat(),
@@ -151,7 +151,7 @@ public class ProductService implements IProductService{
                         travel.getTo().getLon());
 
         List<Product> validProducts=
-                checkProductTimetable2(products,travel.getDateTime());
+                checkProductTimetable2(products,travel.getDepartureTimeEarliest());
         // @todo handle case where multiple product found
         if(validProducts.size() == 1) {
             return validProducts.get(0);
