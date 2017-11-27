@@ -5,8 +5,8 @@ package fi.ficora.lippu.exception;
  * verification fails.
  * @author markkuko
  */
-public class AuthVerificationFailed extends Exception{
-    public AuthVerificationFailed(String message) {
+public class AuthVerificationFailedException extends Exception{
+    public AuthVerificationFailedException(String message) {
         super(message);
     }
 }

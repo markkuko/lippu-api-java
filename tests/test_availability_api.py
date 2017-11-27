@@ -260,7 +260,7 @@ class TestAvailabilityApi(unittest.TestCase):
         logging.info("test_availability_null_date, availability response: %s"
                      % r.json())
         self.assertEqual(r.status_code, 200)
-        
+
 
     def test_availability_departure_late(self):
         """

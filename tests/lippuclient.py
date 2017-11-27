@@ -20,6 +20,8 @@ AUTHENTICATION_COMMIT_ENDPOINT = AUTHENTICATION_ENDPOINT + "/commit"
 PRODUCTS_ENDPOINT = "/products"
 AVAILABILITY_ENDPOINT = "/availability"
 RESERVATION_ENDPOINT = "/reservation"
+TRAVEL_ENTITLEMENT_ENDPOINT = "/travelEntitlement"
+TRAVEL_ENTITLEMENT_ACTIVATE = "/activate"
 
 ALG_RSA_SHA256 = "RSA+SHA256"
 
@@ -121,6 +123,60 @@ def reservation_delete(base_url, headers, reservation_id):
     response = requests.delete(base_url + RESERVATION_ENDPOINT + "/" + reservation_id,
                             headers=headers)
     logging.debug("reservation_delete, response %s" % response)
+    return response
+
+
+def travel_entitlement_status(base_url, headers, travel_entitlement_id):
+    """
+    Sends travel entitlement status request to Lippu service,
+    returns response from request.
+
+    :param base_url: <str> Base URL for the server.
+    :param headers: <dict> HTTP Headers for the request.
+    :param travel_entitlement_id: <str> Identification for the
+    travel entitlement.
+    :return: Request response from lippu service.
+
+    """
+    response = requests.get(base_url + TRAVEL_ENTITLEMENT_ENDPOINT +
+                            "/" + travel_entitlement_id,headers=headers)
+    logging.debug("travel_entitlement_status, response %s" % response)
+    return response
+
+def travel_entitlement_activate(base_url, headers, travel_entitlement_id):
+    """
+    Sends travel entitlement activation request to Lippu service,
+    returns response from request.
+
+    :param base_url: <str> Base URL for the server.
+    :param headers: <dict> HTTP Headers for the request.
+    :param travel_entitlement_id: <str> Identification for the travel entitlement.
+    :return: Request response from lippu service.
+
+    """
+    response = requests.post(base_url + TRAVEL_ENTITLEMENT_ENDPOINT + "/" +
+                             travel_entitlement_id + TRAVEL_ENTITLEMENT_ACTIVATE
+                             ,headers=headers)
+    logging.debug("travel_entitlement_activate, response %s" % response)
+    return response
+
+
+
+def travel_entitlement_delete(base_url, headers, travel_entitlement_id):
+    """
+    Sends travel entitlement delete request to Lippu service,
+    returns response from request.
+
+    :param base_url: <str> Base URL for the server.
+    :param headers: <dict> HTTP Headers for the request.
+    :param travel_entitlement_id: <str> Identification for the
+     travel entitlement.
+    :return: Request response from lippu service.
+
+    """
+    response = requests.delete(base_url + TRAVEL_ENTITLEMENT_ENDPOINT + "/"
+                               + travel_entitlement_id,headers=headers)
+    logging.debug("travel_entitlement_delete, response %s" % response)
     return response
 
 def authentication_init_request(base_url, headers, account_id):

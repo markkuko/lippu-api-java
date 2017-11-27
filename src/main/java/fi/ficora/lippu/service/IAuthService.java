@@ -5,7 +5,7 @@ import fi.ficora.lippu.domain.Nonce;
 import fi.ficora.lippu.domain.Reservation;
 import fi.ficora.lippu.domain.ReservationItem;
 import fi.ficora.lippu.exception.AccountNotFoundException;
-import fi.ficora.lippu.exception.AuthVerificationFailed;
+import fi.ficora.lippu.exception.AuthVerificationFailedException;
 import fi.ficora.lippu.exception.NotAuthorizedException;
 import org.jose4j.lang.JoseException;
 
@@ -35,13 +35,13 @@ public interface IAuthService {
      * @throws UnsupportedEncodingException Unsupported encoding when reading
      * file.
      * @throws JoseException Exception in JWT creation.
-     * @throws AuthVerificationFailed General auth verification failed due
+     * @throws AuthVerificationFailedException General auth verification failed due
      * to invalid parameters or invalid signature in the payload.
      */
     Auth verifyAuthentication(String data, String cnonce, String snonce,
                               String keyId, String alg)
             throws UnsupportedEncodingException, JoseException,
-                   AuthVerificationFailed;
+            AuthVerificationFailedException;
 
 
     /**

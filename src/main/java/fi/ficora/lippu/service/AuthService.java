@@ -8,7 +8,7 @@ import fi.ficora.lippu.domain.Nonce;
 import fi.ficora.lippu.domain.Reservation;
 import fi.ficora.lippu.domain.ReservationItem;
 import fi.ficora.lippu.exception.AccountNotFoundException;
-import fi.ficora.lippu.exception.AuthVerificationFailed;
+import fi.ficora.lippu.exception.AuthVerificationFailedException;
 import fi.ficora.lippu.exception.NotAuthorizedException;
 import fi.ficora.lippu.repository.ClientRepository;
 import fi.ficora.lippu.repository.DataRepository;
@@ -75,12 +75,12 @@ public class AuthService implements IAuthService {
     public Auth verifyAuthentication(String data, String cnonce,
                                      String snonce, String keyId,
                                      String alg)
-            throws UnsupportedEncodingException, JoseException, AuthVerificationFailed {
+            throws UnsupportedEncodingException, JoseException, AuthVerificationFailedException {
 
         Nonce serverNonce = verifyNonce(snonce);
         if (serverNonce == null) {
             AuthService.log.info("Did not find valid nonce", snonce);
-            throw new AuthVerificationFailed("Server nonce was null");
+            throw new AuthVerificationFailedException("Server nonce was null");
         }
         Client client = this.clientRepository.findOne(serverNonce.
                 getClient());
@@ -88,7 +88,7 @@ public class AuthService implements IAuthService {
         if (key == null) {
             AuthService.log.info("Did not find client's ({}) key with keyId {}",
                     client.getAccount(), keyId);
-            throw new AuthVerificationFailed("Did not find client's key" +
+            throw new AuthVerificationFailedException("Did not find client's key" +
                     "with given keyId");
         }
         try {
@@ -100,18 +100,19 @@ public class AuthService implements IAuthService {
                     new String(dataEncoded, Charset.forName("UTF-8")),
                     data, key.getKeyfile(), alg);
             AuthService.log.debug("Payload is {} {}  {}", isValidSignature, dataEncoded, data);
-            if (isValidSignature) {
-                Auth auth = this.generateJWT(client);
-                this.nonceRepository.delete(serverNonce);
-                return auth;
-            } else {
+            if (!isValidSignature) {
                 AuthService.log.info("Payload signature was not valid");
-                return null;
+                throw new AuthVerificationFailedException(
+                        "Payload signature was not valid");
             }
+            Auth auth = this.generateJWT(client);
+            this.nonceRepository.delete(serverNonce);
+            return auth;
+
         } catch (IllegalArgumentException e) {
             AuthService.log.debug("Exception while processing authentication payload {}", e.getMessage());
             this.nonceRepository.delete(serverNonce.getNonce());
-            throw new AuthVerificationFailed("Exception while processing authentication payload:"+
+            throw new AuthVerificationFailedException("Exception while processing authentication payload:"+
                     e.getMessage());
         }
 
@@ -214,7 +215,8 @@ public class AuthService implements IAuthService {
             return false;
         }
         try {
-            Signature signature = Signature.getInstance("SHA256withRSA");
+            Signature signature = Signature.getInstance(
+                    Constants.TOKEN_SIGNATURE_SHA256RSA);
             signature.initVerify(KeyUtil.getPublicKey( keyPath ) );
             signature.update( message.getBytes("utf-8" ) );
 
@@ -239,7 +241,8 @@ public class AuthService implements IAuthService {
         return null;
     }
 
-    public void verifyAuthorization(ReservationItem item) throws NotAuthorizedException{
+    public void verifyAuthorization(ReservationItem item)
+            throws NotAuthorizedException{
         String clientId = this.getClientId();
         if(item == null || item.getClientId() == null || clientId == null) {
             throw new IllegalArgumentException("Nulls given as argument");
@@ -248,16 +251,19 @@ public class AuthService implements IAuthService {
             AuthService.log.warn("Client is not authorized to access item. " +
                             "Reservation item client id: {}, current client id {}"
                     , item.getClientId(), clientId);
-            throw new NotAuthorizedException("Client not authorized to access item.");
+            throw new NotAuthorizedException("Client not authorized" +
+                    "to access resource.");
         }
     }
-    public void verifyAuthorization(Reservation reservation) throws NotAuthorizedException{
+    public void verifyAuthorization(Reservation reservation)
+            throws NotAuthorizedException{
         String clientId = this.getClientId();
         if (!reservation.getClientId().equals(clientId)) {
             AuthService.log.warn("Client is not authorized to access reservation. " +
                             "Reservation client id: {}, current client id {}"
                     , reservation.getClientId(), clientId);
-            throw new NotAuthorizedException("Client not authorized to access reservation.");
+            throw new NotAuthorizedException("Client not authorized" +
+                    "to access reservation.");
         }
     }
 }

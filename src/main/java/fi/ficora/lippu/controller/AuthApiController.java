@@ -9,7 +9,7 @@ import fi.ficora.lippu.domain.model.AuthenticationInitResponse;
 import fi.ficora.lippu.domain.model.AuthenticationRequest;
 import fi.ficora.lippu.domain.model.AuthenticationResponse;
 import fi.ficora.lippu.exception.AccountNotFoundException;
-import fi.ficora.lippu.exception.AuthVerificationFailed;
+import fi.ficora.lippu.exception.AuthVerificationFailedException;
 import fi.ficora.lippu.service.IAuthService;
 import fi.ficora.lippu.util.ConversionUtil;
 import io.swagger.annotations.ApiOperation;
@@ -89,7 +89,7 @@ public class AuthApiController implements AuthApi {
                     .user(auth.getClientId());
             return new ResponseEntity<AuthenticationResponse>(response, HttpStatus.OK);
         } catch (JoseException | UnsupportedEncodingException |
-                AuthVerificationFailed e) {
+                AuthVerificationFailedException e) {
             log.info("Operation: commitAuth; exception thrown {}, initator {}," +
                             "returning forbidden.",
                     e.getMessage(), ConversionUtil.sanitizeLog(xInitiator));

@@ -11,6 +11,8 @@ public class Constants {
 
     public static final String AUTH_SIGNATURE_RSA_SHA256 = "RSA+SHA256";
 
+    public static final String TOKEN_SIGNATURE_SHA256RSA = "SHA256withRSA";
+
     public static final String COORDINATE_PRECISION = "#,##0.0";
 
     public static final int RESERVATION_AVAILABILITY_MINUTES = 3;

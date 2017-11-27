@@ -1,5 +1,6 @@
 package fi.ficora.lippu.service;
 
+import fi.ficora.lippu.controller.NotFoundException;
 import fi.ficora.lippu.domain.ExtraServiceFeature;
 import fi.ficora.lippu.domain.Product;
 import fi.ficora.lippu.domain.Reservation;
@@ -9,6 +10,7 @@ import fi.ficora.lippu.domain.model.Travel;
 import fi.ficora.lippu.domain.model.TravelPassenger;
 import fi.ficora.lippu.domain.model.TravelRequest;
 import fi.ficora.lippu.exception.NotAuthorizedException;
+import fi.ficora.lippu.exception.ResourceNotFoundException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,10 +24,38 @@ public interface IReservationService {
 
     /**
      * Removes reservation from repository.
-     * @param caseId Reservation caseId
-     * @return Operation result code
+     * @param caseId Reservation caseId, the reservation to be removed.
+     * @return Operation result code. See {@link fi.ficora.lippu.config.Constants}.
      */
-    int delete(String caseId) throws NotAuthorizedException;
+    int delete(String caseId) throws NotAuthorizedException,
+            ResourceNotFoundException;
+
+    /**
+     * Removes one reservation item. If its the only item,
+     * deletes also the reservation.
+     * @param travelEntitlementId The id for travel entitlement.
+     * @return Operation result code. See {@link fi.ficora.lippu.config.Constants}.
+     */
+    int deleteReservationItem(String travelEntitlementId) throws
+            NotAuthorizedException, ResourceNotFoundException;
+
+    /**
+     * Activate reservation item, identified by travel entitlement id.
+     * @param travelEntitlementId The id for travel entitlement.
+     * @return Reservation item after the activation.
+     */
+    ReservationItem activateReservationItem(String travelEntitlementId)
+            throws NotAuthorizedException, ResourceNotFoundException;
+    /**
+     * Gets one reservation item from repository. Throws
+     * {@link NotAuthorizedException} if client is not authorized
+     * to for the reservationItem. Throws {@link NotFoundException}
+     * if the reservation item is not found.
+     * @param travelEntitlementId The id for travel entitlement.
+     * @return Operation result code.
+     */
+    ReservationItem getReservationItem(String travelEntitlementId)
+            throws NotAuthorizedException, ResourceNotFoundException;
 
     /**
      * Confirms previous reservation made with availability

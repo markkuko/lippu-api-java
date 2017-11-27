@@ -6,10 +6,10 @@ import fi.ficora.lippu.domain.Product;
 import fi.ficora.lippu.domain.Reservation;
 import fi.ficora.lippu.domain.ReservationItem;
 import fi.ficora.lippu.domain.model.ReservationRequestReservations;
-import fi.ficora.lippu.domain.model.Travel;
 import fi.ficora.lippu.domain.model.TravelPassenger;
 import fi.ficora.lippu.domain.model.TravelRequest;
 import fi.ficora.lippu.exception.NotAuthorizedException;
+import fi.ficora.lippu.exception.ResourceNotFoundException;
 import fi.ficora.lippu.repository.ReservationItemRepository;
 import fi.ficora.lippu.repository.ReservationRepository;
 import org.slf4j.Logger;
@@ -61,13 +61,60 @@ public class ReservationService implements IReservationService {
 
         List<ReservationItem> items = reservationItemRepository.findAllByCaseId(caseId);
         for(ReservationItem item: items){
+            authService.verifyAuthorization(item);
             reservationItemRepository.delete(item);
         }
         repository.delete(caseId);
         return Constants.RESULT_CODE_SUCCESS;
     }
 
+    public int deleteReservationItem(String travelEntitlementId)
+            throws NotAuthorizedException, ResourceNotFoundException {
 
+        ReservationItem item =
+                reservationItemRepository.findOneByTravelEntitlementId(travelEntitlementId);
+        if(item == null) {
+            throw new ResourceNotFoundException("Reservation item not" +
+                    "found for :" + travelEntitlementId);
+        }
+        authService.verifyAuthorization(item);
+        List<ReservationItem> items = reservationItemRepository.
+                findAllByCaseId(item.getCaseId());
+        reservationItemRepository.delete(item);
+        if(items.size() == 1) {
+            repository.delete(item.getCaseId());
+        }
+        return Constants.RESULT_CODE_SUCCESS;
+    }
+
+    public ReservationItem getReservationItem(String travelEntitlementId)
+            throws NotAuthorizedException, ResourceNotFoundException{
+
+        ReservationItem item =
+                reservationItemRepository.findOneByTravelEntitlementId(
+                        travelEntitlementId);
+        if(item == null) {
+            throw new ResourceNotFoundException("Reservation item not" +
+                    "found for :" + travelEntitlementId);
+        }
+        authService.verifyAuthorization(item);
+        return item;
+    }
+
+    public ReservationItem activateReservationItem(String travelEntitlementId)
+            throws NotAuthorizedException, ResourceNotFoundException{
+
+        ReservationItem item =
+                reservationItemRepository.findOneByTravelEntitlementId(travelEntitlementId);
+        if(item == null) {
+            throw new ResourceNotFoundException("Reservation item not" +
+                    "found for :" + travelEntitlementId);
+        }
+        authService.verifyAuthorization(item);
+        item.setActivated(true);
+        reservationItemRepository.save(item);
+        return item;
+    }
 
     public Reservation create() {
         Reservation reservation = new Reservation();
@@ -104,7 +151,7 @@ public class ReservationService implements IReservationService {
     public ReservationItem addReservationItem(ReservationItem item) {
         return reservationItemRepository.save(item);
     }
-    public String createReservationData() {
+    public String createTravelEntitlementId() {
         return UUID.randomUUID().toString();
     }
 
@@ -138,7 +185,7 @@ public class ReservationService implements IReservationService {
         ReservationItem item = new ReservationItem();
         item.setPassengerCategory(passenger.getCategory());
         item.setConfirmed(false);
-        item.setTravelEntitlementId(createReservationData());
+        item.setTravelEntitlementId(createTravelEntitlementId());
         item.setProductId(product.getId());
         item.setTravelDate(travel.getDepartureTimeEarliest().
                 toLocalDate().atTime(12, 0));

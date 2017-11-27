@@ -7,7 +7,9 @@ import unittest
 import logging
 import argparse
 import sys, os
-from tests import test_login_api, test_availability_api, test_reservation_api, test_wholechain, test_products_api
+from tests import test_login_api, test_availability_api,\
+    test_reservation_api, test_wholechain, test_products_api, \
+    test_travel_entitlement_api
 #, test_availability_api, kk
 
 
@@ -39,6 +41,7 @@ if __name__ == '__main__':
                            test_products_api.TestProductsApi,
                            test_availability_api.TestAvailabilityApi,
                            test_reservation_api.TestReservationApi,
+                           test_travel_entitlement_api.TestTravelentitlementAPI,
                            test_wholechain.TestWholeChain
                            ]
 

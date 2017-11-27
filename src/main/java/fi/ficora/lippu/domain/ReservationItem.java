@@ -12,6 +12,7 @@ public class ReservationItem {
     private String id;
     private String travelEntitlementId;
     private String ticketPayload;
+    private String ticketType;
     private OffsetDateTime validFrom;
     private OffsetDateTime validTo;
     private List<CustomerInfo> customerInfo;
@@ -19,6 +20,7 @@ public class ReservationItem {
     private List<ExtraServiceFeature> extraServiceFeatures;
     private List<AccessibilityFeature> accessibilities;
     private boolean confirmed;
+    private boolean activated;
     private String productId;
     private String caseId;
     private String clientId;
@@ -158,5 +160,21 @@ public class ReservationItem {
 
     public void setAccessibilities(List<AccessibilityFeature> accessibilities) {
         this.accessibilities = accessibilities;
+    }
+
+    public boolean isActivated() {
+        return activated;
+    }
+
+    public void setActivated(boolean activated) {
+        this.activated = activated;
+    }
+
+    public String getTicketType() {
+        return ticketType;
+    }
+
+    public void setTicketType(String ticketType) {
+        this.ticketType = ticketType;
     }
 }

@@ -52,6 +52,22 @@ public class ConversionUtil {
                 .addApplicableForPassengersItem(returnPassenger)
                 .validTo(item.getReservationValidTo());
     }
+
+    public static TravelEntitlement reservationItemToTravelEntitlement(
+            ReservationItem item) {
+        return new TravelEntitlement()
+                .travelEntitlementId(item.getTravelEntitlementId())
+                .ticketPayload(item.getTicketPayload())
+                .ticketType(item.getTicketType())
+                .activated(item.isActivated())
+                .caseId(item.getCaseId())
+                .validFrom(item.getValidFrom())
+                .validTo(item.getValidTo())
+                .accessibility(accessibilityListToApiReservation(
+                        item.getAccessibilities()))
+                .extraServices(extraServiceListToApiReservation(
+                        item.getExtraServiceFeatures()));
+    }
     public static ProductFare fareToProductFare(Fare fare) {
         if(fare == null ) {
             return null;
