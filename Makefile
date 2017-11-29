@@ -21,16 +21,35 @@ keys/client/client1.pub: keys/client/client1.pem
 
 keys: keys/client/client1.pub keys/operator.pub keys/operator.key
 
+stamps/docker-dependencies:
+	@mkdir -p stamps
+	sudo docker build --rm -f Dockerfile-builddeps -t lippu/lippu-builddeps .
+	touch $@
 # Creates uberjar from the sources. Build process uses docker image
 # to have reproducible builds.
-artifacts/lippu-service.jar:
+artifacts/lippu-service.jar: stamps/docker-dependencies
 	@mkdir -p artifacts
-	sudo docker run --rm -i -v ${PWD}/artifacts:/opt/artifacts:Z  openjdk:8-jdk-alpine sh < build.sh
+	sudo docker build --rm -f Dockerfile-build -t lippu/lippu-build .
+	sudo docker create --name lippu-build lippu/lippu-build
+	sudo docker cp lippu-build:/home/lippu/build/libs/lippu-service.jar artifacts/
 	sudo chown -R $(id -u):$(id -u) artifacts/
+	sudo docker rm lippu-build
+	sudo docker rmi -f  lippu/lippu-build
 
 # Starts container from the lippu-docker image on port 8080.
 run: artifacts/lippu-service.jar keys
 	sudo docker-compose up --build
+
+# Starts container from the lippu-docker image on port 8080.
+test: artifacts/lippu-service.jar keys
+	sudo docker-compose up -d --build
+	sleep 45
+	(\
+		source `which virtualenvwrapper.sh`; \
+		workon lippu-test; \
+		python3 runtests.py; \
+	)
+	sudo docker-compose down
 
 # Stops the lippu-docker container.
 stop:
@@ -46,7 +65,8 @@ run_local: build
 
 # Cleans previously build jars
 clean:
-	rm artifacts/*jar
+	rm -f artifacts/*jar
+	rm stamps/*
 
 # Creates python3 based virtualenv environment
 # for running integration tests.
@@ -60,7 +80,7 @@ test_setup:
 
 # Runs integration test using virtualenv. See @test_setup
 # for setting up the virtualenv environment.
-test:
+runtests:
 	(\
 		source `which virtualenvwrapper.sh`; \
 		workon lippu-test; \

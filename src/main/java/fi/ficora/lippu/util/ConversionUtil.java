@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Utility class, which has general string methods and
@@ -35,7 +36,7 @@ public class ConversionUtil {
     }
 
     public static TravelAvailability reservationItemToTravelAvailability(
-            ReservationItem item, TravelPassenger passenger,
+                ReservationItem item, TravelPassenger passenger,
                 List<AccessibilityFeature> accessibilities,
                 List<ExtraServiceFeature> services) {
         TravelPassengerReservation returnPassenger =
@@ -96,60 +97,57 @@ public class ConversionUtil {
                 .validTo(item.getValidTo().plusMinutes(Constants.TICKET_VALID_PERIOD_IN_MINUTES));
     }
 
-    public static Accessibility accessibilityToApi(AccessibilityFeature accessibilityFeature) {
-        if(accessibilityFeature == null) {
+    public static Accessibility accessibilityToApi(AccessibilityFeature a) {
+        if(a == null) {
             return null;
         }
         return new Accessibility()
-                .title(Accessibility.TitleEnum.fromValue(accessibilityFeature.getTitle().toString()))
-                .additionalInformation(accessibilityFeature.getAdditionalInformation())
-                .description(accessibilityFeature.getDescription())
-                .fare(fareToProductFare(accessibilityFeature.getFare()));
+                .title(Accessibility.TitleEnum.fromValue(a.getTitle().toString()))
+                .additionalInformation(a.getAdditionalInformation())
+                .description(a.getDescription())
+                .fare(fareToProductFare(a.getFare()));
     }
 
-    public static AccessibilityReservation accessibilityReservationToApi(AccessibilityFeature accessibilityFeature) {
-        if(accessibilityFeature == null) {
+    public static AccessibilityReservation accessibilityReservationToApi(AccessibilityFeature a) {
+        if(a == null) {
             return null;
         }
         return new AccessibilityReservation()
-                .title(AccessibilityReservation.TitleEnum.fromValue(accessibilityFeature.getTitle().toString()))
-                .additionalInformation(accessibilityFeature.getAdditionalInformation())
-                .description(accessibilityFeature.getDescription())
-                .fare(fareToProductFare(accessibilityFeature.getFare()))
-                .accessibilityReservationId(accessibilityFeature.getAccessibilityReservationId());
+                .title(AccessibilityReservation.TitleEnum.fromValue(a.getTitle().toString()))
+                .additionalInformation(a.getAdditionalInformation())
+                .description(a.getDescription())
+                .fare(fareToProductFare(a.getFare()))
+                .accessibilityReservationId(a.getAccessibilityReservationId());
     }
-    public static ExtraService extraServiceToApi(ExtraServiceFeature extraServiceFeature) {
-        if(extraServiceFeature == null) {
+    public static ExtraService extraServiceToApi(ExtraServiceFeature e) {
+        if(e == null) {
             return null;
         }
         return (ExtraService) new ExtraService()
-                .description(extraServiceFeature.getDescription())
-                .fare(fareToProductFare(extraServiceFeature.getFare()))
-                .title(extraServiceFeature.getTitle());
+                .description(e.getDescription())
+                .fare(fareToProductFare(e.getFare()))
+                .title(e.getTitle());
 
     }
 
-    public static ExtraServiceReservation extraServiceToApiReservation(ExtraServiceFeature extraServiceFeature) {
-        if(extraServiceFeature == null) {
+    public static ExtraServiceReservation extraServiceToApiReservation(ExtraServiceFeature e) {
+        if(e == null) {
             return null;
         }
         return new ExtraServiceReservation()
-                .title(extraServiceFeature.getTitle())
-                .extraServiceReservationId(extraServiceFeature.getExtraServiceReservationId())
-                .description(extraServiceFeature.getDescription())
-                .fare(fareToProductFare(extraServiceFeature.getFare()));
+                .title(e.getTitle())
+                .extraServiceReservationId(e.getExtraServiceReservationId())
+                .description(e.getDescription())
+                .fare(fareToProductFare(e.getFare()));
     }
 
     public static List<ExtraService> extraServiceListToApi(List<ExtraServiceFeature> list) {
         if(list == null ) {
             return null;
         }
-        List<ExtraService> extraServicesList
-                = new ArrayList<>();
-        for (ExtraServiceFeature service: list) {
-            extraServicesList.add(extraServiceToApi(service));
-        }
-        return extraServicesList;
+
+        return list.stream().map(e -> extraServiceToApi(e))
+                .collect(Collectors.toList());
     }
 
     public static List<ExtraServiceReservation>
@@ -157,33 +155,22 @@ public class ConversionUtil {
         if(list == null ) {
             return null;
         }
-        List<ExtraServiceReservation> extraServicesList
-                = new ArrayList<>();
-        for (ExtraServiceFeature service: list) {
-            extraServicesList.add(extraServiceToApiReservation(service));
-        }
-        return extraServicesList;
-
+        return list.stream().map(e -> extraServiceToApiReservation(e))
+                .collect(Collectors.toList());
     }
     public static List<AccessibilityReservation> accessibilityListToApiReservation(List<AccessibilityFeature> list) {
         if(list == null ) {
             return null;
         }
-        List<AccessibilityReservation> accessibilityList = new ArrayList<>();
-        for (AccessibilityFeature accessibilityFeature : list) {
-            accessibilityList.add(accessibilityReservationToApi(accessibilityFeature));
-        }
-        return accessibilityList;
+        return list.stream().map(a -> accessibilityReservationToApi(a))
+                .collect(Collectors.toList());
     }
     public static List<Accessibility> accessibilityListToApi(List<AccessibilityFeature> list) {
         if(list == null ) {
             return null;
         }
-        List<Accessibility> accessibilityList = new ArrayList<>();
-        for (AccessibilityFeature accessibilityFeature : list) {
-            accessibilityList.add(accessibilityToApi(accessibilityFeature));
-        }
-        return accessibilityList;
+        return list.stream().map(a -> accessibilityToApi(a))
+                .collect(Collectors.toList());
     }
     public static TravelResponse travelRequestToResponse(TravelRequest travel) {
         return new TravelResponse()

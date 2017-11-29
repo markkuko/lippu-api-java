@@ -12,7 +12,7 @@ services:
     environment:
       - JAR_NAME=lippu-service.jar 
     volumes:
-      - ./keys:/opt/lippu/keys:Z
+      - ./keys:/home/lippu/keys:Z
   nginx:
     build:
       context: .

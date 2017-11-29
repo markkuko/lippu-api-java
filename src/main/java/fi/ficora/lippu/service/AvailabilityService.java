@@ -3,17 +3,23 @@ package fi.ficora.lippu.service;
 import fi.ficora.lippu.domain.*;
 import fi.ficora.lippu.domain.Product;
 import fi.ficora.lippu.domain.model.*;
+import fi.ficora.lippu.exception.ProductNotFoundException;
+import fi.ficora.lippu.exception.TimetableNotFoundException;
 import fi.ficora.lippu.repository.CapacityRepository;
 import fi.ficora.lippu.repository.TransportRepository;
+import fi.ficora.lippu.util.ApiErrorUtil;
 import fi.ficora.lippu.util.ConversionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Services for availability functionality.
@@ -41,6 +47,46 @@ public class AvailabilityService implements IAvailabilityService{
 
     public AvailabilityService() {
 
+    }
+
+
+    public Availability getSoftBookingAvailability(TravelRequest request,
+                                                   List<TravelPassenger> passengers,
+                                                   String contract)
+        throws ProductNotFoundException, TimetableNotFoundException{
+        // Get produdct
+        Product product = productService.getProduct(request, contract);
+        if(product == null) {
+            throw new ProductNotFoundException("Product was not found.");
+        }
+        // Capasity check,
+        Availability availability = new Availability();
+        Reservation reservation = null;
+        if(request.getDepartureTimeEarliest() == null)
+            reservation = checkForCapacity(product,
+                    request.getArrivalTimeLatest().toLocalDate(),
+                    passengers);
+        else
+            reservation = checkForCapacity(product,
+                    request.getDepartureTimeEarliest().toLocalDate(),
+                    passengers);
+        if(reservation == null) {
+            return null;
+        }
+
+        List<TravelAvailability> availabilities = new ArrayList<TravelAvailability>();
+        for (TravelPassenger passenger : passengers) {
+            TravelAvailability item = addAvailability(
+                    reservation,product, passenger, request);
+            if(item != null) {
+                availabilities.add(item);
+            } else {
+                log.debug("Got null for availabity add");
+            }
+        }
+        availability.setProduct(product);
+        availability.setAvailabilityList(availabilities);
+        return availability;
     }
     public Reservation checkForCapacity(Product product, LocalDate travelDate,
                                         List<TravelPassenger> passengers) {
@@ -133,11 +179,18 @@ public class AvailabilityService implements IAvailabilityService{
             return returnList;
         }
         for(AccessibilityBase accessibility : accessibilities) {
-            AccessibilityFeature accessibilityFeature1 =
+            AccessibilityFeature a =
                     productService.getAccessibilityFromProduct(product,
                             accessibility.getTitle());
-            if(accessibilityFeature1 != null) {
-                returnList.add(accessibilityFeature1);
+            if(a != null) {
+                AccessibilityFeature feature = new AccessibilityFeature();
+                feature.setTitle(a.getTitle());
+                feature.setAdditionalInformation(a.getAdditionalInformation());
+                feature.setDescription(a.getDescription());
+                feature.setFare(a.getFare());
+                feature.setAccessibilityReservationId(reservationService.
+                        generateAccessiblityReservationCode(a));
+                returnList.add(feature);
             }
         }
         return returnList;
@@ -149,17 +202,17 @@ public class AvailabilityService implements IAvailabilityService{
             return returnList;
         }
         for(ExtraServiceBase extraService : services) {
-            ExtraServiceFeature extraServiceFeature1 =
+            ExtraServiceFeature e =
                     productService.getExtraServiceFromProduct(product,
                             extraService.getTitle());
-            if(extraServiceFeature1 != null) {
+            if(e != null) {
                 ExtraServiceFeature service = new ExtraServiceFeature();
-                service.setTitle(extraServiceFeature1.getTitle());
-                service.setDescription(extraServiceFeature1.getDescription());
-                service.setFare(extraServiceFeature1.getFare());
+                service.setTitle(e.getTitle());
+                service.setDescription(e.getDescription());
+                service.setFare(e.getFare());
                 service.setExtraServiceReservationId(
                         reservationService.generateExtraServiceReservationCode(
-                                extraServiceFeature1));
+                                e));
                 returnList.add(service);
             }
         }

@@ -2,6 +2,7 @@ package fi.ficora.lippu.service;
 
 import fi.ficora.lippu.domain.Product;
 import fi.ficora.lippu.domain.Timetable;
+import fi.ficora.lippu.exception.TimetableNotFoundException;
 import fi.ficora.lippu.repository.TimetableRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,35 +45,58 @@ public class TimetableService implements ITimetableService{
     /**
      * Search if the product has departures on the day
      * after the given time.
-     * @param date Wanted departure time and date.
+     * @param departure Wanted departure time and departure.
      * @param product Product to be searched.
      * @return Boolean value, true if the product operates on the given day
      * and has departures past the time.
      */
-    public boolean hasProductDepartures(OffsetDateTime date, Product product) {
-        if(date == null) {
-            date = OffsetDateTime.now();
-        }
+    public boolean hasProductDepartures(OffsetDateTime departure,
+                                        OffsetDateTime arrival,
+                                        Product product)
+            throws TimetableNotFoundException{
         Timetable timetable = timetableRepository.findByProductId(
                 product.getId());
-        if(timetable != null &&
-                timetable.getOperatedOn().contains(date.getDayOfWeek())) {
-            if(timetable.getHour() > date.getHour()) {
+        if(timetable == null ) {
+            throw new TimetableNotFoundException("Timetable not found");
+        }
+        if(departure == null) {
+            if(timetable.getOperatedOn().contains(arrival.getDayOfWeek())) {
+                if(timetable.getArrivalHour() < arrival.getHour()) {
+                    return true;
+                }else if(timetable.getArrivalHour() == arrival.getHour()
+                        && timetable.getArrivalMinute() < arrival.getMinute()) {
+                    return true;
+                } else {
+                    log.debug("Product {} does not have suitable arrivals after {}:{}"
+                            ,product.getId()
+                            ,arrival.getHour()
+                            ,arrival.getMinute());
+                    return false;
+                }
+            } else {
+                log.debug("Product {} does not operate on {}"
+                        ,product.getId()
+                        ,departure.getDayOfWeek());
+                return false;
+            }
+        }
+        if(timetable.getOperatedOn().contains(departure.getDayOfWeek())) {
+            if(timetable.getDepartureHour() > departure.getHour()) {
                 return true;
-            }else if(timetable.getHour() == date.getHour()
-                && timetable.getMinute() > date.getMinute()) {
+            }else if(timetable.getDepartureHour() == departure.getHour()
+                && timetable.getDepartureMinute() > departure.getMinute()) {
                 return true;
             } else {
-                log.debug("Product {} does not have departures after {}:{}"
+                log.debug("Product {} does not have suitable departures after {}:{}"
                         ,product.getId()
-                        ,date.getHour()
-                        ,date.getMinute());
+                        ,departure.getHour()
+                        ,departure.getMinute());
                 return false;
             }
         } else {
             log.debug("Product {} does not operate on {}"
                     ,product.getId()
-                    ,date.getDayOfWeek());
+                    ,departure.getDayOfWeek());
             return false;
         }
 
@@ -87,21 +111,44 @@ public class TimetableService implements ITimetableService{
     public OffsetDateTime getProductDeparture(LocalDate date, Product product) {
         Timetable timetable = timetableRepository.findByProductId(
                 product.getId());
-        if(timetable != null) {
-            ZoneOffset offset = OffsetDateTime.now().getOffset();
-            return OffsetDateTime.of(date.getYear(),
-                    date.getMonthValue(),
-                    date.getDayOfMonth(),
-                    timetable.getHour(),
-                    timetable.getMinute(),
-                    0,
-                    0,
-                    offset
-                    );
-
-        } else {
+        if(timetable == null) {
             return null;
         }
+        ZoneOffset offset = OffsetDateTime.now().getOffset();
+        return OffsetDateTime.of(date.getYear(),
+                date.getMonthValue(),
+                date.getDayOfMonth(),
+                timetable.getDepartureHour(),
+                timetable.getDepartureMinute(),
+                0,
+                0,
+                offset
+                );
+
+    }
+    /**
+     * Computes the arrival time for the product on the given day
+     * @param date Date of the arrival.
+     * @param product Product for the
+     * @return Boolean value, true if the product operates on the given day
+     * and false otherwise.
+     */
+    public OffsetDateTime getProductArrival(LocalDate date, Product product) {
+        Timetable timetable = timetableRepository.findByProductId(
+                product.getId());
+        if(timetable == null) {
+            return null;
+        }
+        ZoneOffset offset = OffsetDateTime.now().getOffset();
+        return OffsetDateTime.of(date.getYear(),
+                date.getMonthValue(),
+                date.getDayOfMonth(),
+                timetable.getArrivalHour(),
+                timetable.getArrivalMinute(),
+                0,
+                0,
+                offset
+        );
 
     }
     /**

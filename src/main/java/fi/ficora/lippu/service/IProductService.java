@@ -4,6 +4,7 @@ import fi.ficora.lippu.domain.*;
 import fi.ficora.lippu.domain.Product;
 import fi.ficora.lippu.domain.Transport;
 import fi.ficora.lippu.domain.model.*;
+import fi.ficora.lippu.exception.TimetableNotFoundException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -107,7 +108,8 @@ public interface IProductService {
      * @param contract Contract for operation
      * @return Product matching the parameters or null.
      */
-    Product getProduct(TravelRequest travel, String contract);
+    Product getProduct(TravelRequest travel, String contract)
+        throws TimetableNotFoundException;
 
     /**
      * Checks if product has all the required accessibility

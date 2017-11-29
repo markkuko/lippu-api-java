@@ -1,10 +1,7 @@
 package fi.ficora.lippu.service;
 
 import fi.ficora.lippu.config.Constants;
-import fi.ficora.lippu.domain.ExtraServiceFeature;
-import fi.ficora.lippu.domain.Product;
-import fi.ficora.lippu.domain.Reservation;
-import fi.ficora.lippu.domain.ReservationItem;
+import fi.ficora.lippu.domain.*;
 import fi.ficora.lippu.domain.model.ReservationRequestReservations;
 import fi.ficora.lippu.domain.model.TravelPassenger;
 import fi.ficora.lippu.domain.model.TravelRequest;
@@ -182,25 +179,34 @@ public class ReservationService implements IReservationService {
                                                  Reservation reservation,
                                                  TravelRequest travel,
                                                  TravelPassenger passenger) {
+        LocalDate travelTime;
+        if(travel.getDepartureTimeEarliest() ==null)
+            travelTime = travel.getArrivalTimeLatest().toLocalDate();
+        else
+            travelTime = travel.getDepartureTimeEarliest().toLocalDate();
+
         ReservationItem item = new ReservationItem();
         item.setPassengerCategory(passenger.getCategory());
         item.setConfirmed(false);
         item.setTravelEntitlementId(createTravelEntitlementId());
         item.setProductId(product.getId());
-        item.setTravelDate(travel.getDepartureTimeEarliest().
-                toLocalDate().atTime(12, 0));
+        item.setTravelDate(travelTime.atTime(12, 0));
         item.setReservationValidTo(OffsetDateTime.now().plusMinutes(
                 Constants.RESERVATION_AVAILABILITY_MINUTES));
         item.setCaseId(reservation.getCaseId());
         item.setClientId(reservation.getClientId());
         item.setValidFrom(timetableService.getProductDeparture(
-                travel.getDepartureTimeEarliest().toLocalDate(), product));
+                travelTime, product));
         item.setValidTo(item.getValidFrom());
         return item;
     }
 
 
     public String generateExtraServiceReservationCode(ExtraServiceFeature service) {
+        return "EXTRA-" + service.getTitle() + "-" +
+                UUID.randomUUID().toString();
+    }
+    public String generateAccessiblityReservationCode(AccessibilityFeature service) {
         return "EXTRA-" + service.getTitle() + "-" +
                 UUID.randomUUID().toString();
     }

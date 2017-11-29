@@ -4,6 +4,7 @@ import fi.ficora.lippu.domain.*;
 import fi.ficora.lippu.domain.Product;
 import fi.ficora.lippu.domain.Transport;
 import fi.ficora.lippu.domain.model.*;
+import fi.ficora.lippu.exception.TimetableNotFoundException;
 import fi.ficora.lippu.repository.DataRepository;
 import fi.ficora.lippu.repository.ProductRepository;
 import fi.ficora.lippu.repository.TimetableRepository;
@@ -19,6 +20,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -142,7 +144,8 @@ public class ProductService implements IProductService{
         return transportRepository.findByProductId(id);
 
     }
-    public Product getProduct(TravelRequest travel, String contract) {
+    public Product getProduct(TravelRequest travel, String contract)
+            throws TimetableNotFoundException{
         List<Product> products = productRepository.
                 findByFromLatAndFromLonAndToLatAndToLon(
                         travel.getFrom().getLat(),
@@ -151,7 +154,9 @@ public class ProductService implements IProductService{
                         travel.getTo().getLon());
 
         List<Product> validProducts=
-                checkProductTimetable2(products,travel.getDepartureTimeEarliest());
+                checkProductTimetable2(products,
+                        travel.getDepartureTimeEarliest(),
+                        travel.getArrivalTimeLatest());
         // @todo handle case where multiple product found
         if(validProducts.size() == 1) {
             return validProducts.get(0);
@@ -167,20 +172,21 @@ public class ProductService implements IProductService{
     private ProductList checkProductTimetable(List<Product> products,
                                               LocalDate date) {
         ProductList productList = new ProductList();
-        for(Product product: products) {
-            if(timetableService.doesProductOperateOn(date, product)) {
-                productList.add(ConversionUtil.productToProductDescription(product,
-                        timetableService.getProductDeparture(date,product)));
+        products.forEach(p -> {
+            if(timetableService.doesProductOperateOn(date, p)) {
+                productList.add(ConversionUtil.productToProductDescription(p,
+                        timetableService.getProductDeparture(date,p)));
             }
-
-        }
+        });
         return productList;
     }
     private List<Product> checkProductTimetable2(List<Product> products,
-                                              OffsetDateTime date) {
+                                                 OffsetDateTime departure,
+                                                 OffsetDateTime arrival)
+            throws TimetableNotFoundException{
         List<Product> productList = new ArrayList<>();
         for(Product product: products) {
-            if(timetableService.hasProductDepartures(date, product)) {
+            if(timetableService.hasProductDepartures(departure, arrival, product)) {
                 productList.add(product);
             }
 
@@ -191,14 +197,9 @@ public class ProductService implements IProductService{
     private List<Product> filterByAccessibilities(List<Product> products,
                                                   List<? extends AccessibilityBase> accessibilities) {
 
-        List<Product> returnProducts = new ArrayList<>();
-        for(Product product: products) {
-            if(hasRequiredAccessibityFeatures(
-                    product, accessibilities)) {
-                returnProducts.add(product);
-            }
-        }
-        return returnProducts;
+        return products.stream().filter(
+                p-> hasRequiredAccessibityFeatures(p, accessibilities))
+                .collect(Collectors.toList());
     }
     public boolean hasRequiredAccessibityFeatures(Product product,
                                                    List<? extends AccessibilityBase> accessibilities) {
@@ -230,26 +231,20 @@ public class ProductService implements IProductService{
     }
     public AccessibilityFeature getAccessibilityFromProduct(Product product,
                                                             Accessibility.TitleEnum title) {
-        for (AccessibilityFeature accessibilityFeature : product.getAccessibilities()) {
-            if (accessibilityFeature.getTitle().toString().compareTo(
-                    title.toString()) == 0) {
-                log.debug("Found accessibilityFeature:{}",
-                        accessibilityFeature.getTitle());
-                return accessibilityFeature;
-            }
-        }
-        return null;
+
+        return product.getAccessibilities().stream()
+                .filter(a -> a.getTitle().toString().compareTo(
+                        title.toString()) == 0)
+                .findFirst()
+                .orElse(null);
     }
     public ExtraServiceFeature getExtraServiceFromProduct(Product product,
                                                           String title) {
-        for (ExtraServiceFeature extraServiceFeature : product.getExtraServiceFeatures()) {
-            if (extraServiceFeature.getTitle().compareTo(
-                    title) == 0) {
-                log.debug("Found extraServiceFeature:{}",
-                        extraServiceFeature.getTitle());
-                return extraServiceFeature;
-            }
-        }
-        return null;
+
+        return product.getExtraServiceFeatures().stream()
+                .filter(e -> e.getTitle().compareTo(
+                        title) == 0)
+                .findFirst()
+                .orElse(null);
     }
 }

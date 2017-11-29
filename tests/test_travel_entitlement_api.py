@@ -117,7 +117,7 @@ class TestTravelentitlementAPI(unittest.TestCase):
         self.assertEqual(r_status.status_code, 404)
 
 
-    def test_activate_travel_entitlement(self):
+    def test_delete_reservation_travel_entitlement(self):
         """
         Tests that deleting reservation also removes
         the travel entitlement associated with reservation.

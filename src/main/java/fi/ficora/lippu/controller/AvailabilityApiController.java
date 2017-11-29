@@ -1,10 +1,9 @@
 package fi.ficora.lippu.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fi.ficora.lippu.domain.Product;
-import fi.ficora.lippu.domain.Reservation;
-import fi.ficora.lippu.domain.ReservationItem;
+import fi.ficora.lippu.domain.Availability;
 import fi.ficora.lippu.domain.model.*;
+import fi.ficora.lippu.exception.ProductNotFoundException;
 import fi.ficora.lippu.service.IAuthService;
 import fi.ficora.lippu.service.IAvailabilityService;
 import fi.ficora.lippu.service.ITimetableService;
@@ -15,10 +14,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import java.math.BigDecimal;
+
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import javax.validation.Valid;
 import org.slf4j.Logger;
@@ -73,51 +70,45 @@ public class AvailabilityApiController implements AvailabilityApi {
                 xTransactionId,
                 xMessageId,
                 xInitiator);
-        AvailabilityResponse response = new AvailabilityResponse();
         if(!validateCoordinates(body)) {
             return new ResponseEntity<ApiError>(ApiErrorUtil.generateApiError400(
                     messageSource.getMessage("http.error.message.400.elements",
                             null, Locale.ENGLISH)), HttpStatus.BAD_REQUEST);
         }
-        // Get produdct
-        TravelRequest travelRequest = body.getTravel();
-        travelRequest = updateDates(travelRequest);
-        Product product = productService.getProduct(travelRequest, body.getContract());
-        if(product == null) {
+        AvailabilityResponse response = new AvailabilityResponse();
+        try {
+            TravelRequest travelRequest = body.getTravel();
+            travelRequest = updateDates(travelRequest);
+            Availability availability = availabilityService.getSoftBookingAvailability(
+                    body.getTravel(), body.getPassengers(), body.getContract()
+            );
+            if(availability == null) {
+
+                response.setTravel(ConversionUtil.travelRequestToResponse(
+                        body.getTravel()));
+                response.setContract(body.getContract());
+                return new ResponseEntity<AvailabilityResponse>(response, HttpStatus.OK);
+            }
+            TravelResponse travel = ConversionUtil.travelRequestToResponse(
+                    travelRequest);
+            if(travelRequest.getDepartureTimeEarliest() != null)
+                travel.setDepartureTime(timetableService.getProductDeparture(
+                        travelRequest.getDepartureTimeEarliest().toLocalDate(),
+                        availability.getProduct()));
+            if(travelRequest.getArrivalTimeLatest() != null)
+                travel.setArrivalTime(timetableService.getProductArrival(
+                        travelRequest.getArrivalTimeLatest().toLocalDate(),
+                        availability.getProduct()));
+            response.setTravel(travel);
+            response.setContract(availability.getProduct().getContract());
+            response.setAvailability(availability.getAvailabilityList());
+            return new ResponseEntity<AvailabilityResponse>(response, HttpStatus.OK);
+        } catch(ProductNotFoundException e) {
             log.debug("Product not found, returning 400");
             return new ResponseEntity<ApiError>(ApiErrorUtil.generateApiError400(
                     messageSource.getMessage("http.error.message.400.productnotfound",
                             null, Locale.ENGLISH)), HttpStatus.BAD_REQUEST);
         }
-        // Capasity check,
-        Reservation reservation = availabilityService.checkForCapacity(product,
-                travelRequest.getDepartureTimeEarliest().toLocalDate(),
-                body.getPassengers());
-        if(reservation == null) {
-            log.debug("Got null for capacity check.");
-            response.setTravel(ConversionUtil.travelRequestToResponse(
-                    body.getTravel()));
-            response.setContract(body.getContract());
-            return new ResponseEntity<AvailabilityResponse>(response, HttpStatus.OK);
-        }
-        TravelResponse travel = ConversionUtil.travelRequestToResponse(
-                travelRequest);
-        travel.setDepartureTime(timetableService.getProductDeparture(
-                travelRequest.getDepartureTimeEarliest().toLocalDate(),
-                product));
-        response.setTravel(travel);
-        response.setContract(product.getContract());
-
-        for (TravelPassenger passenger : body.getPassengers()) {
-            TravelAvailability item = availabilityService.addAvailability(
-                    reservation,product, passenger, body.getTravel());
-            if(item != null) {
-                response.addAvailabilityItem(item);
-            } else {
-                log.debug("Got null for availabity add");
-            }
-        }
-        return new ResponseEntity<AvailabilityResponse>(response, HttpStatus.OK);
     }
 
     private boolean validateCoordinates(AvailabilityRequest body) {
@@ -134,6 +125,7 @@ public class AvailabilityApiController implements AvailabilityApi {
     private TravelRequest updateDates(TravelRequest request) {
         if(request.getDepartureTimeEarliest() == null
                 && request.getArrivalTimeLatest() == null) {
+            log.info("Overwriting departure time for request.");
             request.setDepartureTimeEarliest(OffsetDateTime.now());
         }
         return request;

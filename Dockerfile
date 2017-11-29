@@ -1,15 +1,15 @@
 FROM openjdk:8-jdk-alpine
-
+ENV LIPPU_HOME=/home/lippu
 MAINTAINER Markku Korkeala
 
 ARG jar="lippu-service.jar"
 
 ENV JARFILE=$jar
 
-RUN mkdir -p /opt/lippu
+RUN adduser -S lippu
+USER lippu
+WORKDIR $LIPPU_HOME
 
-WORKDIR /opt/lippu
+COPY ./artifacts/$jar $LIPPU_HOME/$jar
 
-COPY ./artifacts/$jar /opt/lippu/$jar
-
-CMD java -jar /opt/lippu/$JARFILE
+CMD java -jar $LIPPU_HOME/$JARFILE

@@ -80,8 +80,10 @@
     "operatedOn": [
       "MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY", "SUNDAY"
     ],
-    "hour" : 20,
-    "minutes": 0
+    "departureHour" : 20,
+    "departureMinute": 0,
+    "arrivalHour" : 23,
+    "arrivalMinute": 10
 
   },
   {
@@ -91,8 +93,10 @@
     "operatedOn": [
       "MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY"
     ],
-    "hour" : 19,
-    "minutes": 0
+    "departureHour" : 19,
+    "departureMinute": 0,
+    "arrivalHour" : 21,
+    "arrivalMinute": 35
 
   },
   {

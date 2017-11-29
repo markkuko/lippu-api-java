@@ -1,6 +1,7 @@
 package fi.ficora.lippu.service;
 
 import fi.ficora.lippu.domain.Product;
+import fi.ficora.lippu.exception.TimetableNotFoundException;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -28,12 +29,16 @@ public interface ITimetableService {
     /**
      * Computes does the product given as a parameters operate
      * on the given day and is the
-     * @param date The date time to search suitable departures.
+     * @param departure The departure time to search suitable departures.
+     * @param arrival The arrival time to search suitable departures.
      * @param product The product for which departures are searched.
      * @return Boolean value, true if the product operates on the given day
      * and false otherwise.
      */
-    boolean hasProductDepartures(OffsetDateTime date, Product product);
+    boolean hasProductDepartures(OffsetDateTime departure,
+                                 OffsetDateTime arrival,
+                                 Product product)
+            throws TimetableNotFoundException;
 
     /**
      * Computes the departure time for the product on the given day
@@ -42,6 +47,13 @@ public interface ITimetableService {
      * @return OffsetDateTime departure value for the products on the date.
      */
     OffsetDateTime getProductDeparture(LocalDate date, Product product);
+    /**
+     * Computes the arrival time for the product on the given day.
+     * @param date The date when the arrival is.
+     * @param product The product for which departure time is searched.
+     * @return OffsetDateTime departure value for the products on the date.
+     */
+    OffsetDateTime getProductArrival(LocalDate date, Product product);
     /**
      * Computes which products have departures on the
      * given week day.

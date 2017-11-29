@@ -10,8 +10,10 @@ public class Timetable {
     private String id;
     private String productId;
     private  List<DayOfWeek> operatedOn;
-    private int hour;
-    private int minute;
+    private int departureHour;
+    private int departureMinute;
+    private int arrivalHour;
+    private int arrivalMinute;
 
     public String getProductId() {
         return productId;
@@ -37,19 +39,35 @@ public class Timetable {
         this.id = id;
     }
 
-    public int getHour() {
-        return hour;
+    public int getDepartureHour() {
+        return departureHour;
     }
 
-    public void setHour(int hour) {
-        this.hour = hour;
+    public void setDepartureHour(int departureHour) {
+        this.departureHour = departureHour;
     }
 
-    public int getMinute() {
-        return minute;
+    public int getDepartureMinute() {
+        return departureMinute;
     }
 
-    public void setMinute(int minute) {
-        this.minute = minute;
+    public void setDepartureMinute(int departureMinute) {
+        this.departureMinute = departureMinute;
+    }
+
+    public int getArrivalHour() {
+        return arrivalHour;
+    }
+
+    public void setArrivalHour(int arrivalHour) {
+        this.arrivalHour = arrivalHour;
+    }
+
+    public int getArrivalMinute() {
+        return arrivalMinute;
+    }
+
+    public void setArrivalMinute(int arrivalMinute) {
+        this.arrivalMinute = arrivalMinute;
     }
 }
