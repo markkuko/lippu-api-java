@@ -7,6 +7,7 @@ import fi.ficora.lippu.domain.model.Travel;
 import fi.ficora.lippu.domain.model.TravelPassenger;
 import fi.ficora.lippu.domain.model.TravelRequest;
 import fi.ficora.lippu.exception.NotAuthorizedException;
+import fi.ficora.lippu.exception.NotValidReservationRequest;
 import fi.ficora.lippu.exception.ResourceNotFoundException;
 
 import java.time.LocalDate;
@@ -56,11 +57,14 @@ public interface IReservationService {
 
     /**
      * Confirms previous reservation made with availability
-     * query.
+     * query. First it validates the reservation requests
+     * and if all are valid, it confirms them.
      * @return List of reservation items, that have been confirmed.
      */
     List<ReservationItem> confirmReservation(List<ReservationRequestReservations>
-                                                     reservations);
+                                                     reservations)
+            throws NotAuthorizedException,NotValidReservationRequest,
+                   ResourceNotFoundException;
     /**
      * Creates new empty reservation.
      *

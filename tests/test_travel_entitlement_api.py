@@ -8,8 +8,6 @@
     (MaaS) capabilities. This is API specification of LIPPU-project.
     NOTE, The ticket payment capabilities are scoped out from LIPPU-project.
 
-    OpenAPI spec version: 1.0.0
-
 """
 
 import os
@@ -40,6 +38,14 @@ class TestTravelentitlementAPI(unittest.TestCase):
         logging.debug("TestTravelentitlementAPI: Setting target environment %s", target_environment)
         self.envdata = json.load(env_json)[target_environment]
         env_json.close()
+        token = lippuclient.get_authentication_token(self.envdata['base_url'],
+                                                     str(uuid.uuid4()),
+                                                     self.testdata['valid_client1'],
+                                                     self.testdata['key_id_client1'],
+                                                     self.testdata['key_path_client1'])
+        self.headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
+                                               token=token,
+                                               language="fi")
 
     def tearDown(self):
         """
@@ -54,23 +60,15 @@ class TestTravelentitlementAPI(unittest.TestCase):
         the reservation.
 
         """
-        token = lippuclient.get_authentication_token(self.envdata['base_url'],
-                                                     str(uuid.uuid4()),
-                                                     self.testdata['valid_client1'],
-                                                     self.testdata['key_id_client1'],
-                                                     self.testdata['key_path_client1'])
-        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                               token=token,
-                                               language="fi")
 
         # Make reservation
-        r_reservation = self.make_reservation(headers)
+        r_reservation = self.make_reservation(self.headers)
         # Travel entitlement status
-        headers['X-Message-Id'] = str(uuid.uuid4())
+        self.headers['X-Message-Id'] = str(uuid.uuid4())
         case_id = r_reservation.json()['caseId']
         entitlement_id = r_reservation.json()['confirmedReservations'][0]['travelEntitlementId']
         r_status = lippuclient.travel_entitlement_status(self.envdata['base_url'],
-                                                  headers=headers,
+                                                  headers=self.headers,
                                                   travel_entitlement_id=entitlement_id)
         logging.info("test_activate_travel_entitlement, status for %s, response: %s"
                      %(entitlement_id, r_status.text))
@@ -78,9 +76,9 @@ class TestTravelentitlementAPI(unittest.TestCase):
         self.assertEqual(r_status.json()['activated'], False)
 
         # Travel entitlement activation
-        headers['X-Message-Id'] = str(uuid.uuid4())
+        self.headers['X-Message-Id'] = str(uuid.uuid4())
         r_active = lippuclient.travel_entitlement_activate(self.envdata['base_url'],
-                                                        headers=headers,
+                                                        headers=self.headers,
                                                         travel_entitlement_id=entitlement_id)
         logging.info("test_activate_travel_entitlement, activation for %s, response: %s"
                      %(entitlement_id, r_active.text))
@@ -88,19 +86,19 @@ class TestTravelentitlementAPI(unittest.TestCase):
         self.assertEqual(r_active.json()['activated'], True)
 
         # Delete the the travel entitlement id
-        headers['X-Message-Id'] = str(uuid.uuid4())
+        self.headers['X-Message-Id'] = str(uuid.uuid4())
         case_id = r_reservation.json()['caseId']
         r_delete = lippuclient.travel_entitlement_delete(self.envdata['base_url'],
-                                                  headers=headers,
+                                                  headers=self.headers,
                                                   travel_entitlement_id=entitlement_id)
         logging.info("test_activate_travel_entitlement, delete for %s, response: %s"
                      %(entitlement_id, r_delete.text))
         self.assertEqual(r_delete.status_code, 200)
 
         # Travel entitlement status, already deleted
-        headers['X-Message-Id'] = str(uuid.uuid4())
+        self.headers['X-Message-Id'] = str(uuid.uuid4())
         r_status = lippuclient.travel_entitlement_status(self.envdata['base_url'],
-                                                        headers=headers,
+                                                        headers=self.headers,
                                                         travel_entitlement_id=entitlement_id)
         logging.info("test_activate_travel_entitlement, reservation delete for %s, response: %s"
                      %(entitlement_id, r_status.text))
@@ -108,9 +106,9 @@ class TestTravelentitlementAPI(unittest.TestCase):
 
         # Reservation had only one entitlement, it should be also
         # deleted.
-        headers['X-Message-Id'] = str(uuid.uuid4())
+        self.headers['X-Message-Id'] = str(uuid.uuid4())
         r_reservation_delete = lippuclient.reservation_delete(self.envdata['base_url'],
-                                                         headers=headers,
+                                                         headers=self.headers,
                                                          reservation_id=case_id)
         logging.info("test_activate_travel_entitlement, reservation delete for %s, response: %s"
                      %(entitlement_id, r_status.text))
@@ -123,23 +121,15 @@ class TestTravelentitlementAPI(unittest.TestCase):
         the travel entitlement associated with reservation.
 
         """
-        token = lippuclient.get_authentication_token(self.envdata['base_url'],
-                                                     str(uuid.uuid4()),
-                                                     self.testdata['valid_client1'],
-                                                     self.testdata['key_id_client1'],
-                                                     self.testdata['key_path_client1'])
-        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                               token=token,
-                                               language="fi")
 
         # Make reservation
-        r_reservation = self.make_reservation(headers)
+        r_reservation = self.make_reservation(self.headers)
         # Travel entitlement status
-        headers['X-Message-Id'] = str(uuid.uuid4())
+        self.headers['X-Message-Id'] = str(uuid.uuid4())
         case_id = r_reservation.json()['caseId']
         entitlement_id = r_reservation.json()['confirmedReservations'][0]['travelEntitlementId']
         r_status = lippuclient.travel_entitlement_status(self.envdata['base_url'],
-                                                         headers=headers,
+                                                         headers=self.headers,
                                                          travel_entitlement_id=entitlement_id)
         logging.info("test_activate_travel_entitlement, status for %s, response: %s"
                      %(entitlement_id, r_status.text))
@@ -147,9 +137,9 @@ class TestTravelentitlementAPI(unittest.TestCase):
         self.assertEqual(r_status.json()['activated'], False)
 
         # Travel entitlement status
-        headers['X-Message-Id'] = str(uuid.uuid4())
+        self.headers['X-Message-Id'] = str(uuid.uuid4())
         r_reservation_delete = lippuclient.reservation_delete(self.envdata['base_url'],
-                                                              headers=headers,
+                                                              headers=self.headers,
                                                               reservation_id=case_id)
         logging.info("test_activate_travel_entitlement, reservation delete for %s, response: %s"
                      %(entitlement_id, r_status.text))
@@ -157,53 +147,31 @@ class TestTravelentitlementAPI(unittest.TestCase):
 
 
         # Travel entitlement status
-        headers['X-Message-Id'] = str(uuid.uuid4())
+        self.headers['X-Message-Id'] = str(uuid.uuid4())
         r_status = lippuclient.travel_entitlement_status(self.envdata['base_url'],
-                                                         headers=headers,
+                                                         headers=self.headers,
                                                          travel_entitlement_id=entitlement_id)
         logging.info("test_activate_travel_entitlement, status for %s, response: %s"
                      %(entitlement_id, r_status.text))
         self.assertEqual(r_status.status_code, 404)
 
     def test_delete_travel_entitlement_non_valid_id(self):
-        token = lippuclient.get_authentication_token(self.envdata['base_url'],
-                                                     str(uuid.uuid4()),
-                                                     self.testdata['valid_client1'],
-                                                     self.testdata['key_id_client1'],
-                                                     self.testdata['key_path_client1'])
-        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                               token=token,
-                                               language="fi")
         r= lippuclient.travel_entitlement_delete(self.envdata['base_url'],
-                                                         headers=headers,
+                                                         headers=self.headers,
                                                          travel_entitlement_id=str(uuid.uuid4()))
         self.assertEqual(r.status_code, 404)
 
     def test_activate_travel_entitlement_non_valid_id(self):
-        token = lippuclient.get_authentication_token(self.envdata['base_url'],
-                                                     str(uuid.uuid4()),
-                                                     self.testdata['valid_client1'],
-                                                     self.testdata['key_id_client1'],
-                                                     self.testdata['key_path_client1'])
-        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                               token=token,
-                                               language="fi")
+
         r= lippuclient.travel_entitlement_activate(self.envdata['base_url'],
-                                                 headers=headers,
+                                                 headers=self.headers,
                                                  travel_entitlement_id=str(uuid.uuid4()))
         self.assertEqual(r.status_code, 404)
 
     def test_status_travel_entitlement_non_valid_id(self):
-        token = lippuclient.get_authentication_token(self.envdata['base_url'],
-                                                     str(uuid.uuid4()),
-                                                     self.testdata['valid_client1'],
-                                                     self.testdata['key_id_client1'],
-                                                     self.testdata['key_path_client1'])
-        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                               token=token,
-                                               language="fi")
+
         r= lippuclient.travel_entitlement_status(self.envdata['base_url'],
-                                                 headers=headers,
+                                                 headers=self.headers,
                                                  travel_entitlement_id=str(uuid.uuid4()))
         self.assertEqual(r.status_code, 404)
 
@@ -237,6 +205,56 @@ class TestTravelentitlementAPI(unittest.TestCase):
                                                  travel_entitlement_id=str(uuid.uuid4()))
         self.assertEqual(r.status_code, 403)
 
+    def test_travel_entitlement_uncorfirmed_reservation(self):
+        """
+        Make softbooking and then check that those travel entitlements
+        are not available in travelEntitlement endpoint. Then confirm
+        the reservations and check that they are available in the endpoint.
+        """
+        travel = self.testdata['travel_data']
+        travel["travel"]["departureTimeEarliest"]  = zulu.now().shift(days=2). \
+            replace(hour=14, minute=00).isoformat()
+        r_availability = lippuclient.availability_request(self.envdata['base_url'],
+                                                          headers=self.headers, payload=travel)
+        logging.info("test_travel_entitlement_uncorfirmed_reservation, availability response: %s"
+                     % r_availability)
+        # Check that travel entitlement are not available
+        for a in r_availability.json()['availability']:
+            self.headers['X-Message-Id'] = str(uuid.uuid4())
+            r= lippuclient.travel_entitlement_status(self.envdata['base_url'],
+                                                     headers=self.headers,
+                                                     travel_entitlement_id=a['travelEntitlementId'])
+            self.assertEqual(r.status_code, 404)
+            self.headers['X-Message-Id'] = str(uuid.uuid4())
+            r= lippuclient.travel_entitlement_activate(self.envdata['base_url'],
+                                                     headers=self.headers,
+                                                     travel_entitlement_id=a['travelEntitlementId'])
+            self.assertEqual(r.status_code, 404)
+            self.headers['X-Message-Id'] = str(uuid.uuid4())
+            r= lippuclient.travel_entitlement_delete(self.envdata['base_url'],
+                                                       headers=self.headers,
+                                                       travel_entitlement_id=a['travelEntitlementId'])
+            self.assertEqual(r.status_code, 404)
+
+        # Confirm reservation
+        reservation = {'reservations': []}
+        for a in r_availability.json()['availability']:
+            reservation['reservations'].append({'travelEntitlementId': a['travelEntitlementId'],
+                                        'customerInfo': [self.testdata['customer_info']]})
+        logging.info("Sending reservation request %s" % reservation)
+        r_reservation = lippuclient.reservation_request(self.envdata['base_url'],
+                                                headers=self.headers, payload=reservation)
+        # Confirm that travel entitlements are available after
+        # confirming reservation.
+        for c in r_reservation.json()['confirmedReservations']:
+            r_status = lippuclient.travel_entitlement_status(self.envdata['base_url'],
+                                                         headers=self.headers,
+                                                         travel_entitlement_id=c['travelEntitlementId'])
+            logging.info("test_travel_entitlement_uncorfirmed_reservation, status for %s, response: %s"
+                     %(c['travelEntitlementId'], r_status.text))
+            self.assertEqual(r_status.status_code, 200)
+            self.assertEqual(r_status.json()['activated'], False)
+
     def make_reservation(self, headers):
         """
         Helper funtion to make reservation.
@@ -256,7 +274,7 @@ class TestTravelentitlementAPI(unittest.TestCase):
         reservation = {'reservations': []}
         for a in r_availability.json()['availability']:
             reservation['reservations'].append({'travelEntitlementId': a['travelEntitlementId'],
-                                                'customerInfo': [{'name': 'Matti','phone': 'adsf', 'email': 'asdf'}]})
+                                                'customerInfo': [self.testdata['customer_info']]})
         logging.info("Sending reservation request %s" % reservation)
         r_reservation = lippuclient.reservation_request(self.envdata['base_url'],
                                                         headers=headers, payload=reservation)

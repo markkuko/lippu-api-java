@@ -22,7 +22,7 @@ import logging
 import os
 
 class TestProductsApi(unittest.TestCase):
-    """ ProductsApi unit test """
+    """ ProductsApi integration tests """
 
     def setUp(self):
         """
@@ -38,8 +38,14 @@ class TestProductsApi(unittest.TestCase):
         logging.debug("TestProductsApi: Setting target environment: %s", target_environment)
         self.envdata = json.load(env_json)[target_environment]
         env_json.close()
-
-
+        token = lippuclient.get_authentication_token(self.envdata['base_url'],
+                                                     str(uuid.uuid4()),
+                                                     self.testdata['valid_client1'],
+                                                     self.testdata['key_id_client1'],
+                                                     self.testdata['key_path_client1'])
+        self.headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
+                                               token=token,
+                                               language="fi")
     def tearDown(self):
         pass
 
@@ -50,17 +56,10 @@ class TestProductsApi(unittest.TestCase):
         two products in the response.
 
         """
-        token = lippuclient.get_authentication_token(self.envdata['base_url'],
-                                                           str(uuid.uuid4()),
-                                                           self.testdata['valid_client1'],
-                                                           self.testdata['key_id_client1'],
-                                                           self.testdata['key_path_client1'])
-        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                                     token=token,
-                                                     language="fi")
+
         valid_response = self.testdata['test_products_current_date_response']
         response = lippuclient.product_query(self.envdata['base_url'],
-                                                   headers)
+                                             self.headers)
         logging.info("test_products_current_date, response: %s ", response.json())
         self.assertEqual(response.status_code, 200)
         self.assertGreater(len(response.json()["products"]), 0)
@@ -89,20 +88,12 @@ class TestProductsApi(unittest.TestCase):
         one product in the response.
 
         """
-        token = lippuclient.get_authentication_token(self.envdata['base_url'],
-                                                           str(uuid.uuid4()),
-                                                           self.testdata['valid_client1'],
-                                                           self.testdata['key_id_client1'],
-                                                           self.testdata['key_path_client1'])
-        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                                     token=token,
-                                                     language="fi")
 
         t = datetime.datetime.now()
         valid_response = self.testdata['test_products_current_date_response']
         query = {"fromLat": "60.2","fromLon":"24.8"}
         response = lippuclient.product_query(self.envdata['base_url'],
-                                                   headers,
+                                             self.headers,
                                                    t, query)
         logging.info("test_products_coordinates, response:" + response.text)
 
@@ -126,21 +117,13 @@ class TestProductsApi(unittest.TestCase):
         one product in the response.
 
         """
-        token = lippuclient.get_authentication_token(self.envdata['base_url'],
-                                                           str(uuid.uuid4()),
-                                                           self.testdata['valid_client1'],
-                                                           self.testdata['key_id_client1'],
-                                                           self.testdata['key_path_client1'])
-        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                                     token=token,
-                                                     language="fi")
 
         t = datetime.datetime.now()
         t = t + datetime.timedelta(days=(7 - t.weekday()))
         valid_response = self.testdata['test_products_current_date_response']
         query = {"toLat": "60.5","toLon":"26.9"}
         response = lippuclient.product_query(self.envdata['base_url'],
-                                                   headers,
+                                             self.headers,
                                                    t, query)
         logging.info("test_products_to_coordinates, response:" + response.text)
 
@@ -161,21 +144,13 @@ class TestProductsApi(unittest.TestCase):
                          valid_response["products2"]["extraServices"])
     def test_products_coordinates(self):
 
-        token = lippuclient.get_authentication_token(self.envdata['base_url'],
-                                                           str(uuid.uuid4()),
-                                                           self.testdata['valid_client1'],
-                                                           self.testdata['key_id_client1'],
-                                                           self.testdata['key_path_client1'])
-        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                                     token=token,
-                                                     language="fi")
 
         t = datetime.datetime.now()
         valid_response = self.testdata['test_products_current_date_response']
         query = {"fromLat": "60.2","fromLon":"24.8",
                   "toLat": "61.0", "toLon":"25.7"}
         response = lippuclient.product_query(self.envdata['base_url'],
-                                                   headers,
+                                             self.headers,
                                                    t, query)
         logging.info("test_products_coordinates, response: %s" % response.text)
 
@@ -195,18 +170,9 @@ class TestProductsApi(unittest.TestCase):
 
         Product portfolio for given datetime, date in the past (non-valid)
         """
-
-        token = lippuclient.get_authentication_token(self.envdata['base_url'],
-                                                           str(uuid.uuid4()),
-                                                           self.testdata['valid_client1'],
-                                                           self.testdata['key_id_client1'],
-                                                           self.testdata['key_path_client1'])
-        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                                     token=token,
-                                                     language="fi")
         t = datetime.datetime.now() - datetime.timedelta(days=1)
         response = lippuclient.product_query(self.envdata['base_url'],
-                                                   headers,
+                                             self.headers,
                                                    t)
         logging.info("test_products_date_in_the_past, response: %s ", response.text)
         self.assertEqual(response.status_code, 400)
@@ -214,19 +180,10 @@ class TestProductsApi(unittest.TestCase):
 
     def test_products_from_coordinates_not_found(self):
 
-        token = lippuclient.get_authentication_token(self.envdata['base_url'],
-                                                           str(uuid.uuid4()),
-                                                           self.testdata['valid_client1'],
-                                                           self.testdata['key_id_client1'],
-                                                           self.testdata['key_path_client1'])
-        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                                     token=token,
-                                                     language="fi")
-
         t = datetime.datetime.now()
         query = {"fromLat": "63.2","fromLon":"26.2"}
         response = lippuclient.product_query(self.envdata['base_url'],
-                                                   headers,
+                                             self.headers,
                                                    t, query)
         logging.info("test_products_coordinates_not_found, response:"  + response.text)
 
@@ -239,19 +196,11 @@ class TestProductsApi(unittest.TestCase):
         Test API endpoint with current date and
 
         """
-        token = lippuclient.get_authentication_token(self.envdata['base_url'],
-                                                           str(uuid.uuid4()),
-                                                           self.testdata['valid_client1'],
-                                                           self.testdata['key_id_client1'],
-                                                           self.testdata['key_path_client1'])
-        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                                     token=token,
-                                                     language="fi")
         valid_response = self.testdata['test_products_current_date_response']
         query = {"accessibility": ["PUSHCHAIR", "TESTING"]}
         t = datetime.datetime.now()
         response = lippuclient.product_query(self.envdata['base_url'],
-                                                   headers,
+                                             self.headers,
                                                    t, query)
         logging.info("test_products_invalid_accessibility, response: %s ", response.json())
         self.assertEqual(response.status_code, 400)
@@ -279,18 +228,11 @@ class TestProductsApi(unittest.TestCase):
         """
         t = datetime.datetime.now()
         t = t + datetime.timedelta(days=(7 - t.weekday()))
-        token = lippuclient.get_authentication_token(self.envdata['base_url'],
-                                                           str(uuid.uuid4()),
-                                                           self.testdata['valid_client1'],
-                                                           self.testdata['key_id_client1'],
-                                                           self.testdata['key_path_client1'])
-        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                                     token=token,
-                                                     language="fi")
-        query = {"accessibility": ["WHEELCHAIR"]}
+
+        query = {"accessibility": ["GUIDE_DOG"]}
         valid_response = self.testdata['test_products_current_date_response']
         response = lippuclient.product_query(self.envdata['base_url'],
-                                                   headers,
+                                             self.headers,
                                                    t,query)
         logging.info("test_products_filter_accessibility, response: %s ", response.json())
         self.assertEqual(response.status_code, 200)
@@ -299,9 +241,12 @@ class TestProductsApi(unittest.TestCase):
                          valid_response["passengerCategories"])
         for pr in response.json()["products"]:
             if pr["contract"] is valid_response["products2"]["contract"]:
-                self.assertEqual(pr["contract"]["productType"], valid_response["products2"]["productType"])
-                self.assertEqual(pr["contract"]["accessibility"],
-                                 valid_response["products2"]["accessibility"])
+                self.assertEqual(pr["contract"]["productType"],
+                                 valid_response["products2"]["productType"])
+                self.assertEqual(valid_response["products2"]["accessibility"][0]
+                            in pr["contract"]["accessibility"], True)
+                self.assertEqual(valid_response["products2"]["accessibility"][1]
+                                 in pr["contract"]["accessibility"], True)
                 self.assertEqual(pr["contract"]["extraServices"],
                                  valid_response["products2"]["extraServices"])
                 self.assertEqual(pr["contract"]["suitablePassengerCategories"],
@@ -316,18 +261,11 @@ class TestProductsApi(unittest.TestCase):
         """
         t = datetime.datetime.now()
         t = t + datetime.timedelta(days=(7 - t.weekday()))
-        token = lippuclient.get_authentication_token(self.envdata['base_url'],
-                                                           str(uuid.uuid4()),
-                                                           self.testdata['valid_client1'],
-                                                           self.testdata['key_id_client1'],
-                                                           self.testdata['key_path_client1'])
-        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                                     token=token,
-                                                     language="fi")
-        query = {"accessibility": ["WHEELCHAIR", "STEP_FREE_ACCESS"]}
+
+        query = {"accessibility": ["GUIDE_DOG", "STEP_FREE_ACCESS"]}
         valid_response = self.testdata['test_products_current_date_response']
         response = lippuclient.product_query(self.envdata['base_url'],
-                                                   headers,
+                                             self.headers,
                                                    t,query)
         logging.info("test_products_filter_accessibility, response: %s ", response.json())
         self.assertEqual(response.status_code, 200)

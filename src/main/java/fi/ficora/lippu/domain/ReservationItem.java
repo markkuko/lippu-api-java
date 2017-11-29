@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Id;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 
 public class ReservationItem {
 
@@ -17,8 +18,8 @@ public class ReservationItem {
     private OffsetDateTime validTo;
     private List<CustomerInfo> customerInfo;
     private List<String> chosenExtraReservationData;
-    private List<ExtraServiceFeature> extraServiceFeatures;
-    private List<AccessibilityFeature> accessibilities;
+    private Map<String, ExtraServiceFeature> extraServiceFeatures;
+    private Map<String, AccessibilityFeature> accessibilities;
     private boolean confirmed;
     private boolean activated;
     private String productId;
@@ -146,19 +147,19 @@ public class ReservationItem {
         this.reservationValidTo = reservationValidTo;
     }
 
-    public List<ExtraServiceFeature> getExtraServiceFeatures() {
+    public Map<String, ExtraServiceFeature> getExtraServiceFeatures() {
         return extraServiceFeatures;
     }
 
-    public void setExtraServiceFeatures(List<ExtraServiceFeature> extraServiceFeatures) {
+    public void setExtraServiceFeatures(Map<String, ExtraServiceFeature> extraServiceFeatures) {
         this.extraServiceFeatures = extraServiceFeatures;
     }
 
-    public List<AccessibilityFeature> getAccessibilities() {
+    public Map<String, AccessibilityFeature> getAccessibilities() {
         return accessibilities;
     }
 
-    public void setAccessibilities(List<AccessibilityFeature> accessibilities) {
+    public void setAccessibilities(Map<String, AccessibilityFeature> accessibilities) {
         this.accessibilities = accessibilities;
     }
 

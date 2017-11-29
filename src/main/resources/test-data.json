@@ -34,9 +34,9 @@
     "fromLon": 24.8,
     "toLat": 61.0,
     "toLon": 25.7,
-    "accessibilities": [
-      {"title": "UNKNOWN"}
-    ],
+    "accessibilities": {"UNKNOWN":
+      {"title": "UNKNOWN"}}
+    ,
     "extraServices": [
     ],
     "suitablePassengerCategories": ["Adult", "Child","Senior"]
@@ -53,14 +53,20 @@
     "fromId": "Po3001",
     "toLat": 60.5,
     "toLon": 26.9,
-    "accessibilities": [
-      {"title": "WHEELCHAIR", "fare": {"currency" : "EUR", "amount": 0, "vatPercent": 0},
-        "description" : "Space for wheelchair"}
-    ],
-    "extraServiceFeatures": [
+    "accessibilities": {"GUIDE_DOG":
+      {"title": "GUIDE_DOG", "fare": {"currency" : "EUR", "amount": 0, "vatPercent": 0},
+        "description" : "Guide dogs allowed to the vehicle."},
+      "LOW-FLOOR":
+      {"title": "LOW_FLOOR", "fare": {"currency" : "EUR", "amount": 0, "vatPercent": 0},
+        "description" : "Low-floor transport"},
+      "BOARDING_ASSISTANCE":
+      {"title": "BOARDING_ASSISTANCE", "fare": {"currency" : "EUR", "amount": 0, "vatPercent": 0},
+        "description" : "Assistance for boarding the vehicle."}}
+    ,
+    "extraServiceFeatures": {"CHILDSEAT":
       {"title": "CHILDSEAT", "fare": { "amount" : 13, "currency": "EUR", "vatPercent": 10},
-        "description" : "Separate child safety seat for the travel."}
-    ],
+        "description" : "Separate child safety seat for the travel."}}
+    ,
     "suitablePassengerCategories": ["Adult", "Child","Senior"]
   },
   {

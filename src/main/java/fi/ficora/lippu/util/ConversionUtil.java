@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -37,8 +38,8 @@ public class ConversionUtil {
 
     public static TravelAvailability reservationItemToTravelAvailability(
                 ReservationItem item, TravelPassenger passenger,
-                List<AccessibilityFeature> accessibilities,
-                List<ExtraServiceFeature> services) {
+                Map<String, AccessibilityFeature> accessibilities,
+                Map<String, ExtraServiceFeature> services) {
         TravelPassengerReservation returnPassenger =
                 new TravelPassengerReservation()
                 .category(item.getPassengerCategory());
@@ -141,35 +142,37 @@ public class ConversionUtil {
                 .fare(fareToProductFare(e.getFare()));
     }
 
-    public static List<ExtraService> extraServiceListToApi(List<ExtraServiceFeature> list) {
+    public static List<ExtraService> extraServiceListToApi(Map<String, ExtraServiceFeature> list) {
         if(list == null ) {
             return null;
         }
 
-        return list.stream().map(e -> extraServiceToApi(e))
+        return list.values().stream().map(e -> extraServiceToApi(e))
                 .collect(Collectors.toList());
     }
 
     public static List<ExtraServiceReservation>
-        extraServiceListToApiReservation(List<ExtraServiceFeature> list) {
+        extraServiceListToApiReservation(Map<String, ExtraServiceFeature> list) {
         if(list == null ) {
             return null;
         }
-        return list.stream().map(e -> extraServiceToApiReservation(e))
+        return list.values().stream().map(e -> extraServiceToApiReservation(e))
                 .collect(Collectors.toList());
     }
-    public static List<AccessibilityReservation> accessibilityListToApiReservation(List<AccessibilityFeature> list) {
+    public static List<AccessibilityReservation> accessibilityListToApiReservation(
+            Map<String, AccessibilityFeature> list) {
         if(list == null ) {
             return null;
         }
-        return list.stream().map(a -> accessibilityReservationToApi(a))
+        return list.values().stream().map(a -> accessibilityReservationToApi(a))
                 .collect(Collectors.toList());
     }
-    public static List<Accessibility> accessibilityListToApi(List<AccessibilityFeature> list) {
+    public static List<Accessibility> accessibilityListToApi(
+            Map<String, AccessibilityFeature> list) {
         if(list == null ) {
             return null;
         }
-        return list.stream().map(a -> accessibilityToApi(a))
+        return list.values().stream().map(a -> accessibilityToApi(a))
                 .collect(Collectors.toList());
     }
     public static TravelResponse travelRequestToResponse(TravelRequest travel) {

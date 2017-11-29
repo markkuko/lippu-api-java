@@ -5,6 +5,10 @@ import java.util.List;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Repository;
 
+/**
+ * Data repository has general lippu service configuration
+ * options, like server side encryption key configurations.
+ */
 @Repository
 @ConfigurationProperties("data")
 public class DataRepository {

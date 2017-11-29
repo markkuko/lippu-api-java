@@ -6,6 +6,7 @@ import fi.ficora.lippu.domain.model.ReservationRequestReservations;
 import fi.ficora.lippu.domain.model.TravelPassenger;
 import fi.ficora.lippu.domain.model.TravelRequest;
 import fi.ficora.lippu.exception.NotAuthorizedException;
+import fi.ficora.lippu.exception.NotValidReservationRequest;
 import fi.ficora.lippu.exception.ResourceNotFoundException;
 import fi.ficora.lippu.repository.ReservationItemRepository;
 import fi.ficora.lippu.repository.ReservationRepository;
@@ -17,9 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Services for storing and deleting reservations.
@@ -70,7 +69,7 @@ public class ReservationService implements IReservationService {
 
         ReservationItem item =
                 reservationItemRepository.findOneByTravelEntitlementId(travelEntitlementId);
-        if(item == null) {
+        if(item == null || !item.isConfirmed()) {
             throw new ResourceNotFoundException("Reservation item not" +
                     "found for :" + travelEntitlementId);
         }
@@ -103,7 +102,7 @@ public class ReservationService implements IReservationService {
 
         ReservationItem item =
                 reservationItemRepository.findOneByTravelEntitlementId(travelEntitlementId);
-        if(item == null) {
+        if(item == null || !item.isConfirmed()) {
             throw new ResourceNotFoundException("Reservation item not" +
                     "found for :" + travelEntitlementId);
         }
@@ -122,27 +121,40 @@ public class ReservationService implements IReservationService {
 
 
     public List<ReservationItem> confirmReservation(List<ReservationRequestReservations>
-                                                    reservations) {
-        List<ReservationItem> items = new ArrayList<>();
+                                                    reservations)
+            throws NotAuthorizedException, NotValidReservationRequest,
+                   ResourceNotFoundException{
         String clientId = authService.getClientId();
-        for(ReservationRequestReservations reservation: reservations) {
-            ReservationItem item = reservationItemRepository.
-                    findOneByTravelEntitlementId(reservation.getTravelEntitlementId());
-            try {
-
-                if (isValidReservation(item, reservation)) {
-                    authService.verifyAuthorization(item);
-                    item.setConfirmed(true);
-                    item.setTicketPayload(ticketService.generateTicket(item));
-
-                    items.add(reservationItemRepository.save(item));
-
-                }
-            } catch (NotAuthorizedException e) {
-                log.info("Client {} tried to confirm item {}, message: {}", clientId,
-                        item.getTravelEntitlementId(), e.getMessage());
+        for(ReservationRequestReservations r: reservations){
+            if (!isValidReservation(r)) {
+                log.info("Reservation item {} was not valid", r.getTravelEntitlementId());
+                throw new NotValidReservationRequest("Reservation item was not valid:" +
+                        r.getTravelEntitlementId());
             }
         }
+        List<ReservationItem> items = new ArrayList<>();
+        reservations.forEach(r -> {
+            ReservationItem item = reservationItemRepository.
+                    findOneByTravelEntitlementId(r.getTravelEntitlementId());
+            item.setConfirmed(true);
+            item.setTicketPayload(ticketService.generateTicket(item));
+            if (item.getExtraServiceFeatures() != null &&
+                    r.getChosenExtraReservationIds() != null) {
+                item.getExtraServiceFeatures()
+                        .keySet().retainAll(new HashSet<>(r.getChosenExtraReservationIds()));
+            } else {
+                item.setExtraServiceFeatures(new HashMap<>());
+            }
+            if (item.getAccessibilities() != null &&
+                    r.getChosenAccessibilityReservationIds() != null) {
+                item.getAccessibilities()
+                        .keySet().retainAll(new HashSet<>(r.getChosenAccessibilityReservationIds()));
+            } else {
+                item.setAccessibilities(new HashMap<>());
+            }
+
+            items.add(reservationItemRepository.save(item));
+        });
         return items;
     }
     public ReservationItem addReservationItem(ReservationItem item) {
@@ -160,18 +172,55 @@ public class ReservationService implements IReservationService {
         return result;
     }
 
-    private boolean isValidReservation(ReservationItem item,
-                                       ReservationRequestReservations reservation) {
+    /**
+     * Validates reservation request against reservation item. Returns
+     * true if reservation item is not null and still valid,
+     * requested accessibility features are in reservation item,
+     * requested extra services are in reservation item.
+     * @param reservation A singe reservation request.
+     * @return Returns true if the request is valid for the item.
+     */
+    private boolean isValidReservation(ReservationRequestReservations reservation)
+        throws NotAuthorizedException, ResourceNotFoundException{
+        ReservationItem item = reservationItemRepository.
+                findOneByTravelEntitlementId(reservation.getTravelEntitlementId());
         if(item == null || item.getReservationValidTo() == null) {
             log.info("Did not find reservation with travel entitlement id {}",
                     reservation.getTravelEntitlementId());
-            return false;
+            throw new ResourceNotFoundException("Did not find resource with" +
+                    "travel entitlement id: " + reservation.getTravelEntitlementId());
         }
-
+        authService.verifyAuthorization(item);
         if (!item.getReservationValidTo().isAfter(OffsetDateTime.now())) {
             log.info("Reservation {} has expired",
                     reservation.getTravelEntitlementId() );
             return false;
+        }
+        if(reservation.getChosenAccessibilityReservationIds() != null) {
+            for (String s : reservation.getChosenAccessibilityReservationIds()) {
+                if (item.getAccessibilities() == null ||
+                        !item.getAccessibilities().containsKey(s)) {
+                    log.info("Reservation {} accessibility {} was not found",
+                            reservation.getTravelEntitlementId(),
+                            s);
+                    throw new ResourceNotFoundException("Accessibility requirement" +
+                            " reservation id:"+ s + "was not found for " +
+                            "travel entitlement id: " + reservation.getTravelEntitlementId());
+                }
+            }
+        }
+        if(reservation.getChosenExtraReservationIds() != null) {
+            for(String s: reservation.getChosenExtraReservationIds()){
+                if(item.getExtraServiceFeatures() == null ||
+                        !item.getExtraServiceFeatures().containsKey(s)) {
+                    log.info("Reservation {} extra service {} was not found",
+                            reservation.getTravelEntitlementId(),
+                            s);
+                    throw new ResourceNotFoundException("Extra service requirement" +
+                            " reservation id:"+ s + "was not found for " +
+                            "travel entitlement id: " + reservation.getTravelEntitlementId());
+                }
+            }
         }
         return true;
     }

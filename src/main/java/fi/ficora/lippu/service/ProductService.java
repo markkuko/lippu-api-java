@@ -47,54 +47,46 @@ public class ProductService implements IProductService{
                                                 Double toLon,
                                               List<Accessibility> accessibilities) {
         List<Product> products;
-        if(date != null && toLon != null && toLat != null) {
-
-            products = productRepository.findByToLatAndToLon(
-                    toLat, toLon);
-            if(accessibilities.size() > 0) {
-                products = filterByAccessibilities(products,
-                        accessibilities);
-            }
-            return checkProductTimetable(products, date);
-        } else {
+        if(date == null || toLon == null || toLat == null) {
             return null;
         }
+        products = productRepository.findByToLatAndToLon(toLat, toLon);
+        if(accessibilities.size() > 0) {
+            products = filterByAccessibilities(products,
+                    accessibilities);
+        }
+        return checkProductTimetable(products, date);
     }
     public ProductList getAvailableProductsFrom(LocalDate date, Double fromLat,
                                             Double fromLon,
                                                 List<Accessibility> accessibilities) {
-        List<Product> products;
-        if(date != null && fromLon != null && fromLat != null) {
-
-            products = productRepository.findByFromLatAndFromLon(
-                    fromLat, fromLon);
-            if(accessibilities.size() > 0) {
-                products = filterByAccessibilities(products,
-                        accessibilities);
-            }
-            return checkProductTimetable(products, date);
-        } else {
+        if(date == null || fromLon == null || fromLat == null) {
             return null;
         }
+        List<Product> products = productRepository.findByFromLatAndFromLon(
+                fromLat, fromLon);
+        if(accessibilities.size() > 0) {
+            products = filterByAccessibilities(products,
+                    accessibilities);
+        }
+        return checkProductTimetable(products, date);
 
     }
     public ProductList getAvailableProducts(LocalDate date, Double fromLat,
                                             Double fromLon, Double toLat,
                                             Double toLon,List<Accessibility> accessibilities) {
-        List<Product> products;
-        if(date != null && fromLon != null && fromLat != null &&
-                toLat != null && toLon != null) {
-
-            products = productRepository.findByFromLatAndFromLonAndToLatAndToLon(
-                    fromLat, fromLon, toLat,toLon);
-            if(accessibilities.size() > 0) {
-                products = filterByAccessibilities(products,
-                        accessibilities);
-            }
-            return checkProductTimetable(products, date);
-        } else {
+        if(date == null || fromLon == null || fromLat == null ||
+                toLat == null || toLon == null) {
             return null;
         }
+        List<Product> products = productRepository.
+                findByFromLatAndFromLonAndToLatAndToLon(
+                fromLat, fromLon, toLat,toLon);
+        if(accessibilities.size() > 0) {
+            products = filterByAccessibilities(products,
+                    accessibilities);
+        }
+        return checkProductTimetable(products, date);
 
     }
     public ProductList getAvailableProducts(LocalDate date,
@@ -166,7 +158,6 @@ public class ProductService implements IProductService{
 
     }
     public List<String> getPassengerCategories() {
-
         return dataRepository.getPassengerCategories();
     }
     private ProductList checkProductTimetable(List<Product> products,
@@ -231,20 +222,10 @@ public class ProductService implements IProductService{
     }
     public AccessibilityFeature getAccessibilityFromProduct(Product product,
                                                             Accessibility.TitleEnum title) {
-
-        return product.getAccessibilities().stream()
-                .filter(a -> a.getTitle().toString().compareTo(
-                        title.toString()) == 0)
-                .findFirst()
-                .orElse(null);
+        return product.getAccessibilities().get(title.toString());
     }
     public ExtraServiceFeature getExtraServiceFromProduct(Product product,
                                                           String title) {
-
-        return product.getExtraServiceFeatures().stream()
-                .filter(e -> e.getTitle().compareTo(
-                        title) == 0)
-                .findFirst()
-                .orElse(null);
+        return product.getExtraServiceFeatures().get(title);
     }
 }

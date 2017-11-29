@@ -14,9 +14,4 @@ COPY gradlew $LIPPU_HOME
 COPY build.gradle $LIPPU_HOME
 COPY gradle $LIPPU_HOME/gradle
 COPY settings.gradle $LIPPU_HOME
-# Shell commands to build the lippu-service.jar in alpine JDK8 docker container
-# After build is done, copy the jar to artifacts directory to make it available
-# outside the container.
-# ./gradlew clean findbugsMain build
-# sudo docker build -f Dockerfile-build -t lippu/lippu-build .
 RUN /bin/sh gradlew --continue clean compileJava

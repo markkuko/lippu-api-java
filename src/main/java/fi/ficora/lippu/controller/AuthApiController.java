@@ -11,6 +11,7 @@ import fi.ficora.lippu.domain.model.AuthenticationResponse;
 import fi.ficora.lippu.exception.AccountNotFoundException;
 import fi.ficora.lippu.exception.AuthVerificationFailedException;
 import fi.ficora.lippu.service.IAuthService;
+import fi.ficora.lippu.util.ApiErrorUtil;
 import fi.ficora.lippu.util.ConversionUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -78,10 +79,8 @@ public class AuthApiController implements AuthApi {
             if (auth == null) {
                 log.info("Operation: commitAuth; token is null for {}, returning forbidden.",
                         ConversionUtil.sanitizeLog(xInitiator));
-                ApiError error = new ApiError();
-                error.setStatusCode(BigDecimal.valueOf(403));
-                error.setMessage(messageSource.getMessage("http.error.message.403", null, Locale.ENGLISH));
-                return new ResponseEntity<ApiError>(error, HttpStatus.FORBIDDEN);
+                return ApiErrorUtil.generateErrorResponse403(
+                        messageSource.getMessage("http.error.message.403",null, Locale.ENGLISH));
             }
             AuthenticationResponse response = new AuthenticationResponse()
                     .token(auth.getToken())
@@ -93,11 +92,8 @@ public class AuthApiController implements AuthApi {
             log.info("Operation: commitAuth; exception thrown {}, initator {}," +
                             "returning forbidden.",
                     e.getMessage(), ConversionUtil.sanitizeLog(xInitiator));
-            ApiError error = new ApiError();
-            error.setStatusCode(BigDecimal.valueOf(403));
-            error.setMessage(messageSource.getMessage("http.error.message.403",
-                    null, Locale.ENGLISH));
-            return new ResponseEntity<ApiError>(error, HttpStatus.FORBIDDEN);
+            return ApiErrorUtil.generateErrorResponse403(
+                    messageSource.getMessage("http.error.message.403",null, Locale.ENGLISH));
         }
     }
 
@@ -123,16 +119,12 @@ public class AuthApiController implements AuthApi {
                     return new ResponseEntity<AuthenticationInitResponse>(response, HttpStatus.OK);
                 }
             } catch (AccountNotFoundException e) {
-                ApiError error =  new ApiError();
-                error.setStatusCode(BigDecimal.valueOf(403));
-                error.setMessage(messageSource.getMessage("http.error.message.403",null, Locale.ENGLISH));
-                return new ResponseEntity<ApiError>(error, HttpStatus.FORBIDDEN);
+                return ApiErrorUtil.generateErrorResponse403(
+                        messageSource.getMessage("http.error.message.403",null, Locale.ENGLISH));
             }
         }
-        ApiError error =  new ApiError();
-        error.setStatusCode(BigDecimal.valueOf(403));
-        error.setMessage(messageSource.getMessage("http.error.message.403",null, Locale.ENGLISH));
-        return new ResponseEntity<ApiError>(error, HttpStatus.FORBIDDEN);
+        return ApiErrorUtil.generateErrorResponse403(
+                messageSource.getMessage("http.error.message.403",null, Locale.ENGLISH));
 
     }
 

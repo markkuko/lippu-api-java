@@ -12,4 +12,4 @@ WORKDIR $LIPPU_HOME
 
 COPY ./artifacts/$jar $LIPPU_HOME/$jar
 
-CMD java -jar $LIPPU_HOME/$JARFILE
+ENTRYPOINT java -jar $LIPPU_HOME/$JARFILE

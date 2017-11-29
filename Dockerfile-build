@@ -9,6 +9,5 @@ ENV JARFILE=$jar
 
 USER lippu
 COPY src $LIPPU_HOME/src
-COPY build.sh $LIPPU_HOME
 
-RUN sh build.sh
+RUN /bin/sh gradlew clean build

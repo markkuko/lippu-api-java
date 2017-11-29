@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class Product {
@@ -22,8 +23,8 @@ public class Product {
     private String fromId;
     private String toId;
     private ArrayList<String> suitablePassengerCategories;
-    private List<AccessibilityFeature> accessibilities;
-    private List<ExtraServiceFeature> extraServiceFeatures;
+    private Map<String, AccessibilityFeature> accessibilities;
+    private Map<String, ExtraServiceFeature> extraServiceFeatures;
 
     public String getId() {
         return id;
@@ -73,20 +74,19 @@ public class Product {
         this.suitablePassengerCategories = suitablePassengerCategories;
     }
 
-    public List<AccessibilityFeature> getAccessibilities() {
+    public Map<String, AccessibilityFeature> getAccessibilities() {
         return accessibilities;
     }
 
-    @SuppressWarnings("SpellCheckingInspection")
-    public void setAccessibilities(@SuppressWarnings("SpellCheckingInspection") List<AccessibilityFeature> accessibilities) {
+    public void setAccessibilities(Map<String, AccessibilityFeature> accessibilities) {
         this.accessibilities = accessibilities;
     }
 
-    public List<ExtraServiceFeature> getExtraServiceFeatures() {
+    public Map<String, ExtraServiceFeature> getExtraServiceFeatures() {
         return extraServiceFeatures;
     }
 
-    public void setExtraServiceFeatures(List<ExtraServiceFeature> extraServiceFeatures) {
+    public void setExtraServiceFeatures(Map<String, ExtraServiceFeature> extraServiceFeatures) {
         this.extraServiceFeatures = extraServiceFeatures;
     }
 

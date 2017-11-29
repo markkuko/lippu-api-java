@@ -7,6 +7,7 @@ import fi.ficora.lippu.domain.model.ApiError;
 import fi.ficora.lippu.domain.model.ProductList;
 import fi.ficora.lippu.domain.model.ProductQueryResponse;
 import fi.ficora.lippu.service.IProductService;
+import fi.ficora.lippu.util.ApiErrorUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -71,13 +72,8 @@ public class ProductsApiController implements ProductsApi {
                         fromValue(accessibilityTitle);
                 if(aacc == null){
                     log.info("Invalid accessibility: {}", accessibilityTitle);
-                    ApiError error = new ApiError();
-                    error.setStatusCode(new BigDecimal(400));
-                    error.setMessage(messageSource.getMessage(
-                            "http.error.message.400.accessiblity",
-                            new Object[]{accessibilityTitle}, Locale.ENGLISH));
-                    return new ResponseEntity<ApiError>(error,
-                            HttpStatus.BAD_REQUEST);
+                    return ApiErrorUtil.generateErrorResponse400(
+                            messageSource.getMessage("http.error.message.400.accessiblity",null, Locale.ENGLISH));
                 } else {
                     accessibilities.add(new Accessibility().title(aacc));
                 }
@@ -86,11 +82,9 @@ public class ProductsApiController implements ProductsApi {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate localDate = LocalDate.parse(date, formatter);
         if(localDate.isBefore(LocalDate.now())) {
-            ApiError error = new ApiError();
-            error.setStatusCode(new BigDecimal(400));
-            error.setMessage(messageSource.getMessage("http.error.message.400.pastdate",
-                    new Object[]{date}, Locale.ENGLISH));
-            return new ResponseEntity<ApiError>(error, HttpStatus.BAD_REQUEST);
+            return ApiErrorUtil.generateErrorResponse400(
+                    messageSource.getMessage("http.error.message.400.pastdate",null, Locale.ENGLISH));
+
         }
         ProductQueryResponse response = new ProductQueryResponse();
         ProductList productList;

@@ -8,8 +8,6 @@
     (MaaS) capabilities. This is API specification of LIPPU-project.
     NOTE, The ticket payment capabilities are scoped out from LIPPU-project.
 
-    OpenAPI spec version: 0.2
-
 """
 
 from __future__ import absolute_import
@@ -29,7 +27,7 @@ import logging
 import zulu
 
 class TestLoginApi(unittest.TestCase):
-    """ LoginApi unit test stubs """
+    """ LoginApi integration tests  """
 
     def setUp(self):
         """

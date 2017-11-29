@@ -17,9 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * Services for availability functionality.
@@ -117,13 +115,15 @@ public class AvailabilityService implements IAvailabilityService{
         }
         ReservationItem item = reservationService.createReservationItem(
                     product, reservation, travel, passenger);
+        item.setAccessibilities(
+                getAccessibilities(product, passenger.getAccessibility()));
+        item.setExtraServiceFeatures(
+                getExtraServices(product, passenger.getExtraServices()));
         reservationService.addReservationItem(item);
-        List<AccessibilityFeature> accessibilities=
-                getAccessibilities(product, passenger.getAccessibility());
-        List<ExtraServiceFeature> services=
-                getExtraServices(product, passenger.getExtraServices());
         TravelAvailability availability = ConversionUtil.
-                reservationItemToTravelAvailability(item, passenger, accessibilities, services);
+                reservationItemToTravelAvailability(item, passenger,
+                        item.getAccessibilities(),
+                        item.getExtraServiceFeatures());
         availability.fare(ConversionUtil.fareToProductFare(
                 productService.getFare(product.getId())));
         availability.transport(ConversionUtil.transportToModelTransport(
@@ -152,29 +152,21 @@ public class AvailabilityService implements IAvailabilityService{
 
             log.debug("Check if product {} has extraService {}",
                     product.getId(), service.getTitle());
-            boolean valid = false;
-            for(ExtraServiceFeature service1: product.getExtraServiceFeatures()) {
-                if(service.getTitle().equals(service1.getTitle())) {
-                    // Found
-                    log.debug("Found extra service {} in product {}.",
-                            service.getTitle(), product.getId());
-                    valid = true;
-                    break;
-                }
-            }
-            // Check if we found required extraservice
-            if(!valid) {
+            if(product.getExtraServiceFeatures().containsKey(service.getTitle())){
+                log.debug("Found extra service {} in product {}.",
+                        service.getTitle(), product.getId());
+                break;
+            } else {
                 log.info("Did not find required extra service ({}) for product {}",
                         service.getTitle(), product.getId());
                 return false;
             }
         }
-
         return true;
     }
-    private List<AccessibilityFeature> getAccessibilities(Product product,
+    private Map<String, AccessibilityFeature> getAccessibilities(Product product,
                                                           List<? extends AccessibilityBase> accessibilities) {
-        List<AccessibilityFeature> returnList = new ArrayList<>();
+        Map<String, AccessibilityFeature> returnList = new HashMap<>();
         if(accessibilities == null) {
             return returnList;
         }
@@ -190,14 +182,14 @@ public class AvailabilityService implements IAvailabilityService{
                 feature.setFare(a.getFare());
                 feature.setAccessibilityReservationId(reservationService.
                         generateAccessiblityReservationCode(a));
-                returnList.add(feature);
+                returnList.put(feature.getAccessibilityReservationId(), feature);
             }
         }
         return returnList;
     }
-    private List<ExtraServiceFeature> getExtraServices(Product product, List<ExtraServiceBase>
+    private Map<String, ExtraServiceFeature> getExtraServices(Product product, List<ExtraServiceBase>
             services) {
-        List<ExtraServiceFeature> returnList = new ArrayList<>();
+        Map<String,ExtraServiceFeature> returnList = new HashMap<>();
         if(services == null) {
             return returnList;
         }
@@ -213,7 +205,7 @@ public class AvailabilityService implements IAvailabilityService{
                 service.setExtraServiceReservationId(
                         reservationService.generateExtraServiceReservationCode(
                                 e));
-                returnList.add(service);
+                returnList.put(service.getExtraServiceReservationId(), service);
             }
         }
         return returnList;

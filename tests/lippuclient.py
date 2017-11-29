@@ -85,11 +85,9 @@ def availability_request(base_url, headers, payload):
     :return: Request response from lippu service.
 
     """
-    logging.debug("availability_request, request payload: %s" % payload)
     response = requests.post(base_url + AVAILABILITY_ENDPOINT,
                                 headers=headers,
                                 json=payload)
-    logging.debug("availability_request, response %s" % response)
     return response
 
 def reservation_request(base_url, headers, payload):
@@ -102,11 +100,9 @@ def reservation_request(base_url, headers, payload):
     :return: Request response from lippu service.
 
     """
-    logging.debug("reservation_request, request payload: %s" % payload)
     response = requests.post(base_url + RESERVATION_ENDPOINT,
                             headers=headers,
                             json=payload)
-    logging.debug("reservation_request, response %s" % response)
     return response
 
 def reservation_delete(base_url, headers, reservation_id):
@@ -122,7 +118,6 @@ def reservation_delete(base_url, headers, reservation_id):
     """
     response = requests.delete(base_url + RESERVATION_ENDPOINT + "/" + reservation_id,
                             headers=headers)
-    logging.debug("reservation_delete, response %s" % response)
     return response
 
 
@@ -140,7 +135,6 @@ def travel_entitlement_status(base_url, headers, travel_entitlement_id):
     """
     response = requests.get(base_url + TRAVEL_ENTITLEMENT_ENDPOINT +
                             "/" + travel_entitlement_id,headers=headers)
-    logging.debug("travel_entitlement_status, response %s" % response)
     return response
 
 def travel_entitlement_activate(base_url, headers, travel_entitlement_id):
@@ -157,10 +151,7 @@ def travel_entitlement_activate(base_url, headers, travel_entitlement_id):
     response = requests.post(base_url + TRAVEL_ENTITLEMENT_ENDPOINT + "/" +
                              travel_entitlement_id + TRAVEL_ENTITLEMENT_ACTIVATE
                              ,headers=headers)
-    logging.debug("travel_entitlement_activate, response %s" % response)
     return response
-
-
 
 def travel_entitlement_delete(base_url, headers, travel_entitlement_id):
     """
@@ -176,7 +167,6 @@ def travel_entitlement_delete(base_url, headers, travel_entitlement_id):
     """
     response = requests.delete(base_url + TRAVEL_ENTITLEMENT_ENDPOINT + "/"
                                + travel_entitlement_id,headers=headers)
-    logging.debug("travel_entitlement_delete, response %s" % response)
     return response
 
 def authentication_init_request(base_url, headers, account_id):
@@ -190,10 +180,8 @@ def authentication_init_request(base_url, headers, account_id):
     """
 
     # Initialize authentication
-    logging.debug("authentication_init_request, start")
     response = requests.post(base_url + AUTHENTICATION_INIT_ENDPOINT,
                            headers=headers, json={'account': account_id})
-    logging.debug("authentication_init_request, response %s" % response)
     return response
 
 def authentication_commit_request(base_url, headers, snonce, key_id, key_path, alg=ALG_RSA_SHA256):
@@ -215,9 +203,6 @@ def authentication_commit_request(base_url, headers, snonce, key_id, key_path, a
     nonces = snonce + nonce
     data = base64.b64encode(nonces.encode()).decode("utf-8")
     signed_data = sign_data(key_path, data)
-    logging.debug("authentication_request, nonces: %s" % nonces)
-    logging.debug("authentication_request, base64 encoded nonces: %s:" + data)
-    logging.debug("authentication_request, signed_data: %s" % signed_data)
     commit_body = {'data':signed_data, 'pubKeyId':key_id, 'cnonce':nonce,
                    'snonce': snonce, 'alg':alg}
     response = requests.post(base_url + AUTHENTICATION_COMMIT_ENDPOINT,
@@ -237,7 +222,6 @@ def authenticate(base_url, transaction_id, account_id, key_id, key_path, alg):
     :return: Response of the authentication commit request.
 
     """
-    logging.debug("authenticate, start")
     headers = generate_headers(account_id)
     headers['X-Transaction-Id'] = transaction_id
     r_init = authentication_init_request(base_url, headers, account_id)
@@ -248,7 +232,7 @@ def authenticate(base_url, transaction_id, account_id, key_id, key_path, alg):
                                              r_init.json()['nonce'],
                                              key_id, key_path, alg)
         return r_commit
-    return None
+    raise Error('Authentication failed')
 def get_authentication_token(base_url, transaction_id, account_id, key_id, key_path):
     """
     Helper function to get an authentication token from the service.
@@ -266,9 +250,7 @@ def get_authentication_token(base_url, transaction_id, account_id, key_id, key_p
        and response.json() is not None
        and response.json()['token'] is not None):
         return response.json()['token']
-    else:
-        logging.info("Failed to get authentication token is, response is %s" % response)
-        return None
+    raise Error('Authentication failed')
 
 def sign_data(private_key_loc, data):
     """

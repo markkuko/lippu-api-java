@@ -23,7 +23,7 @@ import os
 from tests import lippuclient
 
 class TestAvailabilityApi(unittest.TestCase):
-    """ AvailabilityApi unit test stubs """
+    """ AvailabilityApi integration tests """
 
     def setUp(self):
         """
@@ -39,6 +39,14 @@ class TestAvailabilityApi(unittest.TestCase):
         logging.debug("TestAvailabilityApi: Setting target environment %s", target_environment)
         self.envdata = json.load(env_json)[target_environment]
         env_json.close()
+        token = lippuclient.get_authentication_token(self.envdata['base_url'],
+                                                     str(uuid.uuid4()),
+                                                     self.testdata['valid_client1'],
+                                                     self.testdata['key_id_client1'],
+                                                     self.testdata['key_path_client1'])
+        self.headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
+                                               token=token,
+                                               language="fi")
 
 
     def tearDown(self):
@@ -55,14 +63,6 @@ class TestAvailabilityApi(unittest.TestCase):
         Expects valid response for a transport leaving
         20:00+3.
         """
-        token = lippuclient.get_authentication_token(self.envdata['base_url'],
-                                                           str(uuid.uuid4()),
-                                                           self.testdata['valid_client1'],
-                                                           self.testdata['key_id_client1'],
-                                                           self.testdata['key_path_client1'])
-        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                                     token=token,
-                                                     language="fi")
 
         # Trip availaibility inquiry
         travel = self.testdata['travel_data']
@@ -70,7 +70,7 @@ class TestAvailabilityApi(unittest.TestCase):
         travel["travel"]["departureTimeEarliest"]  = zulu.now().shift(days=2).\
             replace(hour=14, minute=00).isoformat()
         r = lippuclient.availability_request(self.envdata['base_url'],
-                                       headers=headers, payload=travel)
+                                       headers=self.headers, payload=travel)
         logging.info("test_availability, availability response: %s"
                      % r.json())
         self.assertEqual(r.status_code, 200)
@@ -102,14 +102,6 @@ class TestAvailabilityApi(unittest.TestCase):
         Expects valid response for a transport leaving
         20:00+3.
         """
-        token = lippuclient.get_authentication_token(self.envdata['base_url'],
-                                                     str(uuid.uuid4()),
-                                                     self.testdata['valid_client1'],
-                                                     self.testdata['key_id_client1'],
-                                                     self.testdata['key_path_client1'])
-        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                               token=token,
-                                               language="fi")
 
         # Trip availaibility inquiry
         travel = self.testdata['travel_data']
@@ -118,7 +110,7 @@ class TestAvailabilityApi(unittest.TestCase):
         travel["travel"]["arrivalTimeLatest"]  = zulu.now().shift(days=2). \
             replace(hour=23, minute=30).isoformat()
         r = lippuclient.availability_request(self.envdata['base_url'],
-                                             headers=headers, payload=travel)
+                                             headers=self.headers, payload=travel)
         logging.info("test_availability_arrival_time, availability response: %s"
                      % r.json())
         self.assertEqual(r.status_code, 200)
@@ -151,14 +143,6 @@ class TestAvailabilityApi(unittest.TestCase):
         to be used for query.Expects valid response for a transport leaving
         20:00+3.
         """
-        token = lippuclient.get_authentication_token(self.envdata['base_url'],
-                                                     str(uuid.uuid4()),
-                                                     self.testdata['valid_client1'],
-                                                     self.testdata['key_id_client1'],
-                                                     self.testdata['key_path_client1'])
-        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                               token=token,
-                                               language="fi")
 
         # Trip availaibility inquiry
         travel = self.testdata['travel_data']
@@ -168,7 +152,7 @@ class TestAvailabilityApi(unittest.TestCase):
         travel["travel"]["arrivalTimeLatest"]  = zulu.now().shift(days=2). \
             replace(hour=21, minute=30).isoformat()
         r = lippuclient.availability_request(self.envdata['base_url'],
-                                             headers=headers, payload=travel)
+                                             headers=self.headers, payload=travel)
         logging.info("test_availability_both_arrival_time, availability response: %s"
                      % r.json())
         self.assertEqual(r.status_code, 200)
@@ -218,22 +202,12 @@ class TestAvailabilityApi(unittest.TestCase):
         Test case for using null latiatude from coordinate.
 
         """
-
-        token = lippuclient.get_authentication_token(self.envdata['base_url'],
-                                                           str(uuid.uuid4()),
-                                                           self.testdata['valid_client1'],
-                                                           self.testdata['key_id_client1'],
-                                                           self.testdata['key_path_client1'])
-        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                                     token=token,
-                                                     language="fi")
-
         travel = self.testdata['travel_data']
         travel["travel"]["departureTimeEarliest"]  = zulu.now().shift(days=2).\
             replace(hour=14, minute=00).isoformat()
         travel["travel"]["from"]["lat"] = None
         r = lippuclient.availability_request(self.envdata['base_url'],
-                                       headers=headers, payload=travel)
+                                       headers=self.headers, payload=travel)
         logging.info("test_availability_null_from_lat_coordinate, availability response: %s"
                      % r.json())
         self.assertEqual(r.status_code, 400)
@@ -245,21 +219,13 @@ class TestAvailabilityApi(unittest.TestCase):
         operator does not have transport from.
 
         """
-        token = lippuclient.get_authentication_token(self.envdata['base_url'],
-                                                           str(uuid.uuid4()),
-                                                           self.testdata['valid_client1'],
-                                                           self.testdata['key_id_client1'],
-                                                           self.testdata['key_path_client1'])
-        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                                     token=token,
-                                                     language="fi")
 
         travel = self.testdata['travel_data']
         travel["travel"]["departureTimeEarliest"]  = zulu.now().shift(days=2). \
             replace(hour=14, minute=00).isoformat()
         travel["travel"]["from"]["lat"] = 30.5
         r = lippuclient.availability_request(self.envdata['base_url'],
-                          headers=headers, payload=travel)
+                          headers=self.headers, payload=travel)
         logging.info("test_availability_null_from_lat_coordinate, availability response: %s"
                      % r.json())
         self.assertEqual(r.status_code, 400)
@@ -269,21 +235,13 @@ class TestAvailabilityApi(unittest.TestCase):
         Test case for using null longitude from coordinate.
 
         """
-        token = lippuclient.get_authentication_token(self.envdata['base_url'],
-                                                           str(uuid.uuid4()),
-                                                           self.testdata['valid_client1'],
-                                                           self.testdata['key_id_client1'],
-                                                           self.testdata['key_path_client1'])
-        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                                     token=token,
-                                                     language="fi")
 
         travel = self.testdata['travel_data']
         travel["travel"]["from"]["lon"] = None
         travel["travel"]["departureTimeEarliest"] = zulu.now().shift(days=2). \
             replace(hour=14, minute=00).isoformat()
         r = lippuclient.availability_request(self.envdata['base_url'],
-                          headers=headers, payload=travel)
+                          headers=self.headers, payload=travel)
         logging.info("test_availability_null_from_lon_coordinate, availability response: %s"
                      % r.json())
         self.assertEqual(r.status_code, 400)
@@ -295,21 +253,13 @@ class TestAvailabilityApi(unittest.TestCase):
         Test case for using null latitude to coordinate.
 
         """
-        token = lippuclient.get_authentication_token(self.envdata['base_url'],
-                                                           str(uuid.uuid4()),
-                                                           self.testdata['valid_client1'],
-                                                           self.testdata['key_id_client1'],
-                                                           self.testdata['key_path_client1'])
-        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                                     token=token,
-                                                     language="fi")
 
         travel = self.testdata['travel_data']
         travel["travel"]["to"]["lat"] = None
         travel["travel"]["departureTimeEarliest"]  = zulu.now().shift(days=2). \
             replace(hour=14, minute=00).isoformat()
         r = lippuclient.availability_request(self.envdata['base_url'],
-                          headers=headers, payload=travel)
+                          headers=self.headers, payload=travel)
         logging.info("test_availability_null_to_lat_coordinate, availability response: %s"
                      % r.json())
         self.assertEqual(r.status_code, 400)
@@ -320,21 +270,13 @@ class TestAvailabilityApi(unittest.TestCase):
         Test case for using null longitude to coordinate.
 
         """
-        token = lippuclient.get_authentication_token(self.envdata['base_url'],
-                                                           str(uuid.uuid4()),
-                                                           self.testdata['valid_client1'],
-                                                           self.testdata['key_id_client1'],
-                                                           self.testdata['key_path_client1'])
-        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                                     token=token,
-                                                     language="fi")
 
         travel = self.testdata['travel_data']
         travel["travel"]["to"]["lon"] = None
         travel["travel"]["departureTimeEarliest"]  = zulu.now().shift(days=2). \
             replace(hour=14, minute=00).isoformat()
         r = lippuclient.availability_request(self.envdata['base_url'],
-                          headers=headers, payload=travel)
+                          headers=self.headers, payload=travel)
         logging.info("test_availability_null_to_lon_coordinate, availability response: %s"
                      % r.json())
         self.assertEqual(r.status_code, 400)
@@ -346,19 +288,11 @@ class TestAvailabilityApi(unittest.TestCase):
         Test case for using null departureTimeEarliest.
 
         """
-        token = lippuclient.get_authentication_token(self.envdata['base_url'],
-                                                           str(uuid.uuid4()),
-                                                           self.testdata['valid_client1'],
-                                                           self.testdata['key_id_client1'],
-                                                           self.testdata['key_path_client1'])
-        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                                     token=token,
-                                                     language="fi")
 
         travel = self.testdata['travel_data']
         travel["travel"]["departureTimeEarliest"] = None
         r = lippuclient.availability_request(self.envdata['base_url'],
-                          headers=headers, payload=travel)
+                          headers=self.headers, payload=travel)
         logging.info("test_availability_null_date, availability response: %s"
                      % r.json())
         self.assertEqual(r.status_code, 200)
@@ -371,20 +305,11 @@ class TestAvailabilityApi(unittest.TestCase):
         have transport to offer.
 
         """
-        token = lippuclient.get_authentication_token(self.envdata['base_url'],
-                                                           str(uuid.uuid4()),
-                                                           self.testdata['valid_client1'],
-                                                           self.testdata['key_id_client1'],
-                                                           self.testdata['key_path_client1'])
-        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                                     token=token,
-                                                     language="fi")
-
         travel = self.testdata['travel_data']
         travel["travel"]["departureTimeEarliest"] = zulu.now().shift(days=2). \
             replace(hour=20, minute=45).isoformat()
         r = lippuclient.availability_request(self.envdata['base_url'],
-                          headers=headers, payload=travel)
+                          headers=self.headers, payload=travel)
         logging.info("test_availability_departure_late, availability response: %s"
                      % r.json())
         self.assertEqual(r.status_code, 400)
@@ -397,21 +322,13 @@ class TestAvailabilityApi(unittest.TestCase):
         have transport to offer.
 
         """
-        token = lippuclient.get_authentication_token(self.envdata['base_url'],
-                                                     str(uuid.uuid4()),
-                                                     self.testdata['valid_client1'],
-                                                     self.testdata['key_id_client1'],
-                                                     self.testdata['key_path_client1'])
-        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                               token=token,
-                                               language="fi")
 
         travel = self.testdata['travel_data']
         travel["travel"]["departureTimeEarliest"] = None
         travel["travel"]["arrivalTimeLatest"] = zulu.now().shift(days=2). \
             replace(hour=20, minute=45).isoformat()
         r = lippuclient.availability_request(self.envdata['base_url'],
-                                             headers=headers, payload=travel)
+                                             headers=self.headers, payload=travel)
         logging.info("test_availability_arrival_early, availability response: %s"
                      % r.json())
         self.assertEqual(r.status_code, 400)
@@ -423,16 +340,8 @@ class TestAvailabilityApi(unittest.TestCase):
         travel departureTimeEarliest to next monday at 11:00Z.
         Expects valid response for a transport leaving
         19:00+3, one availability for the passenger adult with
-        WHEELCHAIR accessibility feature in the reservation.
+        GUIDE_DOG accessibility feature in the reservation.
         """
-        token = lippuclient.get_authentication_token(self.envdata['base_url'],
-                                                           str(uuid.uuid4()),
-                                                           self.testdata['valid_client1'],
-                                                           self.testdata['key_id_client1'],
-                                                           self.testdata['key_path_client1'])
-        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                                     token=token,
-                                                     language="fi")
 
         # Trip availaibility inquiry
         travel = self.testdata['travel_data_accessibility']
@@ -441,7 +350,7 @@ class TestAvailabilityApi(unittest.TestCase):
         travel["travel"]["departureTimeEarliest"]  = zulu.now().shift(days=(7 - t.weekday())). \
             replace(hour=11, minute=00).isoformat()
         r = lippuclient.availability_request(self.envdata['base_url'],
-                          headers=headers, payload=travel)
+                          headers=self.headers, payload=travel)
         logging.info("test_availability_accessibility, availability response: %s"
                      % r.json())
         self.assertEqual(r.status_code, 200)
@@ -461,7 +370,7 @@ class TestAvailabilityApi(unittest.TestCase):
                 self.assertEqual(applicable['category'], 'Adult')
                 self.assertEqual(applicable['category'] in
                                  product['products2']['suitablePassengerCategories'], True)
-                self.assertEqual(applicable['accessibility'][0]['title'], 'WHEELCHAIR')
+                self.assertEqual(applicable['accessibility'][0]['title'], 'GUIDE_DOG')
                 self.assertEqual(applicable['accessibility'][0]['fare']['currency'], 'EUR')
                 self.assertEqual(applicable['accessibility'][0]['fare']['amount'], 0)
                 self.assertEqual(applicable['accessibility'][0]['fare']['vatPercent'], 0)
@@ -480,14 +389,6 @@ class TestAvailabilityApi(unittest.TestCase):
         19:00+3, one availability for the passenger child with
         CHILDSEAT extra service.
         """
-        token = lippuclient.get_authentication_token(self.envdata['base_url'],
-                                                           str(uuid.uuid4()),
-                                                           self.testdata['valid_client1'],
-                                                           self.testdata['key_id_client1'],
-                                                           self.testdata['key_path_client1'])
-        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                                     token=token,
-                                                     language="fi")
 
         # Trip availaibility inquiry
         travel = self.testdata['travel_data_extra_services']
@@ -496,7 +397,7 @@ class TestAvailabilityApi(unittest.TestCase):
         travel["travel"]["departureTimeEarliest"]  = zulu.now().shift(days=(7 - t.weekday())). \
             replace(hour=11, minute=00).isoformat()
         r = lippuclient.availability_request(self.envdata['base_url'],
-                          headers=headers, payload=travel)
+                          headers=self.headers, payload=travel)
         logging.info("test_availability_extra_services, availability response: %s"
                      % r.json())
         self.assertEqual(r.status_code, 200)
@@ -538,14 +439,6 @@ class TestAvailabilityApi(unittest.TestCase):
         no availabilities as the one passenger has invalid
         extraService
         """
-        token = lippuclient.get_authentication_token(self.envdata['base_url'],
-                                                           str(uuid.uuid4()),
-                                                           self.testdata['valid_client1'],
-                                                           self.testdata['key_id_client1'],
-                                                           self.testdata['key_path_client1'])
-        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                                     token=token,
-                                                     language="fi")
 
         # Trip availaibility inquiry
         travel = self.testdata['travel_data_extra_services']
@@ -555,7 +448,7 @@ class TestAvailabilityApi(unittest.TestCase):
         travel["travel"]["departureTimeEarliest"]  = zulu.now().shift(days=(7 - t.weekday())). \
             replace(hour=11, minute=00).isoformat()
         r = lippuclient.availability_request(self.envdata['base_url'],
-                          headers=headers, payload=travel)
+                          headers=self.headers, payload=travel)
         logging.info("test_availability_invalid_extra_services, availability response: %s"
                      % r.json())
         self.assertEqual(r.status_code, 200)
@@ -574,14 +467,6 @@ class TestAvailabilityApi(unittest.TestCase):
         no availabilities as the one passenger has invalid
         extraService
         """
-        token = lippuclient.get_authentication_token(self.envdata['base_url'],
-                                                           str(uuid.uuid4()),
-                                                           self.testdata['valid_client1'],
-                                                           self.testdata['key_id_client1'],
-                                                           self.testdata['key_path_client1'])
-        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                                     token=token,
-                                                     language="fi")
 
         # Trip availaibility inquiry
         travel = self.testdata['travel_data_extra_services']
@@ -591,7 +476,7 @@ class TestAvailabilityApi(unittest.TestCase):
         travel["travel"]["departureTimeEarliest"]  = zulu.now().shift(days=(7 - t.weekday())). \
             replace(hour=11, minute=00).isoformat()
         r = lippuclient.availability_request(self.envdata['base_url'],
-                          headers=headers, payload=travel)
+                          headers=self.headers, payload=travel)
         logging.info("test_availability_invalid_extra_services, availability response: %s"
                      % r.json())
         self.assertEqual(r.status_code, 200)
@@ -610,14 +495,6 @@ class TestAvailabilityApi(unittest.TestCase):
         travel departureTimeEarliest to next monday at 11:00Z.
         Expects response with zero travel availabilities.
         """
-        token = lippuclient.get_authentication_token(self.envdata['base_url'],
-                                                           str(uuid.uuid4()),
-                                                           self.testdata['valid_client1'],
-                                                           self.testdata['key_id_client1'],
-                                                           self.testdata['key_path_client1'])
-        headers = lippuclient.generate_headers(account_id=self.testdata['valid_client1'],
-                                                     token=token,
-                                                     language="fi")
 
         # Trip availaibility inquiry
         travel = self.testdata['travel_data_accessibility']
@@ -627,7 +504,7 @@ class TestAvailabilityApi(unittest.TestCase):
         travel["travel"]["departureTimeEarliest"]  = zulu.now().shift(days=(7 - t.weekday())). \
             replace(hour=11, minute=00).isoformat()
         r = lippuclient.availability_request(self.envdata['base_url'],
-                          headers=headers, payload=travel)
+                          headers=self.headers, payload=travel)
         logging.info("test_availability_invalid_accessibility, availability response: %s"
                      % r.json())
         self.assertEqual(r.status_code, 400)

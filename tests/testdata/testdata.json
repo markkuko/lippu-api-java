@@ -6,7 +6,14 @@
   "non_valid_caseid": "a05c1b48-3bc9-4d58-8be5-af9adaa8b4d5",
   "expired_token": "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJUZXN0IFRyYW5zcG9ydCBPcGVyYXRvciIsImF1ZCI6IjI5NjdhNmUzLWZlMjQtNGJlYy04NGQxLTFiYTM0YzVmNjIwZSIsImV4cCI6MTUxMTc5MDEyNywianRpIjoiNmhILUpHam10Rm1jajFVN2RZc1NDQSIsImlhdCI6MTUxMTc4NDEyNywibmJmIjoxNTExNzg0MDA3LCJzdWIiOiIyOTY3YTZlMy1mZTI0LTRiZWMtODRkMS0xYmEzNGM1ZjYyMGUifQ.qASQfKbMwp1Y7RiqG-V1aSlbgezbVlZIQxr9ea0bHQQlmi9RcLaWVWhb7t_bGFbqlbAtxKg-UE8LVcDNo_L0ng86-MH6djR_EnIJ1mR4anvdV16WWSyLPGKap5b1M6JTIp0Cu5_l3Uhat-s6FJSrTPyFMO7udJ6Fi2zMvNqrwVi2aJjxHQHfqHdviJU1UVBGAPLS8baEsRxMm7r2YL3En7ZIpKvignk1p2TSYwJ9t7wsr6Y0eu1HGT7eEeeW-ZxWSUi_s84T0rBFGT1JAoXKgtO_p9-50ieI7MX2Gr2jqvfinQdogW0rVHX6Gqn9p6OzSz-IahU_RbkaeZKo0OgEUw",
   "key_path_client1": "keys/client/client1.pem",
-  "non_valid_reservation_data" : {
+  "customer_info":
+    {
+      "name": "Matti Matkustaja",
+      "phone": "+3584444444",
+      "email": "matti.matkustaja@sahkoposti.fi"
+    }
+  ,
+  "invalid_reservation_id" : {
     "reservations": [
       {
         "travelEntitlementId": "InRyYXZlbCI6IFsNCiAgICB7DQogICAgICAidHJhdmVsVHlwZSI6ICJDb29yZGluYXRlQmFzZWRUcmF2ZWwiLA0KICAgICAgImZyb20iOiB7DQogICAgICAgICJsYXQiOiA2MC4yLA0KICAgICAgICAibG9uIjogMjQuOCwNCiAgICAgICAgIm",
@@ -56,7 +63,7 @@
       }
     },
     "passengers": [
-      {"category":"Adult","accessibility": [{"title":"WHEELCHAIR"}]}
+      {"category":"Adult","accessibility": [{"title":"GUIDE_DOG"}]}
     ]
   },
   "travel_data_extra_services" : {
@@ -93,11 +100,23 @@
       "contract": "CONTRACT-362243",
       "productType": "PRODUCT-SINGLE-TICKET",
       "accessibility": [{
-        "title": "WHEELCHAIR",
+        "title": "GUIDE_DOG",
         "additionalInformation" : null,
         "fare" : {"amount": 0, "currency":"EUR", "vatPercent": 0},
-        "description" : "Space for wheelchair"
-      }],
+        "description" : "Guide dogs allowed to the vehicle."
+      },
+        {"title": "LOW-FLOOR",
+          "additionalInformation" : null,
+          "description" : "Low-floor transport",
+          "fare": {"currency" : "EUR", "amount": 0, "vatPercent": 0}
+
+        },
+        {"title": "BOARDING_ASSISTANCE",
+          "additionalInformation" : null,
+          "description" : "Assistance for boarding the vehicle.",
+          "fare": {"currency" : "EUR", "amount": 0, "vatPercent": 0}
+
+        }],
       "extraServices": [{
         "title": "CHILDSEAT",
         "description" : "Separate child safety seat for the travel.",
