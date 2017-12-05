@@ -59,7 +59,7 @@ public class TimetableService implements ITimetableService{
         if(timetable == null ) {
             throw new TimetableNotFoundException("Timetable not found");
         }
-        if(departure == null) {
+        if(departure == null && arrival != null) {
             if(timetable.getOperatedOn().contains(arrival.getDayOfWeek())) {
                 if(timetable.getArrivalHour() < arrival.getHour()) {
                     return true;
@@ -74,9 +74,8 @@ public class TimetableService implements ITimetableService{
                     return false;
                 }
             } else {
-                log.debug("Product {} does not operate on {}"
-                        ,product.getId()
-                        ,departure.getDayOfWeek());
+                log.debug("Product {} does not operate on {}",
+                        product.getId());
                 return false;
             }
         }
