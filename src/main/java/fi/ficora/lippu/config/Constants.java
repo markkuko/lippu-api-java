@@ -23,4 +23,7 @@ public class Constants {
 
     public static final int TICKET_VALID_PERIOD_IN_MINUTES = 45;
 
+    public static final String JWE_TOKEN_TYPE = "JWE";
+
+    public static final String JWS_TOKEN_TYPE = "JWS";
 }

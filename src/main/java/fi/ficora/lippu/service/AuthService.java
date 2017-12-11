@@ -20,16 +20,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.Signature;
-import java.security.SignatureException;
+import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Base64;
 
+import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
+import org.jose4j.jwe.JsonWebEncryption;
+import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
@@ -105,34 +104,56 @@ public class AuthService implements IAuthService {
                 throw new AuthVerificationFailedException(
                         "Payload signature was not valid");
             }
-            Auth auth = this.generateJWT(client);
+            Auth auth = this.generateAuth(client);
             this.nonceRepository.delete(serverNonce);
             return auth;
 
         } catch (IllegalArgumentException e) {
-            AuthService.log.debug("Exception while processing authentication payload {}", e.getMessage());
-            this.nonceRepository.delete(serverNonce.getNonce());
-            throw new AuthVerificationFailedException("Exception while processing authentication payload:"+
+            AuthService.log.debug("Exception while processing authentication payload {}",
                     e.getMessage());
+            throw new AuthVerificationFailedException("Exception while processing" +
+                    "authentication payload:"+ e.getMessage());
         }
 
     }
-
     /**
-     * Generates JWT authentication token for specific client.
+     * Generates @{@link Auth} for a specific client.
      * @param client Client for which token is issued for.
-     * @return JWT authorization token.
+     * @return Authentication for a client.
      * @throws JoseException JWT Jose Exception
      */
-    private Auth generateJWT(Client client) throws JoseException {
-        // Create the claims and sign the JWT with HMAC_SHA512
+    private Auth generateAuth(Client client) throws JoseException{
+        OffsetDateTime exp = OffsetDateTime.now().plusMinutes(
+                Constants.JWT_EXPIRATION_TIME_MINUTES);
+        String jwtType = this.operatorConfiguration.getAuthTokenType();
+        String token = "";
+        if(jwtType.equals(Constants.JWS_TOKEN_TYPE)) {
+            token = generateJWTWithJWS(client, exp);
+        } else {
+            // Default to JWE based authentication token.
+            token = generateJWTWithJWE(client, exp);
+        }
+        Auth authentication =  new Auth();
+        authentication.setToken(token);
+        authentication.setExpires(exp);
+        authentication.setClientId(client.getAccount());
+        return authentication;
+    }
+    /**
+     * Generates signed (JWS) JWT authentication token for specific client.
+     * @param client Client for which token is issued for.
+     * @param exp Expiration time for the token.
+     * @return Signed JWT authorization token in String format.
+     * @throws JoseException JWT Jose Exception
+     */
+    private String generateJWTWithJWS(Client client, OffsetDateTime exp)
+            throws JoseException {
         try {
-            PrivateKey key = KeyUtil.getPrivateKey(this.operatorConfiguration.getPrivateKey());
+            PrivateKey key = KeyUtil.getPrivateKey(
+                    this.operatorConfiguration.getPrivateKey());
             JwtClaims claims = new JwtClaims();
             claims.setIssuer(this.operatorConfiguration.getOperator());
             claims.setAudience(client.getAccount());
-            OffsetDateTime exp = OffsetDateTime.now().plusMinutes(
-                    Constants.JWT_EXPIRATION_TIME_MINUTES);
             claims.setExpirationTime(NumericDate.fromSeconds(exp.toEpochSecond()));
 
             claims.setGeneratedJwtId();
@@ -142,22 +163,52 @@ public class AuthService implements IAuthService {
 
             JsonWebSignature jws = new JsonWebSignature();
             jws.setPayload(claims.toJson());
-
             jws.setKey(key);
             jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);
-            Auth authentication =  new Auth();
-            authentication.setToken(jws.getCompactSerialization());
-            authentication.setExpires(exp);
-            authentication.setClientId(client.getAccount());
 
-            return authentication;
+            return jws.getCompactSerialization();
         } catch (NoSuchAlgorithmException | IOException | InvalidKeySpecException e) {
-            AuthService.log.info("Error while generating JWT: {}", e);
-            return null;
+            AuthService.log.info("Error while generating JWS: {}", e);
+            throw new JoseException("Exception when generating JWS:" + e.getMessage());
         }
 
     }
+    /**
+     * Generates encrypted (JWE) JWT authentication token for specific client.
+     * @param client Client for which token is issued for.
+     * @param exp Expiration time for the token.
+     * @return Encrypted JWT authorization token in String format.
+     * @throws JoseException JWT Jose Exception
+     */
+    private String generateJWTWithJWE(Client client, OffsetDateTime exp) throws JoseException {
+        try {
+            // inner JWT is JWS, outer is JWE.
+            String innerJWT =  generateJWTWithJWS(client, exp);
 
+            PublicKey publicKey = KeyUtil.getPublicKey(
+                    this.operatorConfiguration.getPublicKey());
+            JsonWebEncryption jwe = new JsonWebEncryption();
+            jwe.setAlgorithmHeaderValue(
+                    KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
+            String encAlg = ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256;
+            jwe.setEncryptionMethodHeaderParameter(encAlg);
+
+            jwe.setKey(publicKey);
+            //jwe.setKeyIdHeaderValue(receiverJwk.getKeyId());
+            // A nested JWT requires that the cty (Content Type) header be
+            // set to "JWT" in the outer JWT
+            jwe.setContentTypeHeaderValue("JWT");
+
+            // The inner JWT is the payload of the outer JWT
+            jwe.setPayload(innerJWT);
+
+            return jwe.getCompactSerialization();
+        } catch (NoSuchAlgorithmException | IOException | InvalidKeySpecException e) {
+            AuthService.log.info("Error while generating JWE: {}", e);
+            throw new JoseException("Exception when generating JWE:" + e.getMessage());
+        }
+
+    }
 
     public Nonce generateNonce(String account) throws AccountNotFoundException {
         if(this.clientRepository.exists(account)) {

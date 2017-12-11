@@ -17,6 +17,7 @@ public class DataRepository {
     private String secret;
     private String privateKey;
     private String publicKey;
+    private String authTokenType;
     private List<String> passengerCategories;
 
     public String getOperator() {
@@ -57,5 +58,13 @@ public class DataRepository {
 
     public void setPassengerCategories(List<String> passengerCategories) {
         this.passengerCategories = passengerCategories;
+    }
+
+    public String getAuthTokenType() {
+        return authTokenType;
+    }
+
+    public void setAuthTokenType(String authTokenType) {
+        this.authTokenType = authTokenType;
     }
 }

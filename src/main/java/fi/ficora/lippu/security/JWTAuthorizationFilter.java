@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import fi.ficora.lippu.config.Constants;
 import fi.ficora.lippu.repository.DataRepository;
 import fi.ficora.lippu.util.KeyUtil;
+import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
+import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
@@ -55,14 +57,18 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
         String authToken = request.getHeader(Constants.AUTHORIZATION_HEADER);
         if (authToken == null) {
+            log.info("Did not find authentication token, continue request processing.");
             filterChain.doFilter(request, response);
             return;
         }
         // Validate the value in authToken and set security context
         UsernamePasswordAuthenticationToken auth = authenticate(request);
         if(auth == null) {
+            log.info("Authentication is null, continue request processing.");
             filterChain.doFilter(request, response);
         } else {
+            log.info("Authentication valid for {}, continue request processing.",
+                    auth.getPrincipal());
             SecurityContextHolder.getContext().setAuthentication(auth);
             filterChain.doFilter(request, response);
         }
@@ -80,6 +86,18 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         try {
             String token = request.getHeader(Constants.AUTHORIZATION_HEADER);
             PublicKey key = KeyUtil.getPublicKey(dataRepository.getPublicKey());
+            PrivateKey privateKey = KeyUtil.getPrivateKey(dataRepository.getPrivateKey());
+            AlgorithmConstraints jwsAlgConstraints = new AlgorithmConstraints(
+                    AlgorithmConstraints.ConstraintType.WHITELIST,
+                    AlgorithmIdentifiers.RSA_USING_SHA256);
+
+            AlgorithmConstraints jweAlgConstraints = new AlgorithmConstraints(
+                    AlgorithmConstraints.ConstraintType.WHITELIST,
+                    KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
+
+            AlgorithmConstraints jweEncConstraints = new AlgorithmConstraints(
+                    AlgorithmConstraints.ConstraintType.WHITELIST,
+                    ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
             if (token != null) {
                 log.trace("Verifying token: {}", token);
                 //Key key = new HmacKey(dataRepository.getSecret().getBytes("UTF-8"));
@@ -89,10 +107,11 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
                         .setRequireSubject()
                         .setSkipDefaultAudienceValidation()
                         .setExpectedIssuer(dataRepository.getOperator())
+                        .setDecryptionKey(privateKey)
                         .setVerificationKey(key)
-                        .setJwsAlgorithmConstraints(
-                                new AlgorithmConstraints(AlgorithmConstraints.ConstraintType.WHITELIST,
-                                        AlgorithmIdentifiers.RSA_USING_SHA256))
+                        .setJwsAlgorithmConstraints(jwsAlgConstraints)
+                        .setJweAlgorithmConstraints(jweAlgConstraints)
+                        .setJweContentEncryptionAlgorithmConstraints(jweEncConstraints)
                         .build();
 
                 //  Validate the JWT and process it to the Claims

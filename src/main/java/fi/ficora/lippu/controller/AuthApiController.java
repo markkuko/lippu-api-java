@@ -77,8 +77,11 @@ public class AuthApiController implements AuthApi {
                     body.getSnonce(),
                     body.getPubKeyId(), body.getAlg().toString());
             if (auth == null) {
-                log.info("Operation: commitAuth; token is null for {}, returning forbidden.",
-                        ConversionUtil.sanitizeLog(xInitiator));
+                log.info("Operation: commitAuth; token is null for {}, returning forbidden." +
+                                " Id: {}, Transaction Id: {}",
+                        ConversionUtil.sanitizeLog(xInitiator),
+                        ConversionUtil.sanitizeLog(xMessageId),
+                        ConversionUtil.sanitizeLog(xTransactionId));
                 return ApiErrorUtil.generateErrorResponse403(
                         messageSource.getMessage("http.error.message.403",null, Locale.ENGLISH));
             }
